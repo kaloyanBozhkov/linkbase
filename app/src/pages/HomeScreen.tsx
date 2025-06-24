@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -35,6 +35,21 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   } = useConnectionStore();
 
   const [refreshing, setRefreshing] = useState(false);
+  const [searchText, setSearchText] = useState(searchQuery);
+
+  // Debounced search effect
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setSearchQuery(searchText);
+    }, 500); // 500ms debounce delay
+
+    return () => clearTimeout(timeoutId);
+  }, [searchText, setSearchQuery]);
+
+  // Sync searchText with searchQuery when it changes externally (e.g., from refresh)
+  useEffect(() => {
+    setSearchText(searchQuery);
+  }, [searchQuery]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -44,7 +59,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await fetchConnections();
+    // Respect current search state - if searching, re-run search; if not, fetch all
+    if (searchText.trim()) {
+      // Re-trigger the current search
+      setSearchQuery(searchText);
+    } else {
+      // No search active, fetch all connections
+      await fetchConnections();
+    }
     setRefreshing(false);
   };
 
@@ -79,14 +101,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Text style={styles.emptyStateTitle}>
-        {searchQuery ? "🔍 No Results" : "🌟 Start Building"}
+        {searchText ? "🔍 No Results" : "🌟 Start Building"}
       </Text>
       <Text style={styles.emptyStateText}>
-        {searchQuery
+        {searchText
           ? "No connections found matching your search. Try different keywords."
           : "Your connection network is empty. Add your first connection and start building meaningful relationships!"}
       </Text>
-      {!searchQuery && (
+      {!searchText && (
         <Button
           title="Add First Connection"
           onPress={() => navigation.navigate("AddConnection")}
@@ -107,7 +129,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               title="Try Again"
               onPress={() => {
                 clearError();
-                fetchConnections();
+                // Respect current search state when retrying
+                if (searchText.trim()) {
+                  setSearchQuery(searchText);
+                } else {
+                  fetchConnections();
+                }
               }}
             />
           </View>
@@ -125,8 +152,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
           <Input
             placeholder="Search connections by name or facts..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
+            value={searchText}
+            onChangeText={setSearchText}
             containerStyle={styles.searchContainer}
           />
           <Button

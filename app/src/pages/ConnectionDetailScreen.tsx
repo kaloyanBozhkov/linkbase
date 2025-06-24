@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../../App";
 import { connectionApi } from "../services/api";
 import {
@@ -43,9 +43,11 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchConnection();
-  }, [connectionId]);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchConnection();
+    }, [connectionId])
+  );
 
   const fetchConnection = async () => {
     try {
