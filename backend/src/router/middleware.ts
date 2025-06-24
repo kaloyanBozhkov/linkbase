@@ -20,7 +20,6 @@ export const setupRequestContext = (
   next: NextFunction
 ) => {
   const userId = req.headers["x-user-id"] as string;
-  console.log(req.headers);
   if (!userId && !isPublicPath(req.path)) {
     return res.status(401).json({
       success: false,
