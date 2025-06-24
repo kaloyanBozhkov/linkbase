@@ -21,10 +21,11 @@ export const setupRequestContext = (
 ) => {
   const userId = req.headers["x-user-id"] as string;
   if (!userId && !isPublicPath(req.path)) {
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
       error: "User ID is required in headers (X-User-ID)",
     });
+    return;
   }
 
   // Set up the request context
