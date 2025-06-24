@@ -7,7 +7,7 @@
  * This script runs ESLint with auto-fix to remove unused imports
  * from your TypeScript/JavaScript files.
  */
-
+const __dirname = path.resolve();
 const { execSync } = require("child_process");
 const path = require("path");
 

@@ -45,6 +45,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       fetchConnection();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connectionId])
   );
 
