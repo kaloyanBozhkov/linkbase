@@ -4,9 +4,10 @@
   "description": "Backend API for Linkbase - A personal database of connections",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && prisma generate",
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "vercel-build": "prisma generate && tsc",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",

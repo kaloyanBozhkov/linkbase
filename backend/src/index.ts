@@ -1,11 +1,11 @@
-import express from "express";
+import express, { Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import indexRouter from "./router";
 import { env } from "./env";
 
-const app = express();
+const app: Application = express();
 const PORT = env.PORT;
 
 // Rate limiting
@@ -62,19 +62,14 @@ app.use(
   }
 );
 
-// Graceful shutdown
-process.on("SIGINT", async () => {
-  console.log("Received SIGINT, shutting down gracefully...");
-  process.exit(0);
-});
+// For local development
+if (env.NODE_ENV === "development") {
+  app.listen(PORT, () => {
+    console.log(`🚀 Linkbase API server running on port ${PORT}`);
+    console.log(`Environment: ${env.NODE_ENV}`);
+    console.log(`CORS origin: ${env.CORS_ORIGIN}`);
+  });
+}
 
-process.on("SIGTERM", async () => {
-  console.log("Received SIGTERM, shutting down gracefully...");
-  process.exit(0);
-});
-
-app.listen(PORT, () => {
-  console.log(`🚀 Linkbase API server running on port ${PORT}`);
-  console.log(`Environment: ${env.NODE_ENV}`);
-  console.log(`CORS origin: ${env.CORS_ORIGIN}`);
-});
+// Export for Vercel
+export default app;
