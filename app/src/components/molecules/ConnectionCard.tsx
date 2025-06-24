@@ -9,7 +9,11 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../atoms/Button";
-import { Connection } from "../../hooks/useConnectionStore";
+import {
+  Connection,
+  socialMediaDisplayNames,
+  SocialMediaType,
+} from "../../hooks/useConnectionStore";
 
 interface ConnectionCardProps {
   connection: Connection;
@@ -24,12 +28,6 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
   onEdit,
   onDelete,
 }) => {
-  const handleInstagramPress = () => {
-    if (connection.igUrl) {
-      Linking.openURL(connection.igUrl);
-    }
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -37,6 +35,31 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
       day: "numeric",
     });
   };
+
+  const handleSocialMediaPress = (url: string) => {
+    if (url) {
+      Linking.openURL(url);
+    }
+  };
+
+  const getSocialMediasToShow = () => {
+    // Show legacy Instagram if it exists and no new social medias
+    if (
+      connection.igHandle &&
+      (!connection.socialMedias || connection.socialMedias.length === 0)
+    ) {
+      return [
+        {
+          type: SocialMediaType.INSTAGRAM,
+          handle: connection.igHandle,
+          url: connection.igUrl,
+        },
+      ];
+    }
+    return connection.socialMedias || [];
+  };
+
+  const socialMediasToShow = getSocialMediasToShow();
 
   return (
     <TouchableOpacity
@@ -53,20 +76,37 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
         <View style={styles.cardHeader}>
           <View style={styles.nameContainer}>
             <Text style={styles.name}>{connection.name}</Text>
-            {connection.igHandle && (
-              <TouchableOpacity
-                onPress={handleInstagramPress}
-                style={styles.igContainer}
-              >
-                <LinearGradient
-                  colors={["#00f5ff", "#bf00ff"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.igGradient}
-                >
-                  <Text style={styles.igHandle}>@{connection.igHandle}</Text>
-                </LinearGradient>
-              </TouchableOpacity>
+            {socialMediasToShow.length > 0 && (
+              <View style={styles.socialMediaContainer}>
+                {socialMediasToShow.slice(0, 3).map((socialMedia, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() =>
+                      handleSocialMediaPress(socialMedia.url || "")
+                    }
+                    style={styles.socialMediaItem}
+                  >
+                    <LinearGradient
+                      colors={["#00f5ff", "#bf00ff"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={styles.socialMediaGradient}
+                    >
+                      <Text style={styles.socialMediaText}>
+                        {socialMediaDisplayNames[socialMedia.type] ||
+                          socialMedia.type}
+                      </Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                ))}
+                {socialMediasToShow.length > 3 && (
+                  <View style={styles.moreSocialMedia}>
+                    <Text style={styles.moreSocialMediaText}>
+                      +{socialMediasToShow.length - 3}
+                    </Text>
+                  </View>
+                )}
+              </View>
             )}
           </View>
           <View style={styles.dateContainer}>
@@ -81,7 +121,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
           </View>
 
           <View style={styles.factsContainer}>
-            <Text style={styles.factsLabel}>💡 Facts</Text>
+            <Text style={styles.factsLabel}>💡 Notes</Text>
             <View style={styles.factsList}>
               {connection.facts.slice(0, 2).map((fact, index) => (
                 <View key={index} style={styles.factItem}>
@@ -107,12 +147,12 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
             style={styles.actionButton}
           />
           <Button
+            icon={<Ionicons name="trash" size={18} color="#ffffff" />}
             onPress={onDelete}
             variant="danger"
             size="small"
-            style={styles.deleteButton}
-            icon={<Ionicons name="trash-outline" size={18} color="white" />}
-            iconOnly={true}
+            style={styles.actionButton}
+            iconOnly
           />
         </View>
       </LinearGradient>
@@ -154,17 +194,34 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     letterSpacing: 0.5,
   },
-  igContainer: {
-    alignSelf: "flex-start",
+  socialMediaContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: 6,
   },
-  igGradient: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
+  socialMediaItem: {
+    marginBottom: 4,
   },
-  igHandle: {
-    fontSize: 14,
+  socialMediaGradient: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
+  socialMediaText: {
+    fontSize: 11,
     color: "#0a0d14",
+    fontWeight: "600",
+  },
+  moreSocialMedia: {
+    backgroundColor: "#475569",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
+  moreSocialMediaText: {
+    fontSize: 11,
+    color: "#cbd5e1",
     fontWeight: "600",
   },
   dateContainer: {
@@ -247,17 +304,10 @@ const styles = StyleSheet.create({
   cardFooter: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    alignItems: "center",
     gap: 12,
   },
   actionButton: {
-    minWidth: 70,
-  },
-  deleteButton: {
     minWidth: 44,
-    shadowColor: "#dc2626",
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
   },
 });
 

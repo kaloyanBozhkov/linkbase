@@ -1,5 +1,12 @@
 import { z } from "zod";
+import { SocialMediaType } from "@prisma/client";
 import { connectionService } from "../../services/connectionService";
+
+// Zod schema for social media entries
+export const socialMediaSchema = z.object({
+  type: z.nativeEnum(SocialMediaType),
+  handle: z.string().min(1, "Handle is required"),
+});
 
 // Zod schema for updating connections
 export const updateConnectionSchema = z.object({
@@ -8,13 +15,13 @@ export const updateConnectionSchema = z.object({
     .min(1, "Name is required")
     .max(100, "Name must be less than 100 characters")
     .optional(),
-  igHandle: z.string().optional(),
   metAt: z
     .string()
     .min(1, "Meeting place is required")
     .max(200, "Meeting place must be less than 200 characters")
     .optional(),
-  facts: z.array(z.string()).min(1, "At least one fact is required").optional(),
+  facts: z.array(z.string()).optional(),
+  socialMedias: z.array(socialMediaSchema).optional(),
 });
 
 export type UpdateConnectionInput = z.infer<typeof updateConnectionSchema>;

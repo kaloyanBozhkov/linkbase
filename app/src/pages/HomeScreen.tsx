@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -26,7 +26,6 @@ interface Props {
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const {
     connections,
-    loading,
     error,
     searchQuery,
     fetchConnections,

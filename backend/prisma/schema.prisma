@@ -11,6 +11,8 @@ datasource db {
 }
 
 enum SocialMediaType {
+    EMAIL
+    PHONE
     INSTAGRAM
     FACEBOOK
     TWITTER
@@ -19,9 +21,6 @@ enum SocialMediaType {
     YOUTUBE
     SNAPCHAT
     PINTEREST
-    WHATSAPP
-    TELEGRAM
-    DISCORD
     REDDIT
     TWITCH
     GITHUB
@@ -32,35 +31,12 @@ enum SocialMediaType {
     SPOTIFY
     SOUNDCLOUD
     BANDCAMP
-    VENMO
-    CASHAPP
-    CLUBHOUSE
     THREADS
     MASTODON
     BLUESKY
     TUMBLR
     FLICKR
     VIMEO
-    WECHAT
-    LINE
-    KAKAO
-    VIBER
-    SIGNAL
-    SLACK
-    TEAMS
-    ZOOM
-    SKYPE
-    FACETIME
-    GOOGLEHANGOUTS
-    MEET
-    HOUSEPARTY
-    MARCO_POLO
-    LOOM
-    CALENDLY
-    LINKTREE
-    BEACONS
-    ALLMYLINKS
-    ONLYFANS
 }
 
 model Connection {

@@ -8,14 +8,19 @@ import {
   Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../App";
-import { useConnectionStore } from "../hooks/useConnectionStore";
+import {
+  useConnectionStore,
+  Connection,
+  SocialMedia,
+} from "../hooks/useConnectionStore";
 import { connectionApi } from "../services/api";
-import { Connection } from "../hooks/useConnectionStore";
 import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
+import SocialMediaSection from "../components/molecules/SocialMediaSection";
 
 type EditConnectionScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -32,6 +37,11 @@ interface Props {
   route: EditConnectionScreenRouteProp;
 }
 
+// Helper function to capitalize words
+const capitalizeWords = (text: string): string => {
+  return text.replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
 const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
   const { connectionId } = route.params;
   const { updateConnection, loading } = useConnectionStore();
@@ -39,12 +49,13 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
   const [connection, setConnection] = useState<Connection | null>(null);
   const [formData, setFormData] = useState({
     name: "",
-    igHandle: "",
     metAt: "",
     facts: [""],
+    socialMedias: [] as SocialMedia[],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loadingConnection, setLoadingConnection] = useState(true);
+  const [isNameAutoCapitalized, setIsNameAutoCapitalized] = useState(false); // Don't auto-cap when editing existing
 
   useEffect(() => {
     fetchConnection();
@@ -55,11 +66,25 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
       setLoadingConnection(true);
       const data = await connectionApi.getById(connectionId);
       setConnection(data);
+
+      // Handle legacy Instagram data
+      const socialMedias = data.socialMedias || [];
+      if (
+        data.igHandle &&
+        !socialMedias.some((sm) => sm.type === "INSTAGRAM")
+      ) {
+        socialMedias.push({
+          type: "INSTAGRAM" as any,
+          handle: data.igHandle,
+          url: data.igUrl,
+        });
+      }
+
       setFormData({
         name: data.name,
-        igHandle: data.igHandle || "",
         metAt: data.metAt,
         facts: data.facts.length > 0 ? data.facts : [""],
+        socialMedias: socialMedias,
       });
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to load connection");
@@ -80,9 +105,15 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
       newErrors.metAt = "Meeting place is required";
     }
 
-    const validFacts = formData.facts.filter((fact) => fact.trim());
-    if (validFacts.length === 0) {
-      newErrors.facts = "At least one fact is required";
+    // Facts are now optional - no validation needed
+
+    // Validate social media entries
+    const invalidSocialMedias = formData.socialMedias.filter(
+      (sm) => !sm.handle.trim()
+    );
+    if (invalidSocialMedias.length > 0) {
+      newErrors.socialMedias =
+        "All social media entries must have a handle/username";
     }
 
     setErrors(newErrors);
@@ -94,11 +125,15 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
 
     try {
       const validFacts = formData.facts.filter((fact) => fact.trim());
+      const validSocialMedias = formData.socialMedias.filter((sm) =>
+        sm.handle.trim()
+      );
+
       await updateConnection(connectionId, {
         name: formData.name.trim(),
-        igHandle: formData.igHandle.trim() || undefined,
         metAt: formData.metAt.trim(),
-        facts: validFacts,
+        facts: validFacts, // Can be empty array
+        socialMedias: validSocialMedias,
       });
 
       Alert.alert("Success", "Connection updated successfully!", [
@@ -117,18 +152,24 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const removeFactField = (index: number) => {
-    if (formData.facts.length > 1) {
-      setFormData((prev) => ({
-        ...prev,
-        facts: prev.facts.filter((_, i) => i !== index),
-      }));
-    }
+    // Allow removing even the last fact since facts are now optional
+    setFormData((prev) => ({
+      ...prev,
+      facts: prev.facts.filter((_, i) => i !== index),
+    }));
   };
 
   const updateFact = (index: number, value: string) => {
     setFormData((prev) => ({
       ...prev,
       facts: prev.facts.map((fact, i) => (i === index ? value : fact)),
+    }));
+  };
+
+  const updateSocialMedias = (socialMedias: SocialMedia[]) => {
+    setFormData((prev) => ({
+      ...prev,
+      socialMedias,
     }));
   };
 
@@ -162,20 +203,27 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
             <Input
               label="Name *"
               value={formData.name}
-              onChangeText={(text) =>
-                setFormData((prev) => ({ ...prev, name: text }))
-              }
+              onChangeText={(text) => {
+                // Auto-capitalize if user is just typing (not manually editing)
+                const processedText = isNameAutoCapitalized
+                  ? capitalizeWords(text)
+                  : text;
+                setFormData((prev) => ({ ...prev, name: processedText }));
+
+                // If user deletes or manually edits, stop auto-capitalizing
+                if (
+                  text.length < formData.name.length ||
+                  (text !== capitalizeWords(text) &&
+                    text === text.toLowerCase())
+                ) {
+                  setIsNameAutoCapitalized(false);
+                } else if (text.length > formData.name.length) {
+                  // If user is adding text, enable auto-capitalization
+                  setIsNameAutoCapitalized(true);
+                }
+              }}
               error={errors.name}
               placeholder="Enter their name"
-            />
-
-            <Input
-              label="Instagram Handle"
-              value={formData.igHandle}
-              onChangeText={(text) =>
-                setFormData((prev) => ({ ...prev, igHandle: text }))
-              }
-              placeholder="@username (optional)"
             />
 
             <Input
@@ -188,12 +236,18 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
               placeholder="Coffee shop, conference, party, etc."
             />
 
+            <SocialMediaSection
+              socialMedias={formData.socialMedias}
+              onUpdateSocialMedias={updateSocialMedias}
+              error={errors.socialMedias}
+            />
+
             <View style={styles.factsSection}>
               <LinearGradient
                 colors={["#1e293b", "#334155"]}
                 style={styles.factsSectionContent}
               >
-                <Text style={styles.factsTitle}>💡 Facts about them *</Text>
+                <Text style={styles.factsTitle}>💡 Notes (Optional)</Text>
                 {errors.facts && (
                   <Text style={styles.errorText}>{errors.facts}</Text>
                 )}
@@ -206,15 +260,15 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
                       placeholder={`Interesting fact #${index + 1}`}
                       containerStyle={styles.factInput}
                     />
-                    {formData.facts.length > 1 && (
-                      <Button
-                        title="Remove"
-                        onPress={() => removeFactField(index)}
-                        variant="danger"
-                        size="small"
-                        style={styles.removeButton}
-                      />
-                    )}
+                    {/* Always show remove button since facts are optional */}
+                    <Button
+                      icon={<Ionicons name="trash" size={18} color="#ffffff" />}
+                      onPress={() => removeFactField(index)}
+                      variant="danger"
+                      size="small"
+                      style={styles.removeButton}
+                      iconOnly
+                    />
                   </View>
                 ))}
 
@@ -307,7 +361,7 @@ const styles = StyleSheet.create({
   },
   factRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     marginBottom: 12,
   },
   factInput: {
@@ -316,8 +370,8 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   removeButton: {
-    marginTop: 8,
-    minWidth: 80,
+    minWidth: 44,
+    alignSelf: "center",
   },
   addFactButton: {
     marginTop: 12,

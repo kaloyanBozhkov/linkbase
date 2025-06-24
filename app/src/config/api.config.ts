@@ -1,4 +1,3 @@
-import { Platform } from "react-native";
 
 // This will be dynamically updated by our build script
 const DEV_HOST_IP = "192.168.1.40"; // This will be auto-detected

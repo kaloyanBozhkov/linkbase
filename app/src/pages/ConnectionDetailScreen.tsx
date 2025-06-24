@@ -15,7 +15,11 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../App";
 import { connectionApi } from "../services/api";
-import { Connection } from "../hooks/useConnectionStore";
+import {
+  Connection,
+  socialMediaDisplayNames,
+  SocialMediaType,
+} from "../hooks/useConnectionStore";
 import Button from "../components/atoms/Button";
 
 type ConnectionDetailScreenNavigationProp = StackNavigationProp<
@@ -56,9 +60,9 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
-  const handleInstagramPress = () => {
-    if (connection?.igUrl) {
-      Linking.openURL(connection.igUrl);
+  const handleSocialMediaPress = (url: string) => {
+    if (url) {
+      Linking.openURL(url);
     }
   };
 
@@ -110,6 +114,23 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     });
   };
 
+  const getSocialMediasToShow = () => {
+    // Show legacy Instagram if it exists and no new social medias
+    if (
+      connection?.igHandle &&
+      (!connection.socialMedias || connection.socialMedias.length === 0)
+    ) {
+      return [
+        {
+          type: SocialMediaType.INSTAGRAM,
+          handle: connection.igHandle,
+          url: connection.igUrl,
+        },
+      ];
+    }
+    return connection?.socialMedias || [];
+  };
+
   if (loading) {
     return (
       <LinearGradient colors={["#0a0d14", "#1e293b"]} style={styles.container}>
@@ -138,6 +159,8 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     );
   }
 
+  const socialMediasToShow = getSocialMediasToShow();
+
   return (
     <LinearGradient colors={["#0a0d14", "#1e293b"]} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -152,23 +175,44 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
               style={styles.header}
             >
               <Text style={styles.name}>{connection.name}</Text>
-              {connection.igHandle && (
-                <TouchableOpacity
-                  onPress={handleInstagramPress}
-                  style={styles.igContainer}
-                >
-                  <LinearGradient
-                    colors={["#00f5ff", "#bf00ff"]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.igGradient}
-                  >
-                    <Text style={styles.igHandle}>@{connection.igHandle}</Text>
-                  </LinearGradient>
-                  <Text style={styles.igLink}>Tap to open Instagram</Text>
-                </TouchableOpacity>
-              )}
             </LinearGradient>
+
+            {/* Social Media Section */}
+            {socialMediasToShow.length > 0 && (
+              <LinearGradient
+                colors={["#1e293b", "#334155"]}
+                style={styles.section}
+              >
+                <Text style={styles.sectionTitle}>🔗 Social Media</Text>
+                <View style={styles.socialMediaContainer}>
+                  {socialMediasToShow.map((socialMedia, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() =>
+                        handleSocialMediaPress(socialMedia.url || "")
+                      }
+                      style={styles.socialMediaItem}
+                    >
+                      <LinearGradient
+                        colors={["#00f5ff", "#bf00ff"]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={styles.socialMediaGradient}
+                      >
+                        <Text style={styles.socialMediaPlatform}>
+                          {socialMediaDisplayNames[socialMedia.type] ||
+                            socialMedia.type}
+                        </Text>
+                        <Text style={styles.socialMediaHandle}>
+                          @{socialMedia.handle}
+                        </Text>
+                      </LinearGradient>
+                      <Text style={styles.socialMediaSubtext}>Tap to open</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </LinearGradient>
+            )}
 
             {/* Meeting Details */}
             <LinearGradient
@@ -231,20 +275,17 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             {/* Action Buttons */}
             <View style={styles.actionButtons}>
               <Button
-                title="Edit Connection"
+                title="Edit"
                 onPress={handleEdit}
                 variant="ghost"
-                style={styles.editButton}
-                icon={
-                  <Ionicons name="pencil-outline" size={20} color="#00f5ff" />
-                }
+                style={styles.actionButton}
               />
               <Button
+                icon={<Ionicons name="trash" size={20} color="#ffffff" />}
                 onPress={handleDelete}
                 variant="danger"
-                style={styles.deleteButton}
-                icon={<Ionicons name="trash-outline" size={20} color="white" />}
-                iconOnly={true}
+                style={styles.actionButton}
+                iconOnly
               />
             </View>
           </View>
@@ -314,25 +355,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     letterSpacing: 0.5,
   },
-  igContainer: {
-    alignSelf: "flex-start",
-  },
-  igGradient: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
-  },
-  igHandle: {
-    fontSize: 16,
-    color: "#0a0d14",
-    fontWeight: "600",
-  },
-  igLink: {
-    fontSize: 12,
-    color: "#64748b",
-    marginTop: 8,
-    fontStyle: "italic",
-  },
   section: {
     borderRadius: 16,
     padding: 20,
@@ -354,6 +376,41 @@ const styles = StyleSheet.create({
     color: "#00f5ff",
     marginBottom: 16,
     letterSpacing: 0.5,
+  },
+  socialMediaContainer: {
+    gap: 12,
+  },
+  socialMediaItem: {
+    backgroundColor: "#0f172a",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#334155",
+    overflow: "hidden",
+  },
+  socialMediaGradient: {
+    padding: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  socialMediaPlatform: {
+    fontSize: 16,
+    color: "#0a0d14",
+    fontWeight: "700",
+  },
+  socialMediaHandle: {
+    fontSize: 16,
+    color: "#0a0d14",
+    fontWeight: "600",
+  },
+  socialMediaSubtext: {
+    fontSize: 12,
+    color: "#64748b",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    fontStyle: "italic",
+    textAlign: "center",
+    alignSelf: "center",
   },
   detailContainer: {
     backgroundColor: "#0f172a",
@@ -438,18 +495,10 @@ const styles = StyleSheet.create({
   actionButtons: {
     flexDirection: "row",
     gap: 16,
-    alignItems: "center",
   },
-  editButton: {
+  actionButton: {
     flex: 1,
-  },
-  deleteButton: {
-    minWidth: 52,
-    minHeight: 52,
-    shadowColor: "#dc2626",
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 6,
+    minWidth: 44,
   },
 });
 
