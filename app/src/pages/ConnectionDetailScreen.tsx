@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -18,7 +18,6 @@ import { connectionApi } from "../services/api";
 import {
   Connection,
   socialMediaDisplayNames,
-  SocialMediaType,
 } from "../hooks/useConnectionStore";
 import Button from "../components/atoms/Button";
 
@@ -117,19 +116,6 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const getSocialMediasToShow = () => {
-    // Show legacy Instagram if it exists and no new social medias
-    if (
-      connection?.igHandle &&
-      (!connection.socialMedias || connection.socialMedias.length === 0)
-    ) {
-      return [
-        {
-          type: SocialMediaType.INSTAGRAM,
-          handle: connection.igHandle,
-          url: connection.igUrl,
-        },
-      ];
-    }
     return connection?.socialMedias || [];
   };
 

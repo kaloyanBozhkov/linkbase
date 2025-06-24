@@ -55,6 +55,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
 
   useEffect(() => {
     fetchConnection();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionId]);
 
   const fetchConnection = async () => {
@@ -63,19 +64,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
       const data = await connectionApi.getById(connectionId);
       setConnection(data);
 
-      // Handle legacy Instagram data
       const socialMedias = data.socialMedias || [];
-      if (
-        data.igHandle &&
-        !socialMedias.some((sm) => sm.type === "INSTAGRAM")
-      ) {
-        socialMedias.push({
-          type: "INSTAGRAM" as any,
-          handle: data.igHandle,
-          url: data.igUrl,
-        });
-      }
-
       setFormData({
         name: data.name,
         metAt: data.metAt,
@@ -187,7 +176,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Edit Connection</Text>
           <Text style={styles.headerSubtitle}>
-            Update {connection?.name}'s info
+            Update {connection?.name}&apos;s info
           </Text>
         </View>
 
