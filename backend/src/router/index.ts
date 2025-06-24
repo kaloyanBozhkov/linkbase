@@ -19,6 +19,13 @@ router.use("/connections", connectionRoutes);
 // Mount user routes
 router.use("/users", userRoutes);
 
+router.use("/hello", (req, res) => {
+  res.json({
+    success: true,
+    data: "Hello World",
+  });
+});
+
 // Apply error handling middleware
 router.use(handleZodError);
 router.use(handlePrismaError);
