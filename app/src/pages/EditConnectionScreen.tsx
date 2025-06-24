@@ -21,6 +21,7 @@ import { connectionApi } from "../services/api";
 import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
 import SocialMediaSection from "../components/molecules/SocialMediaSection";
+import { camelCaseWords } from "@/helpers/utils";
 
 type EditConnectionScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -36,11 +37,6 @@ interface Props {
   navigation: EditConnectionScreenNavigationProp;
   route: EditConnectionScreenRouteProp;
 }
-
-// Helper function to capitalize words
-const capitalizeWords = (text: string): string => {
-  return text.replace(/\b\w/g, (char) => char.toUpperCase());
-};
 
 const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
   const { connectionId } = route.params;
@@ -206,15 +202,14 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
               onChangeText={(text) => {
                 // Auto-capitalize if user is just typing (not manually editing)
                 const processedText = isNameAutoCapitalized
-                  ? capitalizeWords(text)
+                  ? camelCaseWords(text)
                   : text;
                 setFormData((prev) => ({ ...prev, name: processedText }));
 
                 // If user deletes or manually edits, stop auto-capitalizing
                 if (
                   text.length < formData.name.length ||
-                  (text !== capitalizeWords(text) &&
-                    text === text.toLowerCase())
+                  (text !== camelCaseWords(text) && text === text.toLowerCase())
                 ) {
                   setIsNameAutoCapitalized(false);
                 } else if (text.length > formData.name.length) {

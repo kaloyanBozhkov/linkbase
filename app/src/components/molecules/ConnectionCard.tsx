@@ -123,15 +123,23 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
           <View style={styles.factsContainer}>
             <Text style={styles.factsLabel}>💡 Notes</Text>
             <View style={styles.factsList}>
-              {connection.facts.slice(0, 2).map((fact, index) => (
-                <View key={index} style={styles.factItem}>
-                  <View style={styles.factDot} />
-                  <Text style={styles.fact}>{fact}</Text>
-                </View>
-              ))}
-              {connection.facts.length > 2 && (
-                <Text style={styles.moreFacts}>
-                  +{connection.facts.length - 2} more insights
+              {connection.facts && connection.facts.length > 0 ? (
+                <>
+                  {connection.facts.slice(0, 2).map((fact, index) => (
+                    <View key={index} style={styles.factItem}>
+                      <View style={styles.factDot} />
+                      <Text style={styles.fact}>{fact}</Text>
+                    </View>
+                  ))}
+                  {connection.facts.length > 2 && (
+                    <Text style={styles.moreFacts}>
+                      +{connection.facts.length - 2} more insights
+                    </Text>
+                  )}
+                </>
+              ) : (
+                <Text style={styles.noFacts}>
+                  No notes added, click edit and some!
                 </Text>
               )}
             </View>
@@ -295,6 +303,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   moreFacts: {
+    fontSize: 13,
+    color: "#64748b",
+    fontStyle: "italic",
+    marginTop: 8,
+    textAlign: "center",
+  },
+  noFacts: {
     fontSize: 13,
     color: "#64748b",
     fontStyle: "italic",

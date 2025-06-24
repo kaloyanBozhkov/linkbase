@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -52,7 +52,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   }, [searchQuery]);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       fetchConnections();
     }, [fetchConnections])
   );

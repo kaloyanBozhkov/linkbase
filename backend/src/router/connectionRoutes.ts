@@ -1,4 +1,5 @@
 import { Router, Request, Response } from "express";
+import { z } from "zod";
 import {
   createConnectionQuery,
   getAllConnectionsQuery,
@@ -7,206 +8,153 @@ import {
   deleteConnectionQuery,
   searchConnectionsQuery,
 } from "../queries/connections";
-import { logError } from "../helpers/logger";
+import { asyncHandler } from "./middleware";
+import "../types/express"; // Import the type declarations
 
 const router: Router = Router();
 
-// GET /api/connections - Get all connections with pagination
-router.get("/", async (req: Request, res: Response) => {
-  try {
-    const limit = parseInt(req.query.limit as string) || 20;
-    const offset = parseInt(req.query.offset as string) || 0;
+// Route-level Zod schemas for request validation (userId removed since it's in ctx)
+const queryPaginationSchema = z.object({
+  limit: z.coerce.number().min(1).max(100).optional().default(20),
+  offset: z.coerce.number().min(0).optional().default(0),
+});
 
-    const result = await getAllConnectionsQuery({ limit, offset });
+const searchQuerySchema = z.object({
+  query: z.string().min(1, "Search query is required"),
+  limit: z.coerce.number().min(1).max(100).optional().default(20),
+  offset: z.coerce.number().min(0).optional().default(0),
+});
+
+const connectionParamsSchema = z.object({
+  id: z.string().min(1, "Connection ID is required"),
+});
+
+// GET /api/connections - Get all connections with pagination
+router.get(
+  "/",
+  asyncHandler(async (req: Request, res: Response) => {
+    const { limit, offset } = queryPaginationSchema.parse(req.query);
+    const { userId } = req.ctx;
+
+    if (!userId)
+      return {
+        success: true,
+        data: [],
+        pagination: 0,
+      };
+
+    const result = await getAllConnectionsQuery({
+      limit,
+      offset,
+      userId,
+    });
 
     res.json({
       success: true,
       data: result.connections,
       pagination: result.pagination,
     });
-  } catch (error) {
-    logError("Get connections error:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch connections",
-    });
-  }
-});
+  })
+);
 
 // GET /api/connections/search - Search connections
-router.get("/search", async (req: Request, res: Response) => {
-  try {
-    const { query, limit = 20, offset = 0 } = req.query;
-
-    if (!query || typeof query !== "string") {
-      res.status(400).json({
-        success: false,
-        error: "Search query is required",
-      });
-      return;
-    }
+router.get(
+  "/search",
+  asyncHandler(async (req: Request, res: Response) => {
+    const queryData = searchQuerySchema.parse(req.query);
+    const { userId } = req.ctx;
 
     const connections = await searchConnectionsQuery({
-      query,
-      limit: parseInt(limit as string),
-      offset: parseInt(offset as string),
+      ...queryData,
+      userId,
     });
 
     res.json({
       success: true,
       data: connections,
-      query,
+      query: queryData.query,
     });
-  } catch (error: any) {
-    if (error.name === "ZodError") {
-      res.status(400).json({
-        success: false,
-        error: "Validation error",
-        details: error.errors,
-      });
-      return;
-    }
-
-    logError("Search connections error:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to search connections",
-    });
-  }
-});
+  })
+);
 
 // GET /api/connections/:id - Get connection by ID
-router.get("/:id", async (req: Request, res: Response) => {
-  try {
-    const connection = await getConnectionByIdQuery({ id: req.params.id });
+router.get(
+  "/:id",
+  asyncHandler(async (req: Request, res: Response) => {
+    const { id } = connectionParamsSchema.parse(req.params);
+    const { userId } = req.ctx;
+
+    const connection = await getConnectionByIdQuery({ id, userId });
 
     if (!connection) {
-      res.status(404).json({
-        success: false,
-        error: "Connection not found",
-      });
-      return;
+      const error = new Error("Connection not found");
+      (error as any).statusCode = 404;
+      throw error;
     }
 
     res.json({
       success: true,
       data: connection,
     });
-  } catch (error: any) {
-    if (error.name === "ZodError") {
-      res.status(400).json({
-        success: false,
-        error: "Validation error",
-        details: error.errors,
-      });
-      return;
-    }
-
-    logError("Get connection error:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch connection",
-    });
-  }
-});
+  })
+);
 
 // POST /api/connections - Create new connection
-router.post("/", async (req: Request, res: Response) => {
-  try {
-    const connection = await createConnectionQuery(req.body);
+router.post(
+  "/",
+  asyncHandler(async (req: Request, res: Response) => {
+    const { userId } = req.ctx;
+
+    const connection = await createConnectionQuery({
+      ...req.body,
+      userId,
+    });
 
     res.status(201).json({
       success: true,
       data: connection,
       message: "Connection created successfully",
     });
-  } catch (error: any) {
-    if (error.name === "ZodError") {
-      res.status(400).json({
-        success: false,
-        error: "Validation error",
-        details: error.errors,
-      });
-      return;
-    }
-
-    logError("Create connection error:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to create connection",
-    });
-  }
-});
+  })
+);
 
 // PUT /api/connections/:id - Update connection
-router.put("/:id", async (req: Request, res: Response) => {
-  try {
-    const connection = await updateConnectionQuery(req.params.id, req.body);
+router.put(
+  "/:id",
+  asyncHandler(async (req: Request, res: Response) => {
+    const { id } = connectionParamsSchema.parse(req.params);
+    const { userId } = req.ctx;
+
+    const connection = await updateConnectionQuery(id, {
+      ...req.body,
+      userId,
+    });
 
     res.json({
       success: true,
       data: connection,
       message: "Connection updated successfully",
     });
-  } catch (error: any) {
-    if (error.name === "ZodError") {
-      res.status(400).json({
-        success: false,
-        error: "Validation error",
-        details: error.errors,
-      });
-      return;
-    }
-
-    if (error.code === "P2025") {
-      res.status(404).json({
-        success: false,
-        error: "Connection not found",
-      });
-      return;
-    }
-
-    logError("Update connection error:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to update connection",
-    });
-  }
-});
+  })
+);
 
 // DELETE /api/connections/:id - Delete connection
-router.delete("/:id", async (req: Request, res: Response) => {
-  try {
-    await deleteConnectionQuery({ id: req.params.id });
+router.delete(
+  "/:id",
+  asyncHandler(async (req: Request, res: Response) => {
+    const { id } = connectionParamsSchema.parse(req.params);
+    const { userId } = req.ctx;
+
+    await deleteConnectionQuery({
+      id,
+      userId,
+    });
 
     res.json({
       success: true,
       message: "Connection deleted successfully",
     });
-  } catch (error: any) {
-    if (error.name === "ZodError") {
-      res.status(400).json({
-        success: false,
-        error: "Validation error",
-        details: error.errors,
-      });
-      return;
-    }
-
-    if (error.code === "P2025") {
-      res.status(404).json({
-        success: false,
-        error: "Connection not found",
-      });
-      return;
-    }
-
-    logError("Delete connection error:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to delete connection",
-    });
-  }
-});
+  })
+);
 
 export default router;

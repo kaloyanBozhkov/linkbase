@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { SocialMediaType } from "@prisma/client";
-import { connectionService } from "../../services/connectionService";
+import { prisma, generateSocialMediaUrl } from "../../helpers/prisma";
 
 // Zod schema for social media entries
 export const socialMediaSchema = z.object({
@@ -22,6 +22,7 @@ export const updateConnectionSchema = z.object({
     .optional(),
   facts: z.array(z.string()).optional(),
   socialMedias: z.array(socialMediaSchema).optional(),
+  userId: z.string().min(1, "User ID is required"),
 });
 
 export type UpdateConnectionInput = z.infer<typeof updateConnectionSchema>;
@@ -35,7 +36,32 @@ export type UpdateConnectionInput = z.infer<typeof updateConnectionSchema>;
  * @throws {ZodError} - If validation fails
  * @throws {Error} - If database operation fails (including P2025 for not found)
  */
-export const updateConnectionQuery = async (id: string, data: unknown) => {
+export const updateConnectionQuery = async (
+  id: string,
+  data: Partial<UpdateConnectionInput>
+) => {
   const validatedData = updateConnectionSchema.parse(data);
-  return await connectionService.updateConnection(id, validatedData);
+  const { socialMedias, userId, ...connectionData } = validatedData;
+
+  return await prisma.connection.update({
+    where: {
+      id,
+    },
+    data: {
+      ...connectionData,
+      socialMedias: socialMedias
+        ? {
+            deleteMany: {},
+            create: socialMedias.map((sm) => ({
+              type: sm.type,
+              handle: sm.handle,
+              url: generateSocialMediaUrl(sm.type, sm.handle),
+            })),
+          }
+        : undefined,
+    },
+    include: {
+      socialMedias: true,
+    },
+  });
 };

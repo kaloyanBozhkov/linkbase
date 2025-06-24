@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { SocialMediaType } from "@prisma/client";
-import { connectionService } from "../../services/connectionService";
+import { prisma, generateSocialMediaUrl } from "../../helpers/prisma";
 
 // Zod schema for social media entries
 export const socialMediaSchema = z.object({
@@ -20,6 +20,7 @@ export const createConnectionSchema = z.object({
     .max(200, "Meeting place must be less than 200 characters"),
   facts: z.array(z.string()).optional().default([]),
   socialMedias: z.array(socialMediaSchema).optional().default([]),
+  userId: z.string().min(1, "User ID is required"),
 });
 
 export type CreateConnectionInput = z.infer<typeof createConnectionSchema>;
@@ -34,5 +35,24 @@ export type CreateConnectionInput = z.infer<typeof createConnectionSchema>;
  */
 export const createConnectionQuery = async (data: unknown) => {
   const validatedData = createConnectionSchema.parse(data);
-  return await connectionService.createConnection(validatedData);
+  const { name, metAt, facts, socialMedias = [], userId } = validatedData;
+
+  return await prisma.connection.create({
+    data: {
+      name,
+      metAt,
+      facts,
+      userId: userId || "default-user", // Provide default user ID until migration
+      socialMedias: {
+        create: socialMedias.map((sm) => ({
+          type: sm.type,
+          handle: sm.handle,
+          url: generateSocialMediaUrl(sm.type, sm.handle),
+        })),
+      },
+    },
+    include: {
+      socialMedias: true,
+    },
+  });
 };

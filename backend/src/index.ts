@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import connectionRoutes from "./router/connectionRoutes";
+import indexRouter from "./router";
 import { env } from "./env";
 
 const app = express();
@@ -27,7 +27,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/api/connections", connectionRoutes);
+app.use("/api", indexRouter);
 
 // Health check
 app.get("/health", (req, res) => {

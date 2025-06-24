@@ -75,9 +75,7 @@ export interface Connection {
   socialMedias: SocialMedia[];
   createdAt: string;
   updatedAt: string;
-  // Legacy fields for backward compatibility (will be removed)
-  igHandle?: string;
-  igUrl?: string;
+  userId: string;
 }
 
 export interface CreateConnectionInput {
@@ -85,6 +83,7 @@ export interface CreateConnectionInput {
   metAt: string;
   facts: string[];
   socialMedias?: SocialMedia[];
+  userId: string;
 }
 
 interface ConnectionStore {
@@ -104,6 +103,15 @@ interface ConnectionStore {
   setSearchQuery: (query: string) => void;
   clearError: () => void;
 }
+
+export type User = {
+  id: string;
+  uuid: string;
+  email: string | null;
+  createdAt: string;
+  updatedAt: string;
+  connections?: Connection[];
+};
 
 export const useConnectionStore = create<ConnectionStore>((set, get) => ({
   connections: [],

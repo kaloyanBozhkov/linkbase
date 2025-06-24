@@ -28,21 +28,20 @@ about the folder structures
 
 backend/
     src/
-        queries/
-        services/
-        router/
-        helpers/
+        queries/   # all functions that wrap around prisma related tasks
+        services/  # third party SDKs or APIs implemented with axios as a service, that need to run on server 
+        router/    # all routers with "procedured" (routes)
+        helpers/   # utils for the project
 
 app/
     src/
-        components/
-            atoms/
-            molecules/
-            organisms/
-            layouts/
-        pages/
-        hooks/
-        helpers/
-        services/
+        components/ # please follow the Atomic design pattern.
+            atoms/ # small UI components with no side effects (e.g. network requests)
+            molecules/ # composed UI components with no side effects (e.g. network requests)
+            organisms/ # reusable components or parts of views that are made of multiple molecules or atoms and, likely, also have side effects  (e.g. network requests)
+            layouts/ # <Stack /> <Center /> <Group /> <Grid /> ... any such components that wrap children and handle common layouts
+        pages/ # the actual views that will render layouts with organisms and molecules and atoms
+        hooks/ # be sure to follow how folders and files are strutured here 
+        helpers/ # utils for the repo
+        services/ # third party SDKs or APIs implemented with axios as a service, that can run on client
 
-For the front end be sure to follow the Atomic design pattern.

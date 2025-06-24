@@ -15,6 +15,8 @@ import { useConnectionStore, SocialMedia } from "../hooks/useConnectionStore";
 import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
 import SocialMediaSection from "../components/molecules/SocialMediaSection";
+import { useSessionUserStore } from "@/hooks/useGetSessionUser";
+import { camelCaseWords } from "@/helpers/utils";
 
 type AddConnectionScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -24,11 +26,6 @@ type AddConnectionScreenNavigationProp = StackNavigationProp<
 interface Props {
   navigation: AddConnectionScreenNavigationProp;
 }
-
-// Helper function to capitalize words
-const capitalizeWords = (text: string): string => {
-  return text.replace(/\b\w/g, (char) => char.toUpperCase());
-};
 
 const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
   const { createConnection, loading } = useConnectionStore();
@@ -78,7 +75,14 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
         sm.handle.trim()
       );
 
+      const userId = useSessionUserStore.getState().userId;
+      if (!userId) {
+        Alert.alert("Error", "User not found");
+        return;
+      }
+
       await createConnection({
+        userId,
         name: formData.name.trim(),
         metAt: formData.metAt.trim(),
         facts: validFacts, // Can be empty array
@@ -141,15 +145,14 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
               onChangeText={(text) => {
                 // Auto-capitalize if user is just typing (not manually editing)
                 const processedText = isNameAutoCapitalized
-                  ? capitalizeWords(text)
+                  ? camelCaseWords(text)
                   : text;
                 setFormData((prev) => ({ ...prev, name: processedText }));
 
                 // If user deletes or manually edits, stop auto-capitalizing
                 if (
                   text.length < formData.name.length ||
-                  (text !== capitalizeWords(text) &&
-                    text === text.toLowerCase())
+                  (text !== camelCaseWords(text) && text === text.toLowerCase())
                 ) {
                   setIsNameAutoCapitalized(false);
                 }

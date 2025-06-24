@@ -1,9 +1,10 @@
 import { z } from "zod";
-import { connectionService } from "../../services/connectionService";
+import { prisma } from "../../helpers/prisma";
 
 // Zod schema for connection ID parameter
 export const getConnectionByIdSchema = z.object({
   id: z.string().min(1, "Connection ID is required"),
+  userId: z.string().min(1, "User ID is required"),
 });
 
 export type GetConnectionByIdInput = z.infer<typeof getConnectionByIdSchema>;
@@ -14,7 +15,18 @@ export type GetConnectionByIdInput = z.infer<typeof getConnectionByIdSchema>;
  * @param params - Object containing the connection ID
  * @returns Promise<Connection | null> - The connection object or null if not found
  */
-export const getConnectionByIdQuery = async (params: { id: string }) => {
-  const { id } = getConnectionByIdSchema.parse(params);
-  return await connectionService.getConnectionById(id);
+export const getConnectionByIdQuery = async (params: {
+  id: string;
+  userId?: string;
+}) => {
+  const { id, userId } = getConnectionByIdSchema.parse(params);
+  return await prisma.connection.findUnique({
+    where: {
+      id,
+      userId,
+    },
+    include: {
+      socialMedias: true,
+    },
+  });
 };
