@@ -1,10 +1,9 @@
+#!/usr/bin/env node
 /* eslint-env node */
-// #!/usr/bin/env node
 
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
-const __dirname = path.resolve();
 
 function getLocalIP() {
   try {
@@ -33,6 +32,7 @@ function getLocalIP() {
 }
 
 function updateConfigFile(ip) {
+  // eslint-disable-next-line no-undef
   const configPath = path.join(__dirname, "../src/config/api.config.ts");
 
   if (!fs.existsSync(configPath)) {
