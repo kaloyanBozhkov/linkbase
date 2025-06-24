@@ -36,12 +36,14 @@ router.get(
     const { limit, offset } = queryPaginationSchema.parse(req.query);
     const { userId } = req.ctx;
 
-    if (!userId)
-      return {
+    if (!userId) {
+      res.json({
         success: true,
         data: [],
         pagination: 0,
-      };
+      });
+      return;
+    }
 
     const result = await getAllConnectionsQuery({
       limit,
