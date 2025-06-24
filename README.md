@@ -1,6 +1,6 @@
 # Linkbase - Personal Connection Database
 
-A simple but elegant app that lets you manage your personal connections with information about where and when you met them, their social handles, and interesting facts about them.
+A simple but elegant app that lets you manage your personal connections with information about where and when you met them, their social handles, and interesting facts about them. <3
 
 ## Features
 
