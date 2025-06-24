@@ -1,0 +1,58 @@
+{
+  "name": "linkbase",
+  "version": "1.0.0",
+  "description": "Personal database for managing connections - Full-stack TypeScript application",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "app"
+  ],
+  "scripts": {
+    "install:all": "pnpm install && pnpm install:backend && pnpm install:app",
+    "install:backend": "cd backend && pnpm install",
+    "install:app": "cd app && pnpm install",
+    "dev": "concurrently \"pnpm run dev:backend\" \"pnpm run dev:app\"",
+    "dev:backend": "cd backend && pnpm run dev",
+    "dev:app": "cd app && npx expo start",
+    "dev:web": "cd app && npx expo start --web",
+    "start": "concurrently \"pnpm run start:backend\" \"pnpm run start:app\"",
+    "start:backend": "cd backend && pnpm run start",
+    "start:app": "cd app && npx expo start --tunnel",
+    "build": "pnpm run build:backend && pnpm run build:app",
+    "build:backend": "cd backend && pnpm run build",
+    "build:app": "cd app && npx expo build",
+    "type-check": "pnpm run type-check:backend && pnpm run type-check:app",
+    "type-check:backend": "cd backend && pnpm run type-check",
+    "type-check:app": "cd app && pnpm run type-check",
+    "lint": "pnpm run lint:backend && pnpm run lint:app",
+    "lint:backend": "cd backend && pnpm run lint",
+    "lint:app": "cd app && pnpm run lint",
+    "clean": "pnpm run clean:backend && pnpm run clean:app",
+    "clean:backend": "cd backend && rm -rf node_modules dist",
+    "clean:app": "cd app && rm -rf node_modules .expo",
+    "reset": "pnpm run clean && pnpm install:all",
+    "db:migrate": "cd backend && pnpm run db:migrate",
+    "db:generate": "cd backend && pnpm run db:generate",
+    "db:studio": "cd backend && pnpm run db:studio",
+    "db:reset": "cd backend && pnpm run db:reset"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=16",
+    "pnpm": ">=8"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "nodejs",
+    "express",
+    "typescript",
+    "prisma",
+    "postgresql",
+    "full-stack"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

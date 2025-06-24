@@ -1,0 +1,48 @@
+Linkbase – A personal database of your connections
+
+This is a simple but elegant looking app which lets user add connections with info about:
+- what their name is
+- what their IG/social handle is -> with a link pointing to the IG page so they dont have to type it twice in order to follow the account
+- where and when they met (when is automatically added)
+- one or more facts about the other personal
+
+The app should also have a main screen view where connnections are listed by recency and there is a search bar that allows searchig contacts by fact.
+All data should be stored locally on the device.
+
+Divide the TypeScript app in 2 parts, the mobile app and backend app. 
+Tech to use for mobile app:
+
+React Native
+Nativewind
+Zustand
+axios
+
+Tech to use for backend app:
+Node
+Express
+Prisma + Postgresql db
+Zod
+
+
+about the folder structures
+
+backend/
+    src/
+        queries/
+        services/
+        router/
+        helpers/
+
+app/
+    src/
+        components/
+            atoms/
+            molecules/
+            organisms/
+            layouts/
+        pages/
+        hooks/
+        helpers/
+        services/
+
+For the front end be sure to follow the Atomic design pattern.

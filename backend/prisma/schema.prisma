@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum SocialMediaType {
+    INSTAGRAM
+    FACEBOOK
+    TWITTER
+    TIKTOK
+    LINKEDIN
+    YOUTUBE
+    SNAPCHAT
+    PINTEREST
+    WHATSAPP
+    TELEGRAM
+    DISCORD
+    REDDIT
+    TWITCH
+    GITHUB
+    BEHANCE
+    DRIBBBLE
+    MEDIUM
+    SUBSTACK
+    SPOTIFY
+    SOUNDCLOUD
+    BANDCAMP
+    VENMO
+    CASHAPP
+    CLUBHOUSE
+    THREADS
+    MASTODON
+    BLUESKY
+    TUMBLR
+    FLICKR
+    VIMEO
+    WECHAT
+    LINE
+    KAKAO
+    VIBER
+    SIGNAL
+    SLACK
+    TEAMS
+    ZOOM
+    SKYPE
+    FACETIME
+    GOOGLEHANGOUTS
+    MEET
+    HOUSEPARTY
+    MARCO_POLO
+    LOOM
+    CALENDLY
+    LINKTREE
+    BEACONS
+    ALLMYLINKS
+    ONLYFANS
+}
+
+model Connection {
+    id           String        @id @default(cuid())
+    name         String
+    metAt        String
+    metWhen      DateTime      @default(now())
+    facts        String[]
+    socialMedias SocialMedia[]
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+
+    @@map("connections")
+}
+
+model SocialMedia {
+    id           String          @id @default(cuid())
+    type         SocialMediaType
+    handle       String
+    url          String?
+    connectionId String
+    connection   Connection      @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+    createdAt    DateTime        @default(now())
+    updatedAt    DateTime        @updatedAt
+
+    @@map("social_medias")
+}
