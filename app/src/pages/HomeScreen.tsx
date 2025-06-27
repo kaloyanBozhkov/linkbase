@@ -16,6 +16,7 @@ import { useConnectionStore } from "../hooks/useConnectionStore";
 import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
 import ConnectionCard from "../components/molecules/ConnectionCard";
+import { rateApp } from "../hooks/useRateApp";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -56,6 +57,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       fetchConnections();
     }, [fetchConnections])
   );
+
+  useEffect(() => {
+    if (!connections.length) return;
+    rateApp();
+  }, [connections]);
 
   const handleRefresh = async () => {
     setRefreshing(true);

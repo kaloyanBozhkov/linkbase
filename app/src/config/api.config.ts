@@ -1,5 +1,5 @@
 // This will be dynamically updated by our build script
-const DEV_HOST_IP = "192.168.1.40"; // This will be auto-detected
+const DEV_HOST_IP = "192.168.199.63"; // This will be auto-detected
 
 const getApiBaseUrl = () => {
   if (__DEV__) {

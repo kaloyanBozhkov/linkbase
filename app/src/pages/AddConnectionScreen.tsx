@@ -17,6 +17,7 @@ import Input from "../components/atoms/Input";
 import SocialMediaSection from "../components/molecules/SocialMediaSection";
 import { useSessionUserStore } from "@/hooks/useGetSessionUser";
 import { camelCaseWords } from "@/helpers/utils";
+import { enableRateApp } from "../hooks/useRateApp";
 
 type AddConnectionScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -88,6 +89,8 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
         facts: validFacts, // Can be empty array
         socialMedias: validSocialMedias,
       });
+
+      await enableRateApp();
 
       Alert.alert("Success", "Connection added successfully!", [
         { text: "OK", onPress: () => navigation.goBack() },
