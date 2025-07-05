@@ -1,6 +1,5 @@
 import { Router } from "express";
-import connectionRoutes from "./connectionRoutes";
-import userRoutes from "./userRouiters";
+import linkbaseRouter from "./linkbase";
 import {
   handleZodError,
   handlePrismaError,
@@ -13,11 +12,7 @@ const router: Router = Router();
 // Apply request context setup middleware to all routes
 router.use(setupRequestContext);
 
-// Mount connection routes
-router.use("/connections", connectionRoutes);
-
-// Mount user routes
-router.use("/users", userRoutes);
+router.use("/linkbase", linkbaseRouter);
 
 router.use("/hello", (req, res) => {
   res.json({

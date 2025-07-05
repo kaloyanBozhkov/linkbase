@@ -43,7 +43,7 @@ linkbase/
 │   │   └── helpers/        # Utility functions, validation, and logging
 │   ├── prisma/             # Database schema and migrations
 │   └── package.json
-├── app/                    # React Native mobile app
+├── linkbase/                    # React Native mobile app
 │   ├── src/
 │   │   ├── components/     # UI components (Atomic Design)
 │   │   │   ├── atoms/      # Basic UI elements

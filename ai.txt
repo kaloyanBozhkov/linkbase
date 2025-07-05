@@ -26,14 +26,19 @@ Zod
 
 about the folder structures
 
-backend/
+backend/ # backend for many react native apps
     src/
         queries/   # all functions that wrap around prisma related tasks
+            /linkbase  # app name parent folder
+                /... # sub folders per scope of queries. E.g. users, connections etc..
         services/  # third party SDKs or APIs implemented with axios as a service, that need to run on server 
-        router/    # all routers with "procedured" (routes)
+        router/    # all routers with routes per FE projec
+            /linkbase
+                /index.ts # index router for all linkbase app routes
+                /connections # router for connections related REST requests
         helpers/   # utils for the project
 
-app/
+linkbase/ # react native mobile app frontend
     src/
         components/ # please follow the Atomic design pattern.
             atoms/ # small UI components with no side effects (e.g. network requests)
@@ -44,4 +49,5 @@ app/
         hooks/ # be sure to follow how folders and files are strutured here 
         helpers/ # utils for the repo
         services/ # third party SDKs or APIs implemented with axios as a service, that can run on client
+
 

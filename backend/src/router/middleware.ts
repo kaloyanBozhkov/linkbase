@@ -10,6 +10,7 @@ export interface AppError extends Error {
 
 // TODO: refactor asyncHnadler to allow isPublic similr to public/private trpc procedures
 const isPublicPath = (path: string) => {
+  console.log("path", path);
   return path === "/users";
 };
 
@@ -20,7 +21,7 @@ export const setupRequestContext = (
   next: NextFunction
 ) => {
   const userId = req.headers["x-user-id"] as string;
-  if (!userId && !isPublicPath(req.path)) {
+  if (!isPublicPath(req.path) && !userId) {
     res.status(401).json({
       success: false,
       error: "User ID is required in headers (X-User-ID)",

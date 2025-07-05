@@ -33,7 +33,7 @@ app.use("/api", indexRouter);
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "OK",
-    message: "Linkbase API is running",
+    message: "API is running",
     environment: env.NODE_ENV,
   });
 });

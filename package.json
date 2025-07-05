@@ -3,10 +3,7 @@
   "version": "1.0.0",
   "description": "Personal database for managing connections - Full-stack TypeScript application",
   "private": true,
-  "workspaces": [
-    "backend",
-    "app"
-  ],
+  "type": "module",
   "scripts": {
     "install:all": "pnpm install && pnpm install:backend && pnpm install:app",
     "install:backend": "cd backend && pnpm install",
@@ -37,6 +34,7 @@
     "db:reset": "cd backend && pnpm run db:reset"
   },
   "devDependencies": {
+    "@types/react": "~19.0.14",
     "concurrently": "^8.2.2"
   },
   "engines": {
@@ -53,6 +51,6 @@
     "postgresql",
     "full-stack"
   ],
-  "author": "Your Name",
+  "author": "Kaloyuan D. Bozhkov",
   "license": "MIT"
 }
