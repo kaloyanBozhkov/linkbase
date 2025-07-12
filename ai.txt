@@ -49,5 +49,18 @@ linkbase/ # react native mobile app frontend
         hooks/ # be sure to follow how folders and files are strutured here 
         helpers/ # utils for the repo
         services/ # third party SDKs or APIs implemented with axios as a service, that can run on client
+        config / # includes the needed base url for the service 
+            api.config.ts # includes the api config for connecting to the right backend router
 
+common/ # shared types and configurations between all apps
+    types.ts # centralized types generated from Prisma schema + additional API types
+    prisma/ # generated Prisma client for shared use
+    api.config.ts # shared API configuration
+
+Type Management:
+- Prisma schema generates types to common/prisma/
+- Backend uses: import { User, Connection } from "@common/types";
+- Frontend uses: import { User, Connection } from "@/common/types";
+- To update types: run `pnpm run db:generate` from root or backend directory
+- No need to re-export types in individual apps anymore
 

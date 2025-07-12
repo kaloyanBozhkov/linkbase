@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SocialMediaType } from "@prisma/client";
+import { SocialMediaType } from "@common/types";
 import { prisma, generateSocialMediaUrl } from "../../../helpers/prisma";
 
 // Zod schema for social media entries

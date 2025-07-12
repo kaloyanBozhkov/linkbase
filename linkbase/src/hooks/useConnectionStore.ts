@@ -1,34 +1,12 @@
 import { create } from "zustand";
 import { connectionApi } from "../services/api";
-
-export enum SocialMediaType {
-  EMAIL = "EMAIL",
-  PHONE = "PHONE",
-  INSTAGRAM = "INSTAGRAM",
-  FACEBOOK = "FACEBOOK",
-  TWITTER = "TWITTER",
-  TIKTOK = "TIKTOK",
-  LINKEDIN = "LINKEDIN",
-  YOUTUBE = "YOUTUBE",
-  SNAPCHAT = "SNAPCHAT",
-  PINTEREST = "PINTEREST",
-  REDDIT = "REDDIT",
-  TWITCH = "TWITCH",
-  GITHUB = "GITHUB",
-  BEHANCE = "BEHANCE",
-  DRIBBBLE = "DRIBBBLE",
-  MEDIUM = "MEDIUM",
-  SUBSTACK = "SUBSTACK",
-  SPOTIFY = "SPOTIFY",
-  SOUNDCLOUD = "SOUNDCLOUD",
-  BANDCAMP = "BANDCAMP",
-  THREADS = "THREADS",
-  MASTODON = "MASTODON",
-  BLUESKY = "BLUESKY",
-  TUMBLR = "TUMBLR",
-  FLICKR = "FLICKR",
-  VIMEO = "VIMEO",
-}
+import type {
+  User,
+  Connection,
+  SocialMedia,
+  CreateConnectionInput,
+} from "../utils/trpc";
+import { SocialMediaType } from "../utils/trpc";
 
 export const socialMediaDisplayNames: Record<SocialMediaType, string> = {
   [SocialMediaType.EMAIL]: "Email",
@@ -59,26 +37,8 @@ export const socialMediaDisplayNames: Record<SocialMediaType, string> = {
   [SocialMediaType.VIMEO]: "Vimeo",
 };
 
-export interface SocialMedia {
-  id?: string;
-  type: SocialMediaType;
-  handle: string;
-  url?: string;
-}
-
-export interface Connection {
-  id: string;
-  name: string;
-  metAt: string;
-  metWhen: string;
-  facts: string[];
-  socialMedias: SocialMedia[];
-  createdAt: string;
-  updatedAt: string;
-  userId: string;
-}
-
-export interface CreateConnectionInput {
+// Local CreateConnectionInput with adjusted structure for the store
+interface LocalCreateConnectionInput {
   name: string;
   metAt: string;
   facts: string[];
@@ -94,24 +54,15 @@ interface ConnectionStore {
 
   // Actions
   fetchConnections: () => Promise<void>;
-  createConnection: (data: CreateConnectionInput) => Promise<void>;
+  createConnection: (data: LocalCreateConnectionInput) => Promise<void>;
   updateConnection: (
     id: string,
-    data: Partial<CreateConnectionInput>
+    data: Partial<LocalCreateConnectionInput>
   ) => Promise<void>;
   deleteConnection: (id: string) => Promise<void>;
   setSearchQuery: (query: string) => void;
   clearError: () => void;
 }
-
-export type User = {
-  id: string;
-  uuid: string;
-  email: string | null;
-  createdAt: string;
-  updatedAt: string;
-  connections?: Connection[];
-};
 
 export const useConnectionStore = create<ConnectionStore>((set, get) => ({
   connections: [],
@@ -132,7 +83,7 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
     }
   },
 
-  createConnection: async (data: CreateConnectionInput) => {
+  createConnection: async (data: LocalCreateConnectionInput) => {
     try {
       set({ loading: true, error: null });
       const newConnection = await connectionApi.create(data);
@@ -151,7 +102,7 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
 
   updateConnection: async (
     id: string,
-    data: Partial<CreateConnectionInput>
+    data: Partial<LocalCreateConnectionInput>
   ) => {
     try {
       set({ loading: true, error: null });

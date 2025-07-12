@@ -10,6 +10,9 @@ import EditConnectionScreen from "./src/pages/EditConnectionScreen";
 import { useSessionUserStore } from "./src/hooks/useGetSessionUser";
 import LoadingScreen from "./src/pages/LoadingScreen";
 import { userApi } from "./src/services/api";
+import { TRPCProvider } from "./src/providers/TRPCProvider";
+import { trpc } from "./src/utils/trpc";
+import { logError } from "@/common/logger";
 
 export type RootStackParamList = {
   Home: undefined;
@@ -23,62 +26,72 @@ const Stack = createStackNavigator<RootStackParamList>();
 const App: React.FC = () => {
   const { initializeUserId, userId, isInitializing, isInitialLoading } =
     useSessionUserStore();
+  const { mutateAsync: createUser } = trpc.linkbase.users.create.useMutation();
 
   useEffect(() => {
     if (userId || isInitializing === true) return;
-    initializeUserId(userApi.createUser);
+    initializeUserId(async () => {
+      try {
+        const { userId } = await createUser();
+        return userId;
+      } catch (error) {
+        logError(error);
+      }
+    });
   }, [initializeUserId, userId, isInitializing]);
 
   return (
-    <SafeAreaProvider>
-      <PaperProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName="Home"
-            screenOptions={{
-              headerStyle: {
-                backgroundColor: "#3b82f6",
-              },
-              headerTintColor: "#fff",
-              headerTitleStyle: {
-                fontWeight: "bold",
-              },
-            }}
-          >
-            {isInitializing || isInitialLoading ? (
-              <Stack.Screen
-                name="Home"
-                component={LoadingScreen}
-                options={{ title: "Linkbase" }}
-              />
-            ) : (
-              <>
+    <TRPCProvider>
+      <SafeAreaProvider>
+        <PaperProvider>
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName="Home"
+              screenOptions={{
+                headerStyle: {
+                  backgroundColor: "#3b82f6",
+                },
+                headerTintColor: "#fff",
+                headerTitleStyle: {
+                  fontWeight: "bold",
+                },
+              }}
+            >
+              {isInitializing || isInitialLoading ? (
                 <Stack.Screen
                   name="Home"
-                  component={HomeScreen}
+                  component={LoadingScreen}
                   options={{ title: "Linkbase" }}
                 />
-                <Stack.Screen
-                  name="AddConnection"
-                  component={AddConnectionScreen}
-                  options={{ title: "Add Connection" }}
-                />
-                <Stack.Screen
-                  name="ConnectionDetail"
-                  component={ConnectionDetailScreen}
-                  options={{ title: "Connection Details" }}
-                />
-                <Stack.Screen
-                  name="EditConnection"
-                  component={EditConnectionScreen}
-                  options={{ title: "Edit Connection" }}
-                />
-              </>
-            )}
-          </Stack.Navigator>
-        </NavigationContainer>
-      </PaperProvider>
-    </SafeAreaProvider>
+              ) : (
+                <>
+                  <Stack.Screen
+                    name="Home"
+                    component={HomeScreen}
+                    options={{ title: "Linkbase" }}
+                  />
+                  <Stack.Screen
+                    name="AddConnection"
+                    component={AddConnectionScreen}
+                    options={{ title: "Add Connection" }}
+                  />
+                  <Stack.Screen
+                    name="ConnectionDetail"
+                    component={ConnectionDetailScreen}
+                    options={{ title: "Connection Details" }}
+                  />
+                  <Stack.Screen
+                    name="EditConnection"
+                    component={EditConnectionScreen}
+                    options={{ title: "Edit Connection" }}
+                  />
+                </>
+              )}
+            </Stack.Navigator>
+          </NavigationContainer>
+        </PaperProvider>
+      </SafeAreaProvider>
+    </TRPCProvider>
   );
 };
 

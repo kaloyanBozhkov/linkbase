@@ -28,7 +28,7 @@
     "index.js",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "../common/api.config.ts"
+    "../common/**/*"
   ],
   "exclude": [
     "node_modules"

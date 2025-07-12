@@ -1,18 +1,26 @@
 import { Router } from "express";
-import linkbaseRouter from "./linkbase";
 import {
   handleZodError,
   handlePrismaError,
   handleGeneralError,
   setupRequestContext,
 } from "./middleware";
+import * as trpcExpress from "@trpc/server/adapters/express";
+import { appRouter, createTRPCContext } from "../trpc/index";
 
 const router: Router = Router();
 
 // Apply request context setup middleware to all routes
 router.use(setupRequestContext);
 
-router.use("/linkbase", linkbaseRouter);
+// tRPC route - accessible at /api/trpc
+router.use(
+  "/trpc",
+  trpcExpress.createExpressMiddleware({
+    router: appRouter,
+    createContext: createTRPCContext,
+  })
+);
 
 router.use("/hello", (req, res) => {
   res.json({

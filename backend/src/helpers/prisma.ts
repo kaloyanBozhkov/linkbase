@@ -1,4 +1,5 @@
-import { PrismaClient, SocialMediaType } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+import { SocialMediaType } from "@common/types";
 import { env } from "../env";
 
 // Shared Prisma client instance
