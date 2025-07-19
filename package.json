@@ -1,4 +1,5 @@
 {
+  "author": "Kaloyan Bozhkov",
   "name": "linkbase",
   "version": "1.0.0",
   "description": "Personal database for managing connections - Full-stack TypeScript application",
@@ -53,7 +54,6 @@
     "postgresql",
     "full-stack"
   ],
-  "author": "Kaloyuan D. Bozhkov",
   "license": "MIT",
   "dependencies": {
     "luxon": "^3.7.1"
