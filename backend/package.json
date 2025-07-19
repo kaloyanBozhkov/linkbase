@@ -2,10 +2,10 @@
   "name": "@linkbase/backend",
   "version": "1.0.0",
   "description": "Backend API for Linkbase - A personal database of connections",
-  "main": "dist/backend/src/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "build": "tsc && tsc-alias && prisma generate",
-    "start": "node dist/backend/src/index.js",
+    "start": "node -r tsconfig-paths/register dist/src/index.js",
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
