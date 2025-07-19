@@ -3,7 +3,7 @@
   "buildCommand": "pnpm build",
   "functions": {
     "dist/src/index.js": {
-      "runtime": "@vercel/node"
+      "runtime": "nodejs22.x"
     }
   },
   "routes": [
