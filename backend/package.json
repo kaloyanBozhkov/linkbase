@@ -19,7 +19,7 @@
     "contacts",
     "api"
   ],
-  "author": "",
+  "author": "Kaloyan Bozhkov",
   "license": "ISC",
   "dependencies": {
     "@linkbase/common": "link:../common",
