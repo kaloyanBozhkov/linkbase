@@ -1,15 +1,16 @@
 {
   "version": 2,
-  "buildCommand": "pnpm run build",
-  "functions": {
-    "dist/src/index.js": {
-      "runtime": "@vercel/node@3"
+  "buildCommand": "pnpm build",
+  "builds": [
+    {
+      "src": "dist/src/index.js",
+      "use": "@vercel/node"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/dist/src/index.js"
+      "dest": "dist/src/index.js"
     }
   ],
   "env": {
