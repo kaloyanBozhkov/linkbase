@@ -34,6 +34,7 @@
     "db:reset": "cd backend && pnpm run db:reset",
     "vercel-build": "cd backend && pnpm build"
   },
+  "postinstall": "cd backend && pnpm install && pnpm db:generate",
   "devDependencies": {
     "@types/react": "~19.0.14",
     "concurrently": "^8.2.2"
