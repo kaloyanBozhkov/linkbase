@@ -13,7 +13,7 @@ import {
   searchConnectionsQuery,
 } from "@/queries/linkbase/connections";
 import { createUserQuery, getUserByUuidQuery } from "@/queries/linkbase/users";
-import { SocialMediaType } from "@prisma/client";
+import { SocialMediaType } from "@linkbase/prisma";
 import { infiniteResponse } from "@/helpers/infiniteResponse";
 
 // Input schemas

@@ -7,22 +7,15 @@ dotenv.config();
 
 export const env = createEnv({
   server: {
-    // Server
-    PORT: z.coerce
-      .number()
-      .default(3000)
-      .describe("Port for the server to run on"),
+    // Database
+    DATABASE_URL: z
+      .string()
+      .url()
+      .describe("PostgreSQL database connection string"),
     NODE_ENV: z
       .enum(["development", "production", "test"])
       .default("development")
       .describe("Node environment"),
-
-    // CORS
-    CORS_ORIGIN: z
-      .string()
-      .url()
-      .default("http://localhost:8081")
-      .describe("CORS origin URL"),
   },
 
   /**

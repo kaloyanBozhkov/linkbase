@@ -1,5 +1,5 @@
 import { createTRPCReact, httpBatchLink } from "@trpc/react-query";
-import type { AppRouter } from "~/src/types";
+import type { AppRouter } from "@linkbase/backend/src/trpc/routers/index";
 import { API_CONFIG } from "../config/api.config";
 import { useSessionUserStore } from "@/hooks/useGetSessionUser";
 import superjson from "superjson";

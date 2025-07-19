@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { User } from "~/src/types";
+import type { User } from "@linkbase/prisma/client";
 
 const USER_ID_KEY = "linkbase_user_id_15-07-2025";
 interface SessionUserStore {

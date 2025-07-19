@@ -1,0 +1,12 @@
+{
+  "name": "@linkbase/shared",
+  "version": "1.0.0",
+  "description": "Shared package for apps",
+  "type": "module",
+  "dependencies": {
+    "luxon": "^3.7.1"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.6.2"
+  }
+}

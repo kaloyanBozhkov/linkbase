@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { prisma, generateSocialMediaUrl } from "@/helpers/prisma";
-import { SocialMediaType } from "@prisma/client";
+import { SocialMediaType } from "@linkbase/prisma";
 
 // Zod schema for social media entries
 export const socialMediaSchema = z.object({

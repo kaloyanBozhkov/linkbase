@@ -1,4 +1,4 @@
-import { SocialMediaType } from "~/src/types";
+import { SocialMediaType } from "@linkbase/prisma/client";
 
 export const socialMediaDisplayNames: Record<SocialMediaType, string> = {
   [SocialMediaType.EMAIL]: "Email",

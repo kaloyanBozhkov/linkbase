@@ -1,17 +1,14 @@
 {
+  "author": "Kaloyan Bozhkov",
+  "license": "ISC",
   "name": "@linkbase/backend",
   "version": "1.0.0",
   "description": "Backend API for Linkbase - A personal database of connections",
   "main": "dist/src/index.js",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "pnpm run clean && tsc && tsc-alias && copyfiles src/pages/*.html dist --parents && prisma generate",
-    "start": "node -r tsconfig-paths/register dist/src/index.js",
-    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
-    "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "build": "pnpm clean && webpack --mode production",
+    "dev": "webpack --mode development --watch"
   },
   "keywords": [
     "linkbase",
@@ -19,11 +16,9 @@
     "contacts",
     "api"
   ],
-  "author": "Kaloyan Bozhkov",
-  "license": "ISC",
   "dependencies": {
-    "@linkbase/common": "link:../common",
-    "@prisma/client": "^5.6.0",
+    "@linkbase/prisma": "workspace:*",
+    "@linkbase/shared": "workspace:*",
     "@t3-oss/env-core": "^0.7.1",
     "@trpc/server": "^11.4.3",
     "cors": "^2.8.5",
@@ -36,14 +31,23 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@swc/core": "^1.13.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.8.10",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^13.0.0",
     "copyfiles": "^2.4.1",
-    "prisma": "^5.6.0",
+    "nodemon-webpack-plugin": "^4.8.2",
     "rimraf": "^6.0.1",
-    "ts-node-dev": "^2.0.0",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.2.2"
+    "swc-loader": "^0.2.6",
+    "typescript": "^5.2.2",
+    "webpack": "^5.100.2",
+    "webpack-cli": "^6.0.1",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "engines": {
+    "node": "22.x",
+    "pnpm": ">=9"
   }
 }

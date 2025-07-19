@@ -1,10 +1,5 @@
-import { PrismaClient, SocialMediaType } from "@prisma/client";
-import { env } from "@/env";
-
-// Shared Prisma client instance
-export const prisma = new PrismaClient({
-  log: env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-});
+import { SocialMediaType, prisma } from "@linkbase/prisma";
+export { prisma };
 
 // Helper function to generate URL from handle based on platform
 export function generateSocialMediaUrl(

@@ -16,7 +16,7 @@ import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
 import SocialMediaSection from "../components/molecules/SocialMediaSection";
 import { camelCaseWords } from "../helpers/utils";
-import type { SocialMedia } from "~/src/types";
+import type { SocialMedia } from "@linkbase/prisma/client";
 import { trpc, updateInfiniteQueryDataOnEdit } from "@/utils/trpc";
 
 type EditConnectionScreenNavigationProp = StackNavigationProp<

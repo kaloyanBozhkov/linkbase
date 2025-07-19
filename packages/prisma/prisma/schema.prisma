@@ -7,7 +7,7 @@ generator client {
 
 generator shared {
     provider = "prisma-client-js"
-    output   = "../../common/prisma"
+    output   = "../client"
 }
 
 datasource db {

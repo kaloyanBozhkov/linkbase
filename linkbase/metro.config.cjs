@@ -6,6 +6,6 @@ const projectRoot = __dirname;
 const workspaceRoot = path.resolve(projectRoot, "..");
 
 const config = getDefaultConfig(__dirname);
-config.watchFolders = [path.resolve(workspaceRoot, "common")];
+config.watchFolders = [path.resolve(workspaceRoot, "packages")];
 
 module.exports = config;

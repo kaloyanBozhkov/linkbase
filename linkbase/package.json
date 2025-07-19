@@ -11,16 +11,19 @@
     "lint:unused": "eslint . --fix --rule 'unused-imports/no-unused-imports: error'",
     "clean-imports:simple": "eslint . --fix --rule 'unused-imports/no-unused-imports: error'",
     "remove-unused-imports": "eslint . --fix --no-eslintrc --parser @typescript-eslint/parser --plugin unused-imports --rule 'unused-imports/no-unused-imports: error'",
-    "start": "npm run update-ip && npx expo start",
+    "start": "pnpm run update-ip && npx expo start",
     "test": "jest",
     "type-check": "tsc --noEmit",
-    "update-ip": "node ../common/src/scripts/update-dev-ip.mjs",
-    "dev": "npm run update-ip && npx expo start"
+    "update-ip": "node ../packages/shared/src/scripts/update-dev-ip.mjs",
+    "dev": "pnpm run update-ip && npx expo start"
   },
   "dependencies": {
+    "@babel/runtime": "^7.27.6",
     "@expo/metro-config": "^0.20.17",
     "@expo/vector-icons": "^14.1.0",
-    "@linkbase/common": "link:../common",
+    "@linkbase/backend": "workspace:*",
+    "@linkbase/prisma": "workspace:*",
+    "@linkbase/shared": "workspace:*",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-picker/picker": "^2.11.1",
     "@react-native-vector-icons/material-design-icons": "^12.0.1",
@@ -79,6 +82,6 @@
     "typescript": "~5.8.3"
   },
   "engines": {
-    "node": ">=16"
+    "node": "22.x"
   }
 }

@@ -35,7 +35,7 @@ function getLocalIP() {
 
 function updateConfigFile(ip) {
   // eslint-disable-next-line no-undef
-  const configPath = path.join(__dirname, "../common/src/api.config.ts");
+  const configPath = path.join(__dirname, "../packages/shared/src/api.config.ts");
 
   if (!fs.existsSync(configPath)) {
     console.error("Config file not found:", configPath);

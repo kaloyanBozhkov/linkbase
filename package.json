@@ -6,16 +6,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "install:all": "pnpm install && pnpm install:backend && pnpm install:app",
-    "install:backend": "cd backend && pnpm install",
-    "install:app": "cd app && pnpm install",
-    "dev": "concurrently \"pnpm run dev:backend\" \"pnpm run dev:app\"",
-    "dev:backend": "cd backend && pnpm run dev",
-    "dev:app": "cd app && npx expo start",
-    "dev:web": "cd app && npx expo start --web",
-    "start": "concurrently \"pnpm run start:backend\" \"pnpm run start:app\"",
-    "start:backend": "cd backend && pnpm run start",
-    "start:app": "cd app && npx expo start --tunnel",
     "build": "pnpm run build:backend && pnpm run build:app",
     "build:backend": "cd backend && pnpm run build",
     "build:app": "cd app && npx expo build",
@@ -35,7 +25,6 @@
     "db:reset": "cd backend && pnpm run db:reset",
     "vercel-build": "cd backend && pnpm build"
   },
-  "postinstall": "cd backend && pnpm install && pnpm db:generate",
   "devDependencies": {
     "@types/react": "~19.0.14",
     "concurrently": "^8.2.2"
@@ -54,8 +43,5 @@
     "postgresql",
     "full-stack"
   ],
-  "license": "MIT",
-  "dependencies": {
-    "luxon": "^3.7.1"
-  }
+  "license": "MIT"
 }

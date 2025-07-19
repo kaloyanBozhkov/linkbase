@@ -1,0 +1,25 @@
+{
+  "name": "@linkbase/prisma",
+  "version": "1.0.0",
+  "description": "Prisma package for Linkbase",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
+  },
+  "postinstall": "prisma generate",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "dependencies": {
+    "@prisma/client": "6.12.0",
+    "@t3-oss/env-core": "^0.7.3",
+    "dotenv": "^16.6.1",
+    "prisma": "^6.12.0",
+    "zod": "^3.25.76"
+  }
+}

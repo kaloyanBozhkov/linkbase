@@ -17,7 +17,7 @@ import SocialMediaSection from "../components/molecules/SocialMediaSection";
 import { useSessionUserStore } from "../hooks/useGetSessionUser";
 import { camelCaseWords } from "../helpers/utils";
 import { enableRateApp } from "../hooks/useRateApp";
-import type { SocialMedia } from "~/src/types";
+import type { SocialMedia } from "@linkbase/prisma/client";
 import { trpc, updateInfiniteQueryDataOnAdd } from "@/utils/trpc";
 
 type AddConnectionScreenNavigationProp = StackNavigationProp<

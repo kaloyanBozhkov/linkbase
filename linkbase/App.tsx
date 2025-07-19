@@ -12,7 +12,6 @@ import LoadingScreen from "./src/pages/LoadingScreen";
 import { TRPCProvider } from "./src/providers/TRPCProvider";
 import { trpc } from "./src/utils/trpc";
 import { Alert } from "react-native";
-// Removed logger import since common/logger.ts was deleted
 
 export type RootStackParamList = {
   Home: undefined;
