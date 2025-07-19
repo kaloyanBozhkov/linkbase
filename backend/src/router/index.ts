@@ -8,6 +8,7 @@ import {
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { appRouter, createTRPCContext } from "@/trpc/index";
 
+
 const router: Router = Router();
 
 // Apply request context setup middleware to all routes

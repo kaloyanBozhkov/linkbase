@@ -4,6 +4,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import indexRouter from "./router";
 import { env } from "./env";
+import { renderSupportPage, renderMarketingPage, renderPrivacyPage, renderTermsPage } from "./flows";
 
 const app: Application = express();
 const PORT = env.PORT;
@@ -28,6 +29,12 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api", indexRouter);
+
+// Page routes - accessible directly without /api prefix
+app.get("/support/:appName", renderSupportPage);
+app.get("/marketing/:appName", renderMarketingPage);
+app.get("/privacy/:appName", renderPrivacyPage);
+app.get("/terms/:appName", renderTermsPage);
 
 // Health check
 app.get("/health", (req, res) => {
