@@ -31,7 +31,8 @@
     "db:migrate": "cd backend && pnpm run db:migrate",
     "db:generate": "cd backend && pnpm run db:generate",
     "db:studio": "cd backend && pnpm run db:studio",
-    "db:reset": "cd backend && pnpm run db:reset"
+    "db:reset": "cd backend && pnpm run db:reset",
+    "vercel-build": "cd backend && pnpm build"
   },
   "devDependencies": {
     "@types/react": "~19.0.14",
