@@ -11,11 +11,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
-import {
-  SocialMediaType,
-  SocialMedia,
-  socialMediaDisplayNames,
-} from "../../hooks/useConnectionStore";
+import { SocialMedia, SocialMediaType } from "~/src/types";
+import { socialMediaDisplayNames } from "@/helpers/constants";
 
 interface SocialMediaSectionProps {
   socialMedias: SocialMedia[];
@@ -76,7 +73,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
   const addSocialMedia = () => {
     onUpdateSocialMedias([
       ...socialMedias,
-      { type: SocialMediaType.EMAIL, handle: "" },
+      { type: SocialMediaType.EMAIL, handle: "" } as SocialMedia,
     ]);
   };
 
@@ -302,7 +299,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
         })}
 
         <Button
-          title="+ Add Contact/Social"
+          title="+ Add Contact or Social"
           onPress={addSocialMedia}
           variant="ghost"
           style={styles.addButton}

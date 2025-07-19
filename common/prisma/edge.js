@@ -178,7 +178,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/admin/Documents/personal_work/linkbase/common/prisma",
+      "value": "/Users/kaloyanbozhkov/Documents/personal_work/linkbase/common/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -187,12 +187,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "darwin-arm64",
+        "value": "darwin",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/admin/Documents/personal_work/linkbase/backend/prisma/schema.prisma",
+    "sourceFilePath": "/Users/kaloyanbozhkov/Documents/personal_work/linkbase/backend/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { SocialMediaType } from "@common/types";
-import { prisma, generateSocialMediaUrl } from "../../../helpers/prisma";
+import { prisma, generateSocialMediaUrl } from "@/helpers/prisma";
+import { SocialMediaType } from "@prisma/client";
 
 // Zod schema for social media entries
 export const socialMediaSchema = z.object({
@@ -43,7 +43,7 @@ export const updateConnectionQuery = async (
   const validatedData = updateConnectionSchema.parse(data);
   const { socialMedias, userId, ...connectionData } = validatedData;
 
-  return await prisma.connection.update({
+  return prisma.connection.update({
     where: {
       id,
     },

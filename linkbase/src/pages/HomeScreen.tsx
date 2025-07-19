@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,16 +7,19 @@ import {
   Alert,
   RefreshControl,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../../App";
-import { useConnectionStore } from "../hooks/useConnectionStore";
 import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
 import ConnectionCard from "../components/molecules/ConnectionCard";
 import { rateApp } from "../hooks/useRateApp";
+import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
+import { minutesToMillis } from "~/src/duration";
+import { getInfiniteQueryItems } from "@/hooks/getInfiniteQueryItems";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -25,38 +28,36 @@ interface Props {
 }
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
-  const {
-    connections,
-    error,
-    searchQuery,
-    fetchConnections,
-    setSearchQuery,
-    deleteConnection,
-    clearError,
-  } = useConnectionStore();
-
-  const [refreshing, setRefreshing] = useState(false);
-  const [searchText, setSearchText] = useState(searchQuery);
-
-  // Debounced search effect
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setSearchQuery(searchText);
-    }, 500); // 500ms debounce delay
-
-    return () => clearTimeout(timeoutId);
-  }, [searchText, setSearchQuery]);
-
-  // Sync searchText with searchQuery when it changes externally (e.g., from refresh)
-  useEffect(() => {
-    setSearchText(searchQuery);
-  }, [searchQuery]);
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchConnections();
-    }, [fetchConnections])
+  const trpcUtils = trpc.useUtils();
+  const getAllQuery = trpc.linkbase.connections.getAll.useInfiniteQuery(
+    {},
+    {
+      staleTime: minutesToMillis(2),
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
   );
+  const { mutateAsync: deleteConnection } =
+    trpc.linkbase.connections.delete.useMutation();
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchText = useDebouncedValue(searchQuery, 500);
+  const searchItemsQuery = trpc.linkbase.connections.search.useInfiniteQuery(
+    { query: debouncedSearchText },
+    {
+      staleTime: minutesToMillis(2),
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      enabled: !debouncedSearchText,
+    }
+  );
+  const {
+    data: connectionsData,
+    isLoading: isLoadingConnections,
+    error: errorConnections,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+  } = debouncedSearchText ? searchItemsQuery : getAllQuery;
+  const connections = getInfiniteQueryItems(connectionsData);
 
   useEffect(() => {
     if (!connections.length) return;
@@ -66,12 +67,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const handleRefresh = async () => {
     setRefreshing(true);
     // Respect current search state - if searching, re-run search; if not, fetch all
-    if (searchText.trim()) {
-      // Re-trigger the current search
-      setSearchQuery(searchText);
+    if (debouncedSearchText.trim()) {
+      await trpcUtils.linkbase.connections.search.invalidate();
     } else {
       // No search active, fetch all connections
-      await fetchConnections();
+      await trpcUtils.linkbase.connections.getAll.invalidate();
     }
     setRefreshing(false);
   };
@@ -85,13 +85,35 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         {
           text: "Delete",
           style: "destructive",
-          onPress: () => deleteConnection(id),
+          onPress: () =>
+            deleteConnection(
+              { id },
+              {
+                onSuccess: () => {
+                  updateInfiniteQueryDataOnDelete(
+                    trpcUtils,
+                    ["linkbase", "connections", "getAll"],
+                    id
+                  );
+                },
+                onError: (error) => {
+                  Alert.alert(
+                    "Error",
+                    error.message || "Failed to delete connection"
+                  );
+                },
+              }
+            ),
         },
       ]
     );
   };
 
-  const renderConnectionCard = ({ item }: { item: any }) => (
+  const renderConnectionCard = ({
+    item,
+  }: {
+    item: (typeof connections)[number];
+  }) => (
     <ConnectionCard
       connection={item}
       onPress={() =>
@@ -107,14 +129,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Text style={styles.emptyStateTitle}>
-        {searchText ? "🔍 No Results" : "🌟 Start Building"}
+        {debouncedSearchText ? "🔍 No Results" : "🌟 Start Building"}
       </Text>
       <Text style={styles.emptyStateText}>
-        {searchText
+        {debouncedSearchText
           ? "No connections found matching your search. Try different keywords."
           : "Your connection network is empty. Add your first connection and start building meaningful relationships!"}
       </Text>
-      {!searchText && (
+      {!debouncedSearchText && (
         <Button
           title="Add First Connection"
           onPress={() => navigation.navigate("AddConnection")}
@@ -124,22 +146,21 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     </View>
   );
 
-  if (error) {
+  if (errorConnections) {
     return (
       <LinearGradient colors={["#0a0d14", "#1e293b"]} style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.errorContainer}>
             <Text style={styles.errorTitle}>⚠️ Connection Error</Text>
-            <Text style={styles.errorText}>{error}</Text>
+            <Text style={styles.errorText}>{errorConnections.message}</Text>
             <Button
               title="Try Again"
               onPress={() => {
-                clearError();
                 // Respect current search state when retrying
-                if (searchText.trim()) {
-                  setSearchQuery(searchText);
+                if (debouncedSearchText) {
+                  trpcUtils.linkbase.connections.getAll.invalidate();
                 } else {
-                  fetchConnections();
+                  trpcUtils.linkbase.connections.getAll.invalidate();
                 }
               }}
             />
@@ -158,8 +179,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
           <Input
             placeholder="Search connections by name or facts..."
-            value={searchText}
-            onChangeText={setSearchText}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
             containerStyle={styles.searchContainer}
           />
           <Button
@@ -169,28 +190,49 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           />
         </View>
 
-        <FlatList
-          data={connections}
-          renderItem={renderConnectionCard}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-          ListEmptyComponent={renderEmptyState}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              tintColor="#00f5ff"
-              colors={["#00f5ff", "#bf00ff"]}
-            />
-          }
-          showsVerticalScrollIndicator={false}
-        />
+        {isLoadingConnections ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#00f5ff" />
+          </View>
+        ) : (
+          <FlatList
+            data={connections}
+            renderItem={renderConnectionCard}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContainer}
+            ListEmptyComponent={renderEmptyState}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                tintColor="#00f5ff"
+                colors={["#00f5ff", "#bf00ff"]}
+              />
+            }
+            showsVerticalScrollIndicator={false}
+            onEndReached={() => {
+              if (isFetchingNextPage || !hasNextPage) return;
+              fetchNextPage();
+            }}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={() =>
+              isFetchingNextPage && hasNextPage ? (
+                <ActivityIndicator size="large" color="#00f5ff" />
+              ) : null
+            }
+          />
+        )}
       </SafeAreaView>
     </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
   },

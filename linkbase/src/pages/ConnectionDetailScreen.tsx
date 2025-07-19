@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -12,14 +12,11 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp, useFocusEffect } from "@react-navigation/native";
+import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../App";
-import { connectionApi } from "../services/api";
-import {
-  Connection,
-  socialMediaDisplayNames,
-} from "../hooks/useConnectionStore";
 import Button from "../components/atoms/Button";
+import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
+import { socialMediaDisplayNames } from "@/helpers/constants";
 
 type ConnectionDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -38,29 +35,17 @@ interface Props {
 
 const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   const { connectionId } = route.params;
-  const [connection, setConnection] = useState<Connection | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchConnection();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [connectionId])
-  );
-
-  const fetchConnection = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await connectionApi.getById(connectionId);
-      setConnection(data);
-    } catch (err: any) {
-      setError(err.message || "Failed to load connection");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    data: connection,
+    isLoading,
+    error,
+    refetch: fetchConnection,
+  } = trpc.linkbase.connections.getById.useQuery({
+    id: connectionId,
+  });
+  const { mutateAsync: deleteConnection } =
+    trpc.linkbase.connections.delete.useMutation();
+  const trpcUtils = trpc.useUtils();
 
   const handleSocialMediaPress = (url: string) => {
     if (url) {
@@ -81,26 +66,38 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
         {
           text: "Delete",
           style: "destructive",
-          onPress: async () => {
-            try {
-              await connectionApi.delete(connectionId);
-              Alert.alert("Success", "Connection deleted successfully!", [
-                { text: "OK", onPress: () => navigation.goBack() },
-              ]);
-            } catch (err: any) {
-              Alert.alert(
-                "Error",
-                err.message || "Failed to delete connection"
-              );
-            }
+          onPress: () => {
+            deleteConnection(
+              {
+                id: connectionId,
+              },
+              {
+                onSuccess: () => {
+                  updateInfiniteQueryDataOnDelete(
+                    trpcUtils,
+                    ["linkbase", "connections", "getAll"],
+                    connectionId
+                  );
+                  Alert.alert("Success", "Connection deleted successfully!", [
+                    { text: "OK", onPress: () => navigation.goBack() },
+                  ]);
+                },
+                onError: (err: any) => {
+                  Alert.alert(
+                    "Error",
+                    err.message || "Failed to delete connection"
+                  );
+                },
+              }
+            );
           },
         },
       ]
     );
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+  const formatDate = (date: string | Date) => {
+    return new Date(date).toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -108,8 +105,8 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     });
   };
 
-  const formatShortDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+  const formatShortDate = (date: string | Date) => {
+    return new Date(date).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -120,7 +117,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     return connection?.socialMedias || [];
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <LinearGradient colors={["#0a0d14", "#1e293b"]} style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
@@ -139,7 +136,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           <View style={styles.centerContainer}>
             <Text style={styles.errorTitle}>⚠️ Error</Text>
             <Text style={styles.errorText}>
-              {error || "Connection not found"}
+              {error?.message ?? "Connection not found"}
             </Text>
             <Button title="Try Again" onPress={fetchConnection} />
           </View>

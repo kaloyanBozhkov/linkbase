@@ -52,5 +52,8 @@
     "full-stack"
   ],
   "author": "Kaloyuan D. Bozhkov",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "luxon": "^3.7.1"
+  }
 }

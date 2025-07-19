@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../init";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/trpc/init";
 import {
   createConnectionQuery,
   getAllConnectionsQuery,
@@ -7,12 +11,10 @@ import {
   updateConnectionQuery,
   deleteConnectionQuery,
   searchConnectionsQuery,
-} from "../../queries/linkbase/connections";
-import {
-  createUserQuery,
-  getUserByUuidQuery,
-} from "../../queries/linkbase/users";
-import { SocialMediaType } from "@common/types";
+} from "@/queries/linkbase/connections";
+import { createUserQuery, getUserByUuidQuery } from "@/queries/linkbase/users";
+import { SocialMediaType } from "@prisma/client";
+import { infiniteResponse } from "@/helpers/infiniteResponse";
 
 // Input schemas
 const connectionCreateSchema = z.object({
@@ -32,17 +34,6 @@ const connectionCreateSchema = z.object({
 
 const connectionUpdateSchema = connectionCreateSchema.partial();
 
-const connectionSearchSchema = z.object({
-  query: z.string().min(1, "Search query is required"),
-  limit: z.number().min(1).max(100).optional().default(20),
-  offset: z.number().min(0).optional().default(0),
-});
-
-const paginationSchema = z.object({
-  limit: z.number().min(1).max(100).optional().default(20),
-  offset: z.number().min(0).optional().default(0),
-});
-
 const connectionIdSchema = z.object({
   id: z.string().min(1, "Connection ID is required"),
 });
@@ -51,126 +42,72 @@ const userUuidSchema = z.object({
   uuid: z.string().min(1, "User UUID is required"),
 });
 
-// Create the linkbase router
-export const linkbaseRouter = createTRPCRouter({
-  // Connection procedures
-  connections: createTRPCRouter({
-    // Get all connections
-    getAll: protectedProcedure
-      .input(paginationSchema)
-      .query(async ({ ctx, input }) => {
-        const { limit, offset } = input;
-        const { userId } = ctx;
+const PAGE_SIZE = 20;
 
-        const result = await getAllConnectionsQuery({
-          limit,
-          offset,
+export const linkbaseRouter = createTRPCRouter({
+  connections: createTRPCRouter({
+    getAll: protectedProcedure
+      .input(z.object({ cursor: z.number().default(0) }))
+      .query(async ({ ctx: { userId }, input: { cursor } }) => {
+        const connections = await getAllConnectionsQuery({
+          cursor,
           userId,
+          pageSize: PAGE_SIZE,
         });
 
-        return {
-          connections: result.connections,
-          pagination: result.pagination,
-        };
+        return infiniteResponse(connections, cursor, PAGE_SIZE);
       }),
-
-    // Get connection by ID
     getById: protectedProcedure
       .input(connectionIdSchema)
-      .query(async ({ ctx, input }) => {
-        const { id } = input;
-        const { userId } = ctx;
-
-        const connection = await getConnectionByIdQuery({ id, userId });
-
-        if (!connection) {
-          throw new Error("Connection not found");
-        }
-
-        return connection;
+      .query(({ ctx: { userId }, input: { id } }) => {
+        return getConnectionByIdQuery({ id, userId });
       }),
-
-    // Create connection
     create: protectedProcedure
       .input(connectionCreateSchema)
-      .mutation(async ({ ctx, input }) => {
-        const { userId } = ctx;
-
-        const connection = await createConnectionQuery({
+      .mutation(({ ctx: { userId }, input }) => {
+        return createConnectionQuery({
           ...input,
           userId,
         });
-
-        return connection;
       }),
-
-    // Update connection
     update: protectedProcedure
       .input(connectionIdSchema.extend(connectionUpdateSchema.shape))
-      .mutation(async ({ ctx, input }) => {
-        const { id, ...updateData } = input;
-        const { userId } = ctx;
-
-        const connection = await updateConnectionQuery(id, {
+      .mutation(({ ctx: { userId }, input: { id, ...updateData } }) => {
+        return updateConnectionQuery(id, {
           ...updateData,
           userId,
         });
-
-        return connection;
       }),
-
-    // Delete connection
     delete: protectedProcedure
       .input(connectionIdSchema)
-      .mutation(async ({ ctx, input }) => {
-        const { id } = input;
-        const { userId } = ctx;
-
+      .mutation(async ({ ctx: { userId }, input: { id } }) => {
         await deleteConnectionQuery({ id, userId });
-
         return { success: true };
       }),
-
-    // Search connections
     search: protectedProcedure
-      .input(connectionSearchSchema)
-      .query(async ({ ctx, input }) => {
-        const { userId } = ctx;
-
+      .input(
+        z.object({
+          query: z.string().min(1, "Search query is required"),
+          cursor: z.number().default(0),
+        })
+      )
+      .query(async ({ ctx: { userId }, input: { query, cursor } }) => {
         const connections = await searchConnectionsQuery({
-          ...input,
+          query,
+          cursor,
           userId,
+          pageSize: PAGE_SIZE,
         });
 
-        return {
-          connections,
-          query: input.query,
-        };
+        return infiniteResponse(connections, cursor, PAGE_SIZE);
       }),
   }),
-
-  // User procedures
   users: createTRPCRouter({
-    // Get user by UUID
     getByUuid: protectedProcedure
       .input(userUuidSchema)
-      .query(async ({ input }) => {
-        const { uuid } = input;
-
-        const user = await getUserByUuidQuery(uuid);
-
-        if (!user) {
-          throw new Error("User not found");
-        }
-
-        return user;
-      }),
-
-    // Create user
+      .query(({ input: { uuid } }) => getUserByUuidQuery(uuid)),
     create: publicProcedure.mutation(async () => {
-      const userId = await createUserQuery({});
-
-      return { userId };
+      return createUserQuery();
     }),
   }),
 });

@@ -1,12 +1,14 @@
 import { z } from "zod";
-import { prisma } from "../../../helpers/prisma";
+import { prisma } from "@/helpers/prisma";
+
+const PAGE_SIZE = 20;
 
 // Zod schema for search connections parameters
 export const searchConnectionsSchema = z.object({
   query: z.string().min(1, "Search query is required"),
   userId: z.string().min(1, "User ID is required"),
-  limit: z.number().min(1).max(100).optional().default(20),
-  offset: z.number().min(0).optional().default(0),
+  cursor: z.number().default(0),
+  pageSize: z.number().min(1).max(100).optional().default(PAGE_SIZE),
 });
 
 export type SearchConnectionsInput = z.infer<typeof searchConnectionsSchema>;
@@ -17,16 +19,13 @@ export type SearchConnectionsInput = z.infer<typeof searchConnectionsSchema>;
  * @param params - Search parameters (query, userId?, limit, offset)
  * @returns Promise<Connection[]> - Array of matching connections
  */
-export const searchConnectionsQuery = async (params: {
-  query: string;
-  userId?: string;
-  limit?: number;
-  offset?: number;
-}) => {
-  const { query, userId, limit, offset } =
+export const searchConnectionsQuery = async (
+  params: SearchConnectionsInput
+) => {
+  const { query, userId, cursor, pageSize } =
     searchConnectionsSchema.parse(params);
 
-  return await prisma.connection.findMany({
+  return prisma.connection.findMany({
     where: {
       ...(userId && { userId }),
       OR: [
@@ -62,8 +61,8 @@ export const searchConnectionsQuery = async (params: {
     include: {
       socialMedias: true,
     },
-    skip: offset,
-    take: limit,
+    skip: cursor,
+    take: pageSize,
     orderBy: {
       createdAt: "desc",
     },

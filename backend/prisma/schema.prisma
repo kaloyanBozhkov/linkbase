@@ -7,7 +7,7 @@ generator client {
 
 generator shared {
     provider = "prisma-client-js"
-    output   = "../../common/prisma"
+    output   = "../common/prisma"
 }
 
 datasource db {
@@ -46,7 +46,7 @@ enum SocialMediaType {
 
 model User {
     id          String       @id @default(cuid())
-    uuid        String       @unique
+    uuid        String       @unique @default(uuid())
     email       String?
     connections Connection[]
     createdAt   DateTime     @default(now())

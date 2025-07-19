@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { prisma } from "../../../helpers/prisma";
+import { prisma } from "@/helpers/prisma";
 
 // Validation schema for creating a user
 export const createUserSchema = z.object({
@@ -17,14 +17,8 @@ export type CreateUserInput = z.infer<typeof createUserSchema>;
  * @throws {ZodError} - If validation fails
  * @throws {Error} - If database operation fails
  */
-export const createUserQuery = async (data: unknown) => {
-  const validatedData = createUserSchema.parse(data);
-  const { uuid, email } = validatedData;
-
+export const createUserQuery = async () => {
   return await prisma.user.create({
-    data: {
-      uuid,
-      email,
-    },
+    data: {},
   });
 };

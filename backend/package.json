@@ -1,13 +1,12 @@
 {
-  "name": "linkbase-backend",
+  "name": "@linkbase/backend",
   "version": "1.0.0",
   "description": "Backend API for Linkbase - A personal database of connections",
-  "main": "dist/index.js",
+  "main": "dist/backend/src/index.js",
   "scripts": {
-    "build": "tsc && prisma generate",
-    "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "vercel-build": "prisma generate && tsc",
+    "build": "tsc && tsc-alias && prisma generate",
+    "start": "node dist/backend/src/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
@@ -22,6 +21,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@linkbase/common": "link:../common",
     "@prisma/client": "^5.6.0",
     "@t3-oss/env-core": "^0.7.1",
     "@trpc/server": "^11.4.3",
@@ -30,6 +30,8 @@
     "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
     "helmet": "^7.1.0",
+    "superjson": "^1.13.3",
+    "tsc-alias": "^1.8.16",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -38,6 +40,7 @@
     "@types/node": "^20.8.10",
     "prisma": "^5.6.0",
     "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2"
   }
 }

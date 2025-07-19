@@ -1,7 +1,7 @@
 import { initTRPC, TRPCError } from "@trpc/server";
-import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { Request, Response } from "express";
 import { z } from "zod";
+import superjson from "superjson";
 
 // Define context interface explicitly
 export interface TRPCContext {
@@ -18,27 +18,35 @@ export function createTRPCContext({
 }): TRPCContext {
   // Get user ID from header (set by your existing middleware)
   const userId = req.headers["x-user-id"] as string;
-
-  return {
+  const context: TRPCContext = {
     userId,
   };
+  return context;
 }
 
 export type Context = TRPCContext;
 
 // Initialize tRPC with explicit context type
-const t = initTRPC.context<TRPCContext>().create({
-  errorFormatter({ shape, error }) {
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError:
-          error.cause instanceof z.ZodError ? error.cause.flatten() : null,
-      },
-    };
-  },
-});
+const t = initTRPC
+  .context<TRPCContext>()
+  .meta<{
+    // Add any metadata you need here
+    // This helps avoid naming collisions
+    procedures: Record<string, unknown>;
+  }>()
+  .create({
+    transformer: superjson,
+    errorFormatter({ shape, error }) {
+      return {
+        ...shape,
+        data: {
+          ...shape.data,
+          zodError:
+            error.cause instanceof z.ZodError ? error.cause.flatten() : null,
+        },
+      };
+    },
+  });
 
 // Export helpers with explicit types
 export const createTRPCRouter = t.router;

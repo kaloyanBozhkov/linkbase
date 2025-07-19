@@ -1,36 +1,27 @@
 {
-  "extends": [
-    "@tsconfig/react-native/tsconfig.json",
-    "expo/tsconfig.base"
-  ],
+  "extends": ["@tsconfig/react-native/tsconfig.json", "expo/tsconfig.base"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/common/*": ["../common/*"],
-      "@/linkbase/*": ["src/*"]
+      "@/*": ["src/*"],
+      "~/*": ["../common/*"]
     },
     "strict": true,
+    "strictNullChecks": true,
     "skipLibCheck": true,
     "jsx": "react-jsx",
-    "lib": [
-      "ES2015",
-      "ES2017",
-      "ES2018",
-      "ES2020"
-    ],
+    "lib": ["ES2015", "ES2017", "ES2018", "ES2020"],
     "target": "ES2018",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "src/**/*",
     "App.tsx",
     "index.js",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts",
-    "../common/**/*"
+    "expo-env.d.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ],
+  "exclude": ["node_modules"],
+  "references": [{ "path": "../common" }]
 }

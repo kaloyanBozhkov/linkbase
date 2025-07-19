@@ -1,4 +1,4 @@
-import { prisma } from "../../../helpers/prisma";
+import { prisma } from "@/helpers/prisma";
 
 /**
  * Retrieves a user by their UUID.

@@ -1,53 +1,61 @@
-import { env } from "../env";
+import { TRPCError } from "@trpc/server";
 
-/**
- * Logs error messages with optional stack traces in development mode.
- *
- * This utility function provides consistent error logging across the application.
- * In development mode, it includes detailed stack traces for debugging.
- * In production mode, it logs only the error message to avoid exposing sensitive information.
- *
- * @param message - A descriptive message about where/why the error occurred
- * @param error - The error object or any value to be logged
- *
- * @example
- * ```typescript
- * try {
- *   await riskyOperation();
- * } catch (error) {
- *   logError('Failed to process user data:', error);
- *   // Handle error appropriately
- * }
- * ```
- */
-export const logError = (message: string, error: any): void => {
-  console.error(message, error);
+type LoggableError = TRPCError | Error;
 
-  if (env.NODE_ENV === "development") {
-    console.error("Stack trace:", error.stack);
+export const isTrpcError = (err: unknown): err is TRPCError => {
+  if (!err || typeof err !== "object") {
+    return false;
   }
+  return "name" in err && err.name === "TRPCError";
 };
 
 /**
- * Logs informational messages in development mode only.
- * Useful for debugging without cluttering production logs.
- *
- * @param message - The message to log
- * @param data - Optional data to include with the message
+ * Formats error for client consumption by sanitizing sensitive information
+ * and providing a consistent error structure.
  */
-export const logInfo = (message: string, data?: any): void => {
-  if (env.NODE_ENV === "development") {
-    console.log(message, data || "");
+export const formatClientError = (error: LoggableError): { message: string; code?: string } => {
+  // For TRPC errors, preserve the code and sanitized message
+  if (isTrpcError(error)) {
+    return {
+      message: error.message,
+      code: error.code,
+    };
   }
+
+  // For generic errors, provide a sanitized message
+  // In production, you might want to return a generic message to avoid leaking sensitive info
+  const isDevelopment = process.env.NODE_ENV === "development";
+  
+  return {
+    message: isDevelopment ? error.message : "An unexpected error occurred",
+  };
 };
 
-/**
- * Logs warning messages.
- * These are logged in all environments as they indicate potential issues.
- *
- * @param message - The warning message
- * @param data - Optional data to include with the warning
- */
-export const logWarning = (message: string, data?: any): void => {
-  console.warn(message, data || "");
+export const logError = (error: LoggableError) => {
+  if (isTrpcError(error)) {
+    // TRPCError thrown by trpc endpoint
+    if (error.code === "INTERNAL_SERVER_ERROR") {
+      console.error("TRPC Internal Server Error:", error.message);
+      if (error.cause) {
+        console.error("Caused by:", error.cause);
+      }
+      // Log stack trace for internal server errors
+      console.error("Stack:", error.stack);
+    } else {
+      // Using console.log for non-server errors to avoid flooding error logs
+      console.log(`TRPC ${error.code}:`, error.message);
+      if (process.env.NODE_ENV === "development" && error.stack) {
+        console.log("Stack:", error.stack);
+      }
+    }
+  } else {
+    // Generic Error (Prisma errors, etc.)
+    console.error("Error:", error.message);
+    if (process.env.NODE_ENV === "development" && error.stack) {
+      console.error("Stack:", error.stack);
+    }
+  }
+
+  // Return formatted error for potential client use
+  return formatClientError(error);
 };

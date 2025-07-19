@@ -1,17 +1,17 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
-import { logError } from "../helpers/logger";
-import "../types/express"; // Import the type declarations
+import { logError } from "@/helpers/logger";
+import "@/types/express"; // Import the type declarations
 
 export interface AppError extends Error {
   statusCode?: number;
   code?: string;
 }
 
-// TODO: refactor asyncHnadler to allow isPublic similr to public/private trpc procedures
+// tprc paths handled by createTRPCContext and protectedProcedure and publicProcedure
 const isPublicPath = (path: string) => {
   console.log("path", path);
-  return path === "/users";
+  return path.includes("/trpc/");
 };
 
 // Middleware to extract userId from headers and set up request context
@@ -91,7 +91,12 @@ export const handleGeneralError = (
   res: Response,
   next: NextFunction
 ) => {
-  logError(`${req.method} ${req.path} error:`, error);
+  logError({
+    message: `${req.method} ${req.path} error:`,
+    cause: error,
+    code: "INTERNAL_SERVER_ERROR",
+    name: "INTERNAL_SERVER_ERROR",
+  });
 
   const statusCode = error.statusCode || 500;
   const message = error.message || "Internal server error";

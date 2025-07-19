@@ -11,13 +11,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../App";
-import { useConnectionStore, SocialMedia } from "../hooks/useConnectionStore";
 import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
 import SocialMediaSection from "../components/molecules/SocialMediaSection";
 import { useSessionUserStore } from "../hooks/useGetSessionUser";
 import { camelCaseWords } from "../helpers/utils";
 import { enableRateApp } from "../hooks/useRateApp";
+import type { SocialMedia } from "~/src/types";
+import { trpc, updateInfiniteQueryDataOnAdd } from "@/utils/trpc";
 
 type AddConnectionScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -29,17 +30,17 @@ interface Props {
 }
 
 const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
-  const { createConnection, loading } = useConnectionStore();
-
+  const { mutateAsync: createConnection, isPending: loading } =
+    trpc.linkbase.connections.create.useMutation();
   const [formData, setFormData] = useState({
     name: "",
     metAt: "",
     facts: [""],
     socialMedias: [] as SocialMedia[],
   });
-
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isNameAutoCapitalized, setIsNameAutoCapitalized] = useState(true);
+  const trpcUtils = trpc.useUtils();
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -59,45 +60,55 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
       (sm) => !sm.handle.trim()
     );
     if (invalidSocialMedias.length > 0) {
-      newErrors.socialMedias =
-        "All social media entries must have a handle/username";
+      newErrors.socialMedias = "All social media entries must have valid input";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!validateForm()) return;
 
-    try {
-      const validFacts = formData.facts.filter((fact) => fact.trim());
-      const validSocialMedias = formData.socialMedias.filter((sm) =>
-        sm.handle.trim()
-      );
+    const validFacts = formData.facts.filter((fact) => fact.trim());
+    const validSocialMedias = formData.socialMedias.filter((sm) =>
+      sm.handle.trim()
+    );
 
-      const userId = useSessionUserStore.getState().userId;
-      if (!userId) {
-        Alert.alert("Error", "User not found");
-        return;
-      }
+    const userId = useSessionUserStore.getState().userId;
+    if (!userId) {
+      Alert.alert("Error", "User not found");
+      return;
+    }
 
-      await createConnection({
-        userId,
+    createConnection(
+      {
         name: formData.name.trim(),
         metAt: formData.metAt.trim(),
         facts: validFacts, // Can be empty array
         socialMedias: validSocialMedias,
-      });
+      },
+      {
+        onSuccess: (createdConnection) => {
+          // Update getAll cache - we need to update the connection in all paginated results
+          updateInfiniteQueryDataOnAdd(
+            trpcUtils,
+            ["linkbase", "connections", "getAll"],
+            createdConnection,
+            { prepend: true }
+          );
 
-      await enableRateApp();
+          Alert.alert("Success", "Connection added successfully!", [
+            { text: "OK", onPress: () => navigation.goBack() },
+          ]);
 
-      Alert.alert("Success", "Connection added successfully!", [
-        { text: "OK", onPress: () => navigation.goBack() },
-      ]);
-    } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to add connection");
-    }
+          enableRateApp();
+        },
+        onError: (error) => {
+          Alert.alert("Error", error.message || "Failed to add connection");
+        },
+      }
+    );
   };
 
   const addFactField = () => {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { prisma } from "../../../helpers/prisma";
+import { prisma } from "@/helpers/prisma";
 
 // Zod schema for delete connection parameter
 export const deleteConnectionSchema = z.object({

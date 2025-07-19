@@ -9,14 +9,11 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../atoms/Button";
-import {
-  Connection,
-  socialMediaDisplayNames,
-  SocialMediaType,
-} from "../../hooks/useConnectionStore";
+import { RouterOutput } from "~/src/types";
+import { socialMediaDisplayNames } from "@/helpers/constants";
 
 interface ConnectionCardProps {
-  connection: Connection;
+  connection: RouterOutput["linkbase"]["connections"]["getById"];
   onPress: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -43,19 +40,19 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
   };
 
   const getSocialMediasToShow = () => {
-    // Show legacy Instagram if it exists and no new social medias
-    if (
-      connection.igHandle &&
-      (!connection.socialMedias || connection.socialMedias.length === 0)
-    ) {
-      return [
-        {
-          type: SocialMediaType.INSTAGRAM,
-          handle: connection.igHandle,
-          url: connection.igUrl,
-        },
-      ];
-    }
+    // // Show legacy Instagram if it exists and no new social medias
+    // if (
+    //   connection.igHandle &&
+    //   (!connection.socialMedias || connection.socialMedias.length === 0)
+    // ) {
+    //   return [
+    //     {
+    //       type: SocialMediaType.INSTAGRAM,
+    //       handle: connection.igHandle,
+    //       url: connection.igUrl,
+    //     },
+    //   ];
+    // }
     return connection.socialMedias || [];
   };
 

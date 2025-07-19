@@ -6,7 +6,7 @@ import {
   setupRequestContext,
 } from "./middleware";
 import * as trpcExpress from "@trpc/server/adapters/express";
-import { appRouter, createTRPCContext } from "../trpc/index";
+import { appRouter, createTRPCContext } from "@/trpc/index";
 
 const router: Router = Router();
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { prisma } from "../../../helpers/prisma";
+import { prisma } from "@/helpers/prisma";
 
 // Zod schema for connection ID parameter
 export const getConnectionByIdSchema = z.object({

@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Start Backend",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "pnpm dev",
+            "cwd": "${workspaceFolder}/backend"
+        },
+        {
+            "name": "Start Linkbase",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "pnpm dev",
+            "cwd": "${workspaceFolder}/linkbase"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Start All (Backend + Linkbase)",
+            "configurations": ["Start Backend", "Start Linkbase"],
+            "presentation": {
+                "hidden": false,
+                "group": "Development",
+                "order": 1
+            }
+        }
+    ]
+} 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,16 +12,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../App";
-import {
-  useConnectionStore,
-  Connection,
-  SocialMedia,
-} from "../hooks/useConnectionStore";
-import { connectionApi } from "../services/api";
 import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
 import SocialMediaSection from "../components/molecules/SocialMediaSection";
 import { camelCaseWords } from "../helpers/utils";
+import type { SocialMedia } from "~/src/types";
+import { trpc, updateInfiniteQueryDataOnEdit } from "@/utils/trpc";
 
 type EditConnectionScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -40,9 +36,12 @@ interface Props {
 
 const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
   const { connectionId } = route.params;
-  const { updateConnection, loading } = useConnectionStore();
-
-  const [connection, setConnection] = useState<Connection | null>(null);
+  const { data: connection, isLoading: isLoadingConnection } =
+    trpc.linkbase.connections.getById.useQuery({
+      id: connectionId,
+    });
+  const { mutateAsync: updateConnection, isPending: isUpdatingConnection } =
+    trpc.linkbase.connections.update.useMutation();
   const [formData, setFormData] = useState({
     name: "",
     metAt: "",
@@ -50,34 +49,8 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
     socialMedias: [] as SocialMedia[],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [loadingConnection, setLoadingConnection] = useState(true);
   const [isNameAutoCapitalized, setIsNameAutoCapitalized] = useState(false); // Don't auto-cap when editing existing
-
-  useEffect(() => {
-    fetchConnection();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectionId]);
-
-  const fetchConnection = async () => {
-    try {
-      setLoadingConnection(true);
-      const data = await connectionApi.getById(connectionId);
-      setConnection(data);
-
-      const socialMedias = data.socialMedias || [];
-      setFormData({
-        name: data.name,
-        metAt: data.metAt,
-        facts: data.facts.length > 0 ? data.facts : [""],
-        socialMedias: socialMedias,
-      });
-    } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to load connection");
-      navigation.goBack();
-    } finally {
-      setLoadingConnection(false);
-    }
-  };
+  const trpcUtils = trpc.useUtils();
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -97,36 +70,62 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
       (sm) => !sm.handle.trim()
     );
     if (invalidSocialMedias.length > 0) {
-      newErrors.socialMedias =
-        "All social media entries must have a handle/username";
+      newErrors.socialMedias = "All social media entries must have valid input";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!validateForm()) return;
 
-    try {
-      const validFacts = formData.facts.filter((fact) => fact.trim());
-      const validSocialMedias = formData.socialMedias.filter((sm) =>
-        sm.handle.trim()
-      );
+    const validFacts = formData.facts.filter((fact) => fact.trim());
+    const validSocialMedias = formData.socialMedias.filter((sm) =>
+      sm.handle.trim()
+    );
 
-      await updateConnection(connectionId, {
+    updateConnection(
+      {
+        id: connectionId,
         name: formData.name.trim(),
         metAt: formData.metAt.trim(),
         facts: validFacts, // Can be empty array
         socialMedias: validSocialMedias,
-      });
+      },
+      {
+        onSuccess: (updatedConnection) => {
+          // Update getById cache
+          trpcUtils.linkbase.connections.getById.setData(
+            { id: connectionId },
+            updatedConnection
+          );
 
-      Alert.alert("Success", "Connection updated successfully!", [
-        { text: "OK", onPress: () => navigation.goBack() },
-      ]);
-    } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to update connection");
-    }
+          // Update getAll cache - we need to update the connection in all paginated results
+          updateInfiniteQueryDataOnEdit(
+            trpcUtils,
+            ["linkbase", "connections", "getAll"],
+            connectionId,
+            updatedConnection
+          );
+
+          // Update search cache - we need to update the connection in all search results
+          updateInfiniteQueryDataOnEdit(
+            trpcUtils,
+            ["linkbase", "connections", "search"],
+            connectionId,
+            updatedConnection
+          );
+
+          Alert.alert("Success", "Connection updated successfully!", [
+            { text: "OK", onPress: () => navigation.goBack() },
+          ]);
+        },
+        onError: (error) => {
+          Alert.alert("Error", error.message || "Failed to update connection");
+        },
+      }
+    );
   };
 
   const addFactField = () => {
@@ -158,7 +157,17 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
     }));
   };
 
-  if (loadingConnection) {
+  useEffect(() => {
+    if (!connection) return;
+    setFormData({
+      name: connection.name,
+      metAt: connection.metAt,
+      facts: connection.facts,
+      socialMedias: connection.socialMedias,
+    });
+  }, [connection]);
+
+  if (isLoadingConnection) {
     return (
       <LinearGradient colors={["#0a0d14", "#1e293b"]} style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
@@ -273,9 +282,11 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
                 style={styles.cancelButton}
               />
               <Button
-                title={loading ? "Updating..." : "Update Connection"}
+                title={
+                  isUpdatingConnection ? "Updating..." : "Update Connection"
+                }
                 onPress={handleSubmit}
-                disabled={loading}
+                disabled={isUpdatingConnection}
                 style={styles.submitButton}
               />
             </View>

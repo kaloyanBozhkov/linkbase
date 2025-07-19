@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { User } from "./useConnectionStore";
+import type { User } from "~/src/types";
 
-const USER_ID_KEY = "linkbase_user_id_05-07-2025";
+const USER_ID_KEY = "linkbase_user_id_15-07-2025";
 interface SessionUserStore {
   userId: string | null;
   isInitializing: boolean;
@@ -18,7 +18,6 @@ export const useSessionUserStore = create<SessionUserStore>((set, get) => ({
   userId: null,
   isInitializing: false,
   isInitialLoading: true,
-
   getStoredUserId: async (): Promise<string | null> => {
     try {
       const storedUserId = await AsyncStorage.getItem(USER_ID_KEY);
@@ -48,6 +47,8 @@ export const useSessionUserStore = create<SessionUserStore>((set, get) => ({
     try {
       set({ isInitializing: true });
       const storedUserId = await get().getStoredUserId();
+      console.log("storedUserId", storedUserId);
+      debugger;
       if (storedUserId) {
         set({
           userId: storedUserId,
@@ -58,8 +59,9 @@ export const useSessionUserStore = create<SessionUserStore>((set, get) => ({
       }
 
       const userId = await onInitialized();
-      console.log("userId", userId);
+      if (!userId) return;
       set({ userId, isInitializing: false, isInitialLoading: false });
+      await get().saveUserId(userId);
     } catch (error) {
       console.error("Error initializing userId from AsyncStorage:", error);
     }
