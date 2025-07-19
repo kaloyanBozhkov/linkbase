@@ -1,11 +1,12 @@
 {
   "version": 2,
   "buildCommand": "pnpm build",
-  "functions": {
-    "dist/src/index.js": {
-      "runtime": "nodejs22.x"
+  "builds": [
+    {
+      "src": "dist/src/index.js",
+      "use": "@vercel/node"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/(.*)",
