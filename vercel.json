@@ -1,10 +1,6 @@
 {
+  "version": 2,
   "installCommand": "pnpm install && cd packages/prisma && pnpm db:generate",
   "buildCommand": "pnpm run vercel-build",
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "backend/dist/src/index.js"
-    }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
 }
