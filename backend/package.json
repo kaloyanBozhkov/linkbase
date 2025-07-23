@@ -47,7 +47,6 @@
     "webpack-node-externals": "^3.0.0"
   },
   "engines": {
-    "node": "22.x",
-    "pnpm": ">=9"
+    "node": "22.x"
   }
 }
