@@ -30,11 +30,18 @@ jobs:
       - name: Build backend
         run: pnpm build:backend
 
-      - name: Upload backend dist folder to VPS
+          
+      - name: Create ecosystem.config.js from template
+        run: |
+          sed "s|__DATABASE_URL__|${{ secrets.DATABASE_URL }}|" backend/ecosystem.config.template.js > backend/ecosystem.config.js
+      
+      - name: Upload backend dist folder and ecosystem.config.js to VPS
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "backend/dist/"
+          source: "backend/dist/,backend/ecosystem.config.js"
           target: ${{ secrets.REMOTE_DIR }}
+
+      
