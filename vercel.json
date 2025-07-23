@@ -1,4 +1,4 @@
 {
-  "installCommand": "cd packages/prisma && pnpm install && cd ../../backend && pnpm install",
+  "installCommand": "pnpm install",
   "buildCommand": "pnpm run vercel-build"
 }
