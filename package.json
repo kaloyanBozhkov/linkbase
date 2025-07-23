@@ -23,7 +23,7 @@
     "db:generate": "cd packages/prisma && pnpm run db:generate",
     "db:studio": "cd packages/prisma && pnpm run db:studio",
     "db:reset": "cd packages/prisma && pnpm run db:reset",
-    "vercel-build": "cd packages/prisma && pnpm build"
+    "vercel-build": "pnpm db:generate && cd backend && pnpm build"
   },
   "devDependencies": {
     "@types/react": "~19.0.14",
