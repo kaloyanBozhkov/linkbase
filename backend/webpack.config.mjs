@@ -28,7 +28,8 @@ export default (_env, argv) => {
           path.resolve(__dirname, "..", "packages", "prisma", "node_modules"),
         ],
         importType: "commonjs",
-        allowlist: [/^@linkbase\/.*/, "superjson"],
+        // Allow Prisma client to be bundled instead of externalized
+        allowlist: [/^@linkbase\/.*/, "superjson", "@prisma/client"],
       }),
     ],
     entry: path.join(__dirname, "src", "index.ts"),
@@ -55,6 +56,30 @@ process.env.RELEASE_HASH = ${JSON.stringify(process.env.RELEASE_HASH)};`,
             from: "*.html",
             to: path.join(__dirname, "dist", "src", "pages"),
             context: path.join(__dirname, "src", "pages"),
+          },
+          // Copy entire Prisma client directory to maintain structure
+          {
+            from: path.join(__dirname, "..", "packages", "prisma", "client"),
+            to: path.join(__dirname, "dist", "packages", "prisma", "client"),
+            globOptions: {
+              ignore: ["**/node_modules/**"],
+            },
+          },
+          // Also copy to node_modules location where Prisma might look
+          {
+            from: path.join(__dirname, "..", "packages", "prisma", "client"),
+            to: path.join(__dirname, "dist", "node_modules", "@prisma", "client"),
+            globOptions: {
+              ignore: ["**/node_modules/**"],
+            },
+          },
+          // Copy to .prisma location as fallback
+          {
+            from: path.join(__dirname, "..", "packages", "prisma", "client"),
+            to: path.join(__dirname, "dist", "node_modules", ".prisma", "client"),
+            globOptions: {
+              ignore: ["**/node_modules/**"],
+            },
           },
         ],
       }),
