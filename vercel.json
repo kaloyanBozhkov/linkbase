@@ -3,9 +3,9 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "./dist/src/index.js"
+      "dest": "backend/dist/src/index.js"
     }
   ],
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm run build"
+  "buildCommand": "pnpm run vercel-build"
 }
