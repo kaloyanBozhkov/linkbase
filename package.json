@@ -30,8 +30,7 @@
     "concurrently": "^8.2.2"
   },
   "engines": {
-    "node": "22.x",
-    "pnpm": ">=9"
+    "node": "22.x"
   },
   "keywords": [
     "react-native",
