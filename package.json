@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm run build:backend && pnpm run build:app",
-    "build:backend": "cd backend && pnpm run build",
+    "build:backend": "pnpm db:generate && cd backend && pnpm run build",
     "build:app": "cd app && npx expo build",
     "type-check": "pnpm run type-check:backend && pnpm run type-check:app",
     "type-check:backend": "cd backend && pnpm run type-check",

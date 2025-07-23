@@ -1,6 +1,0 @@
-{
-  "version": 2,
-  "installCommand": "pnpm install && cd packages/prisma && pnpm db:generate",
-  "buildCommand": "pnpm run vercel-build",
-  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
-}
