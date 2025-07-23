@@ -1,4 +1,4 @@
-import { getApiBaseUrl } from "~/src/api.config";
+import { getApiBaseUrl } from "@linkbase/shared/src/api.config";
 
 export const API_CONFIG = {
   BASE_URL: getApiBaseUrl(__DEV__),

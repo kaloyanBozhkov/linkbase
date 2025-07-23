@@ -87,7 +87,6 @@ process.env.RELEASE_HASH = ${JSON.stringify(process.env.RELEASE_HASH)};`,
           test: /\.[jt]sx?$/i,
           exclude: [
             /node_modules/,
-            /packages\/prisma\/client/,
           ],
           use: {
             loader: "swc-loader",

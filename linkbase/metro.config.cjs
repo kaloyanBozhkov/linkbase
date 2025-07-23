@@ -9,7 +9,7 @@ const packagesRoot = path.resolve(workspaceRoot, "packages");
 const sharedRoot = path.resolve(packagesRoot, "shared");
 const prismaRoot = path.resolve(packagesRoot, "prisma");
 
-const config = getDefaultConfig(__dirname);
+const config = getDefaultConfig(projectRoot);
 config.watchFolders = [packagesRoot];
 
 config.resolver.nodeModulesPaths = [

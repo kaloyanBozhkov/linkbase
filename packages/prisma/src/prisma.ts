@@ -1,4 +1,4 @@
-import { PrismaClient } from "../client";
+import { PrismaClient } from "../client/client";
 import { env } from "./env";
 
 // Shared Prisma client instance

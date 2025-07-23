@@ -17,7 +17,7 @@ import Input from "../components/atoms/Input";
 import ConnectionCard from "../components/molecules/ConnectionCard";
 import { rateApp } from "../hooks/useRateApp";
 import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
-import { minutesToMillis } from "~/src/duration";
+import { minutesToMillis } from "@linkbase/shared/src/duration";
 import { getInfiniteQueryItems } from "@/hooks/getInfiniteQueryItems";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
