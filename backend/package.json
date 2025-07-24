@@ -8,7 +8,8 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "pnpm clean && webpack --mode production",
-    "dev": "webpack --mode development --watch"
+    "dev": "webpack --mode development --watch",
+    "db:generate": "cd ../packages/prisma && pnpm run db:generate"
   },
   "keywords": [
     "linkbase",
