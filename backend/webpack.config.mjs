@@ -28,8 +28,12 @@ export default (_env, argv) => {
           path.resolve(__dirname, "..", "packages", "prisma", "node_modules"),
         ],
         importType: "commonjs",
-        // Allow Prisma client to be bundled instead of externalized
-        allowlist: [/^@linkbase\/.*/, "superjson", "@prisma/client"],
+        // Bundle all npm packages, only externalize workspace packages  
+        allowlist: [/.*/], // Bundle everything by default
+        // Only externalize our workspace packages (they're handled by aliases and copying)
+        externals: [
+          /^@linkbase\/.*/
+        ],
       }),
     ],
     entry: path.join(__dirname, "src", "index.ts"),
