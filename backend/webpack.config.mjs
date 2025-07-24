@@ -28,11 +28,10 @@ export default (_env, argv) => {
           path.resolve(__dirname, "..", "packages", "prisma", "node_modules"),
         ],
         importType: "commonjs",
-        // Bundle all npm packages, only externalize workspace packages  
-        allowlist: [/.*/], // Bundle everything by default
-        // Only externalize our workspace packages (they're handled by aliases and copying)
-        externals: [
-          /^@linkbase\/.*/
+        // Bundle everything except @prisma/client binaries
+        allowlist: [
+          // Bundle all packages including @linkbase/* (webpack will compile TS)
+          /.*/,
         ],
       }),
     ],
@@ -61,26 +60,10 @@ process.env.RELEASE_HASH = ${JSON.stringify(process.env.RELEASE_HASH)};`,
             to: path.join(__dirname, "dist", "src", "pages"),
             context: path.join(__dirname, "src", "pages"),
           },
-          // Copy entire Prisma client directory to maintain structure
+          // Copy entire Prisma client directory (binaries + schema)
           {
             from: path.join(__dirname, "..", "packages", "prisma", "client"),
             to: path.join(__dirname, "dist", "packages", "prisma", "client"),
-            globOptions: {
-              ignore: ["**/node_modules/**"],
-            },
-          },
-          // Also copy to node_modules location where Prisma might look
-          {
-            from: path.join(__dirname, "..", "packages", "prisma", "client"),
-            to: path.join(__dirname, "dist", "node_modules", "@prisma", "client"),
-            globOptions: {
-              ignore: ["**/node_modules/**"],
-            },
-          },
-          // Copy to .prisma location as fallback
-          {
-            from: path.join(__dirname, "..", "packages", "prisma", "client"),
-            to: path.join(__dirname, "dist", "node_modules", ".prisma", "client"),
             globOptions: {
               ignore: ["**/node_modules/**"],
             },
