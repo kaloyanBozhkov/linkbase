@@ -87,11 +87,15 @@ export const linkbaseRouter = createTRPCRouter({
     search: protectedProcedure
       .input(
         z.object({
-          query: z.string().min(1, "Search query is required"),
+          query: z.string(),
           cursor: z.number().default(0),
         })
       )
       .query(async ({ ctx: { userId }, input: { query, cursor } }) => {
+        if (!query.trim()) {
+          return infiniteResponse([], cursor, PAGE_SIZE);
+        }
+
         const connections = await searchConnectionsQuery({
           query,
           cursor,

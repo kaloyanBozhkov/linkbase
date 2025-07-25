@@ -8,18 +8,18 @@ import {
   RefreshControl,
   SafeAreaView,
   ActivityIndicator,
+  TextInput,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../App";
 import Button from "../components/atoms/Button";
-import Input from "../components/atoms/Input";
 import ConnectionCard from "../components/molecules/ConnectionCard";
+import SearchInputWrapper from "../components/molecules/SearchInputWrapper";
 import { rateApp } from "../hooks/useRateApp";
 import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
 import { minutesToMillis } from "@linkbase/shared/src/duration";
 import { getInfiniteQueryItems } from "@/hooks/getInfiniteQueryItems";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -36,19 +36,47 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     }
   );
+  
   const { mutateAsync: deleteConnection } =
     trpc.linkbase.connections.delete.useMutation();
+  
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const debouncedSearchText = useDebouncedValue(searchQuery, 500);
+  const [isSearching, setIsSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const searchItemsQuery = trpc.linkbase.connections.search.useInfiniteQuery(
-    { query: debouncedSearchText },
+    { query: searchQuery },
     {
       staleTime: minutesToMillis(2),
       getNextPageParam: (lastPage) => lastPage.nextCursor,
-      enabled: !debouncedSearchText,
+      enabled: false,
     }
   );
+
+  // Handle search state changes
+  useEffect(() => {
+    if (searchItemsQuery.data && isSearching) {
+      setIsSearching(false);
+      setHasSearched(true);
+    }
+  }, [searchItemsQuery.data, isSearching]);
+
+  useEffect(() => {
+    if (searchItemsQuery.error && isSearching) {
+      setIsSearching(false);
+      setHasSearched(true);
+    }
+  }, [searchItemsQuery.error, isSearching]);
+
+  // Auto-clear search when input becomes empty after a search
+  useEffect(() => {
+    if (!searchQuery.trim() && hasSearched) {
+      setHasSearched(false);
+      setIsSearching(false);
+    }
+  }, [searchQuery, hasSearched]);
+  
+  // Use search results if we've searched, otherwise use all connections
   const {
     data: connectionsData,
     isLoading: isLoadingConnections,
@@ -56,21 +84,35 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
-  } = debouncedSearchText ? searchItemsQuery : getAllQuery;
-  const connections = getInfiniteQueryItems(connectionsData);
+  } = hasSearched ? searchItemsQuery : getAllQuery;
+  
+  const connections = hasSearched ? getInfiniteQueryItems(searchItemsQuery.data) : getInfiniteQueryItems(connectionsData);
 
   useEffect(() => {
     if (!connections.length) return;
     rateApp();
   }, [connections]);
 
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    
+    setIsSearching(true);
+    searchItemsQuery.refetch();
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setHasSearched(false);
+    setIsSearching(false);
+  };
+
   const handleRefresh = async () => {
     setRefreshing(true);
-    // Respect current search state - if searching, re-run search; if not, fetch all
-    if (debouncedSearchText.trim()) {
-      await trpcUtils.linkbase.connections.search.invalidate();
+    if (hasSearched && searchQuery.trim()) {
+      // Re-run the search
+      await searchItemsQuery.refetch();
     } else {
-      // No search active, fetch all connections
+      // Fetch all connections
       await trpcUtils.linkbase.connections.getAll.invalidate();
     }
     setRefreshing(false);
@@ -95,6 +137,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                     ["linkbase", "connections", "getAll"],
                     id
                   );
+                  // Also update search results if we're in search mode
+                  if (hasSearched) {
+                    updateInfiniteQueryDataOnDelete(
+                      trpcUtils,
+                      ["linkbase", "connections", "search"],
+                      id
+                    );
+                  }
                 },
                 onError: (error) => {
                   Alert.alert(
@@ -129,14 +179,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Text style={styles.emptyStateTitle}>
-        {debouncedSearchText ? "🔍 No Results" : "🌟 Start Building"}
+        {hasSearched ? "🔍 No Results" : "🌟 Start Building"}
       </Text>
       <Text style={styles.emptyStateText}>
-        {debouncedSearchText
+        {hasSearched
           ? "No connections found matching your search. Try different keywords."
           : "Your connection network is empty. Add your first connection and start building meaningful relationships!"}
       </Text>
-      {!debouncedSearchText && (
+      {!hasSearched && (
         <Button
           title="Add First Connection"
           onPress={() => navigation.navigate("AddConnection")}
@@ -145,6 +195,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       )}
     </View>
   );
+
+
 
   if (errorConnections) {
     return (
@@ -156,9 +208,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             <Button
               title="Try Again"
               onPress={() => {
-                // Respect current search state when retrying
-                if (debouncedSearchText) {
-                  trpcUtils.linkbase.connections.getAll.invalidate();
+                if (hasSearched && searchQuery.trim()) {
+                  searchItemsQuery.refetch();
                 } else {
                   trpcUtils.linkbase.connections.getAll.invalidate();
                 }
@@ -177,12 +228,25 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.headerTitle}>Linkbase</Text>
           <Text style={styles.headerSubtitle}>Your Connection Network</Text>
 
-          <Input
-            placeholder="Search connections by name or facts..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            containerStyle={styles.searchContainer}
-          />
+          <SearchInputWrapper
+            isSearching={isSearching}
+            hasSearched={hasSearched}
+            searchQuery={searchQuery}
+            onSearch={handleSearch}
+            onClear={handleClearSearch}
+            containerStyle={styles.searchContainerWrapper}
+          >
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search by facts or questions..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholderTextColor="#64748b"
+              onSubmitEditing={handleSearch}
+              returnKeyType="search"
+            />
+          </SearchInputWrapper>
+
           <Button
             title="Add Connection"
             onPress={() => navigation.navigate("AddConnection")}
@@ -258,8 +322,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontWeight: "500",
   },
-  searchContainer: {
+  searchContainerWrapper: {
     marginBottom: 16,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: "#e2e8f0",
+    paddingRight: 8,
   },
   addButton: {
     marginTop: 4,
