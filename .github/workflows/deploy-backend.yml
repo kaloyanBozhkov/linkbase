@@ -8,6 +8,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    
+    # Define SSH connection details once at job level
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
 
     steps:
       - name: Checkout code
@@ -40,21 +47,21 @@ jobs:
       - name: Upload Docker image and deployment files to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USER }}
+          key: ${{ env.SSH_KEY }}
           source: "backend/linkbase-backend.tar,backend/docker-compose.yml,backend/.env.production"
-          target: ${{ secrets.REMOTE_DIR }}
+          target: ${{ env.REMOTE_DIR }}
           strip_components: 1
 
       - name: Deploy on VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USER }}
+          key: ${{ env.SSH_KEY }}
           script: |
-            cd ${{ secrets.REMOTE_DIR }}
+            cd ${{ env.REMOTE_DIR }}
             
             # Load the new Docker image
             docker load < linkbase-backend.tar
