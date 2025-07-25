@@ -11,7 +11,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
-import { SocialMedia, SocialMediaType } from "@linkbase/prisma/client";
+import type { SocialMedia } from "@linkbase/prisma";
+import { SocialMediaType } from "@linkbase/prisma/client/enums";
 import { socialMediaDisplayNames } from "@/helpers/constants";
 
 interface SocialMediaSectionProps {

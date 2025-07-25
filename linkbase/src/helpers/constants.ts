@@ -1,4 +1,4 @@
-import { SocialMediaType } from "@linkbase/prisma/client";
+import { SocialMediaType } from "@linkbase/prisma/client/enums";
 
 export const socialMediaDisplayNames: Record<SocialMediaType, string> = {
   [SocialMediaType.EMAIL]: "Email",

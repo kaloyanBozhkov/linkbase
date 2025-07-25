@@ -2,4 +2,4 @@
 export { prisma } from "./prisma";
 
 // Export all types from the generated client
-export * from "../client/client"; 
+export * from "../client/client";
