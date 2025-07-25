@@ -20,6 +20,7 @@ import { rateApp } from "../hooks/useRateApp";
 import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
 import { minutesToMillis } from "@linkbase/shared/src/duration";
 import { getInfiniteQueryItems } from "@/hooks/getInfiniteQueryItems";
+import { colors, typography, borderRadius } from "@/theme/colors";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -200,7 +201,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   if (errorConnections) {
     return (
-      <LinearGradient colors={["#0a0d14", "#1e293b"]} style={styles.container}>
+      <LinearGradient colors={colors.gradients.background} style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.errorContainer}>
             <Text style={styles.errorTitle}>⚠️ Connection Error</Text>
@@ -239,7 +240,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           placeholder="Search by facts or questions..."
           value={searchQuery}
           onChangeText={setSearchQuery}
-          placeholderTextColor="#64748b"
+          placeholderTextColor={colors.text.muted}
           onSubmitEditing={handleSearch}
           returnKeyType="search"
         />
@@ -254,12 +255,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   );
 
   return (
-    <LinearGradient colors={["#0a0d14", "#1e293b"]} style={styles.container}>
+    <LinearGradient colors={colors.gradients.background} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         {actionsHeader}
         {isLoadingConnections ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#00f5ff" />
+            <ActivityIndicator size="large" color={colors.loading} />
           </View>
         ) : (
           <FlatList
@@ -272,8 +273,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
-                tintColor="#00f5ff"
-                colors={["#00f5ff", "#bf00ff"]}
+                tintColor={colors.loading}
+                colors={[colors.loading, colors.secondary[500]]}
               />
             }
             showsVerticalScrollIndicator={false}
@@ -284,7 +285,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             onEndReachedThreshold={0.5}
             ListFooterComponent={() =>
               isFetchingNextPage && hasNextPage ? (
-                <ActivityIndicator size="large" color="#00f5ff" />
+                <ActivityIndicator size="large" color={colors.loading} />
               ) : null
             }
           />
@@ -310,28 +311,28 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#334155",
+    borderBottomColor: colors.border.light,
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: "#e2e8f0",
+    fontSize: typography.size['5xl'],
+    fontWeight: typography.weight.extrabold,
+    color: colors.text.primary,
     marginBottom: 4,
-    letterSpacing: 1,
+    letterSpacing: typography.letterSpacing.wider,
   },
   headerSubtitle: {
-    fontSize: 16,
-    color: "#64748b",
+    fontSize: typography.size.xl,
+    color: colors.text.muted,
     marginBottom: 20,
-    fontWeight: "500",
+    fontWeight: typography.weight.medium,
   },
   searchContainerWrapper: {
     marginBottom: 16,
   },
   searchInput: {
     flex: 1,
-    fontSize: 16,
-    color: "#e2e8f0",
+    fontSize: typography.size.xl,
+    color: colors.text.primary,
     paddingRight: 8,
   },
   addButton: {
@@ -348,15 +349,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   emptyStateTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#e2e8f0",
+    fontSize: typography.size['4xl'],
+    fontWeight: typography.weight.bold,
+    color: colors.text.primary,
     marginBottom: 12,
     textAlign: "center",
   },
   emptyStateText: {
-    fontSize: 16,
-    color: "#64748b",
+    fontSize: typography.size.xl,
+    color: colors.text.muted,
     textAlign: "center",
     marginBottom: 32,
     lineHeight: 24,
@@ -371,15 +372,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   errorTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#e2e8f0",
+    fontSize: typography.size['4xl'],
+    fontWeight: typography.weight.bold,
+    color: colors.text.primary,
     marginBottom: 12,
     textAlign: "center",
   },
   errorText: {
-    fontSize: 16,
-    color: "#dc2626",
+    fontSize: typography.size.xl,
+    color: colors.text.error,
     textAlign: "center",
     marginBottom: 32,
     lineHeight: 24,

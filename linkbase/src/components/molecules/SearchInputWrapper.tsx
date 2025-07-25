@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { colors, shadows, borderRadius } from "@/theme/colors";
 
 interface SearchInputWrapperProps {
   children: React.ReactNode;
@@ -28,13 +29,13 @@ const SearchInputWrapper: React.FC<SearchInputWrapperProps> = ({
 }) => {
   const renderIcon = () => {
     if (isSearching) {
-      return <ActivityIndicator size={20} color="#00f5ff" style={{ marginTop: 4, marginBottom: 4 }} />;
+      return <ActivityIndicator size={20} color={colors.loading} style={{ marginTop: 4, marginBottom: 4 }} />;
     }
     
     if (hasSearched) {
       return (
         <TouchableOpacity onPress={onClear} style={styles.iconButton}>
-          <Ionicons name="close" size={20} color="#64748b" />
+          <Ionicons name="close" size={20} color={colors.text.muted} />
         </TouchableOpacity>
       );
     }
@@ -48,7 +49,7 @@ const SearchInputWrapper: React.FC<SearchInputWrapperProps> = ({
         <Ionicons 
           name="search" 
           size={20} 
-          color={searchQuery.trim() ? "#64748b" : "#475569"} 
+          color={searchQuery.trim() ? colors.text.muted : colors.text.disabled} 
         />
       </TouchableOpacity>
     );
@@ -67,19 +68,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#475569",
-    borderRadius: 12,
-    backgroundColor: "#1e293b",
+    borderColor: colors.border.default,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
+    ...shadows.sm,
   },
   iconButton: {
     padding: 4,

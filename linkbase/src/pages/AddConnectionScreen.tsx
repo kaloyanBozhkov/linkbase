@@ -17,8 +17,9 @@ import SocialMediaSection from "../components/molecules/SocialMediaSection";
 import { useSessionUserStore } from "../hooks/useGetSessionUser";
 import { camelCaseWords } from "../helpers/utils";
 import { enableRateApp } from "../hooks/useRateApp";
-import type { SocialMedia } from "@linkbase/prisma/client";
+import type { SocialMedia } from "@linkbase/prisma";
 import { trpc, updateInfiniteQueryDataOnAdd } from "@/utils/trpc";
+import { colors, typography, borderRadius } from "@/theme/colors";
 
 type AddConnectionScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -141,7 +142,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient colors={["#0a0d14", "#1e293b"]} style={styles.container}>
+    <LinearGradient colors={colors.gradients.background} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Add New Connection</Text>
@@ -193,7 +194,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
 
             <View style={styles.factsSection}>
               <LinearGradient
-                colors={["#1e293b", "#334155"]}
+                colors={colors.gradients.section}
                 style={styles.factsSectionContent}
               >
                 <Text style={styles.factsTitle}>💡 Notes (Optional)</Text>
@@ -262,19 +263,19 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#334155",
+    borderBottomColor: colors.border.light,
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: "#e2e8f0",
+    fontSize: typography.size['5xl'],
+    fontWeight: typography.weight.extrabold,
+    color: colors.text.primary,
     marginBottom: 4,
-    letterSpacing: 0.5,
+    letterSpacing: typography.letterSpacing.wide,
   },
   headerSubtitle: {
-    fontSize: 16,
-    color: "#64748b",
-    fontWeight: "500",
+    fontSize: typography.size.xl,
+    color: colors.text.muted,
+    fontWeight: typography.weight.medium,
   },
   scrollView: {
     flex: 1,
@@ -287,16 +288,16 @@ const styles = StyleSheet.create({
   },
   factsSectionContent: {
     padding: 20,
-    borderRadius: 16,
+    borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: "#474a57",
+    borderColor: colors.border.default,
   },
   factsTitle: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: typography.size['2xl'],
+    fontWeight: typography.weight.bold,
     marginBottom: 16,
-    color: "#00f5ff",
-    letterSpacing: 0.5,
+    color: colors.text.accent,
+    letterSpacing: typography.letterSpacing.wide,
   },
   factRow: {
     flexDirection: "row",
@@ -327,10 +328,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   errorText: {
-    color: "#dc2626",
-    fontSize: 14,
+    color: colors.text.error,
+    fontSize: typography.size.base,
     marginBottom: 12,
-    fontWeight: "500",
+    fontWeight: typography.weight.medium,
   },
 });
 

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TextInputProps,
 } from "react-native";
+import { colors, shadows, typography, borderRadius } from "@/theme/colors";
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -34,7 +35,7 @@ const Input: React.FC<InputProps> = ({
         ]}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        placeholderTextColor="#64748b"
+        placeholderTextColor={colors.input.placeholder}
         {...props}
       />
       {error && <Text style={styles.errorText}>{error}</Text>}
@@ -47,47 +48,40 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: typography.size.xl,
+    fontWeight: typography.weight.semibold,
     marginBottom: 8,
-    color: "#e2e8f0",
-    letterSpacing: 0.5,
+    color: colors.input.label,
+    letterSpacing: typography.letterSpacing.wide,
   },
   input: {
     borderWidth: 2,
-    borderColor: "#475569",
-    borderRadius: 12,
+    borderColor: colors.input.border,
+    borderRadius: borderRadius.md,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    fontSize: 16,
-    backgroundColor: "#1e293b",
-    color: "#e2e8f0",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
+    fontSize: typography.size.xl,
+    backgroundColor: colors.input.background,
+    color: colors.input.text,
+    ...shadows.sm,
   },
   inputFocused: {
-    borderColor: "#00f5ff",
-    shadowColor: "#00f5ff",
+    borderColor: colors.input.borderFocus,
+    shadowColor: colors.input.borderFocus,
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 6,
   },
   inputError: {
-    borderColor: "#dc2626",
-    shadowColor: "#dc2626",
+    borderColor: colors.input.borderError,
+    shadowColor: colors.input.borderError,
     shadowOpacity: 0.3,
   },
   errorText: {
-    color: "#dc2626",
-    fontSize: 14,
+    color: colors.text.error,
+    fontSize: typography.size.base,
     marginTop: 6,
-    fontWeight: "500",
+    fontWeight: typography.weight.medium,
   },
 });
 

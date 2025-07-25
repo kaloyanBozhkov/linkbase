@@ -12,6 +12,7 @@ import Button from "../atoms/Button";
 import type { RouterOutput } from "@linkbase/backend/src/trpc/routers";
 import { socialMediaDisplayNames } from "@/helpers/constants";
 import { formatDate } from "@linkbase/shared/src/date";
+import { colors, shadows, typography, borderRadius } from "@/theme/colors";
 
 interface ConnectionCardProps {
   connection: NonNullable<RouterOutput["linkbase"]["connections"]["getById"]>;
@@ -45,7 +46,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
       style={styles.cardContainer}
     >
       <LinearGradient
-        colors={["#1e293b", "#334155"]}
+        colors={colors.gradients.section}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.card}
@@ -64,7 +65,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
                     style={styles.socialMediaItem}
                   >
                     <LinearGradient
-                      colors={["#00f5ff", "#bf00ff"]}
+                      colors={colors.gradients.primary}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       style={styles.socialMediaGradient}
@@ -150,18 +151,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   card: {
-    borderRadius: 16,
+    borderRadius: borderRadius.lg,
     padding: 20,
     borderWidth: 1,
-    borderColor: "#475569",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 8,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
+    borderColor: colors.border.default,
+    ...shadows.lg,
   },
   cardHeader: {
     flexDirection: "row",
@@ -173,11 +167,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#e2e8f0",
+    fontSize: typography.size['3xl'],
+    fontWeight: typography.weight.bold,
+    color: colors.text.primary,
     marginBottom: 8,
-    letterSpacing: 0.5,
+    letterSpacing: typography.letterSpacing.wide,
   },
   socialMediaContainer: {
     flexDirection: "row",
@@ -191,34 +185,34 @@ const styles = StyleSheet.create({
   socialMediaGradient: {
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 8,
+    borderRadius: borderRadius.sm,
   },
   socialMediaText: {
-    fontSize: 11,
-    color: "#0a0d14",
-    fontWeight: "600",
+    fontSize: typography.size.xs,
+    color: colors.text.onAccent,
+    fontWeight: typography.weight.semibold,
   },
   moreSocialMedia: {
-    backgroundColor: "#475569",
+    backgroundColor: colors.border.default,
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 8,
+    borderRadius: borderRadius.sm,
   },
   moreSocialMediaText: {
-    fontSize: 11,
-    color: "#cbd5e1",
-    fontWeight: "600",
+    fontSize: typography.size.xs,
+    color: colors.text.secondary,
+    fontWeight: typography.weight.semibold,
   },
   dateContainer: {
-    backgroundColor: "#475569",
+    backgroundColor: colors.border.default,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 20,
+    borderRadius: borderRadius.full,
   },
   date: {
-    fontSize: 12,
-    color: "#cbd5e1",
-    fontWeight: "500",
+    fontSize: typography.size.sm,
+    color: colors.text.secondary,
+    fontWeight: typography.weight.medium,
   },
   cardBody: {
     marginBottom: 16,
@@ -227,36 +221,36 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
-    backgroundColor: "#0f172a",
+    backgroundColor: colors.background.surface,
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 12,
+    borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: "#334155",
+    borderColor: colors.border.light,
   },
   locationIcon: {
-    fontSize: 16,
+    fontSize: typography.size.xl,
     marginRight: 8,
   },
   location: {
-    fontSize: 15,
-    color: "#cbd5e1",
-    fontWeight: "500",
+    fontSize: typography.size.lg,
+    color: colors.text.secondary,
+    fontWeight: typography.weight.medium,
     flex: 1,
   },
   factsContainer: {
-    backgroundColor: "#0f172a",
+    backgroundColor: colors.background.surface,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: "#334155",
+    borderColor: colors.border.light,
   },
   factsLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#00f5ff",
+    fontSize: typography.size.xl,
+    fontWeight: typography.weight.semibold,
+    color: colors.text.accent,
     marginBottom: 12,
-    letterSpacing: 0.5,
+    letterSpacing: typography.letterSpacing.wide,
   },
   factsList: {
     gap: 8,
@@ -269,26 +263,26 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#00f5ff",
+    backgroundColor: colors.text.accent,
     marginTop: 6,
     marginRight: 12,
   },
   fact: {
-    fontSize: 14,
-    color: "#cbd5e1",
+    fontSize: typography.size.base,
+    color: colors.text.secondary,
     lineHeight: 20,
     flex: 1,
   },
   moreFacts: {
-    fontSize: 13,
-    color: "#64748b",
+    fontSize: typography.size.sm,
+    color: colors.text.muted,
     fontStyle: "italic",
     marginTop: 8,
     textAlign: "center",
   },
   noFacts: {
-    fontSize: 13,
-    color: "#64748b",
+    fontSize: typography.size.sm,
+    color: colors.text.muted,
     fontStyle: "italic",
     marginTop: 8,
     textAlign: "center",

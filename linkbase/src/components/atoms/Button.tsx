@@ -7,6 +7,7 @@ import {
   TextStyle,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { colors, shadows, typography, borderRadius } from "@/theme/colors";
 
 interface ButtonProps {
   title?: string;
@@ -35,7 +36,7 @@ const Button: React.FC<ButtonProps> = ({
     if (variant === "primary") {
       return (
         <LinearGradient
-          colors={["#00f5ff", "#bf00ff"]}
+          colors={colors.button.primary.background}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={[
@@ -98,30 +99,16 @@ const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   gradientContainer: {
-    borderRadius: 12,
-    shadowColor: "#00f5ff",
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 8,
+    borderRadius: borderRadius.md,
+    ...shadows.accent,
   },
   button: {
-    borderRadius: 12,
+    borderRadius: borderRadius.md,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
     gap: 8,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+    ...shadows.md,
   },
   iconButton: {
     paddingHorizontal: 12,
@@ -133,19 +120,18 @@ const styles = StyleSheet.create({
     // This is handled by LinearGradient
   },
   secondary: {
-    backgroundColor: "#334155",
+    backgroundColor: colors.button.secondary.background,
     borderWidth: 1,
-    borderColor: "#475569",
+    borderColor: colors.button.secondary.border,
   },
   danger: {
-    backgroundColor: "#dc2626",
-    shadowColor: "#dc2626",
-    shadowOpacity: 0.4,
+    backgroundColor: colors.button.danger.background,
+    ...shadows.danger,
   },
   ghost: {
-    backgroundColor: "transparent",
+    backgroundColor: colors.button.ghost.background,
     borderWidth: 1,
-    borderColor: "#00f5ff",
+    borderColor: colors.button.ghost.border,
   },
   small: {
     paddingHorizontal: 16,
@@ -163,22 +149,22 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   text: {
-    fontWeight: "600",
-    fontSize: 16,
-    letterSpacing: 0.5,
+    fontWeight: typography.weight.semibold,
+    fontSize: typography.size.xl,
+    letterSpacing: typography.letterSpacing.wide,
   },
   primaryText: {
-    color: "#0a0d14",
-    fontWeight: "700",
+    color: colors.button.primary.text,
+    fontWeight: typography.weight.bold,
   },
   secondaryText: {
-    color: "#e2e8f0",
+    color: colors.button.secondary.text,
   },
   dangerText: {
-    color: "#ffffff",
+    color: colors.button.danger.text,
   },
   ghostText: {
-    color: "#00f5ff",
+    color: colors.button.ghost.text,
   },
 });
 

@@ -14,12 +14,7 @@ import Input from "../atoms/Input";
 import type { SocialMedia } from "@linkbase/prisma";
 import { SocialMediaType } from "@linkbase/prisma/client/enums";
 import { socialMediaDisplayNames } from "@/helpers/constants";
-
-interface SocialMediaSectionProps {
-  socialMedias: SocialMedia[];
-  onUpdateSocialMedias: (socialMedias: SocialMedia[]) => void;
-  error?: string;
-}
+import { colors, shadows, typography, borderRadius } from "@/theme/colors";
 
 // Validation functions
 const validateEmail = (email: string): boolean => {
@@ -58,6 +53,12 @@ const getInputConfig = (type: SocialMediaType) => {
       };
   }
 };
+
+interface SocialMediaSectionProps {
+  socialMedias: SocialMedia[];
+  onUpdateSocialMedias: (socialMedias: SocialMedia[]) => void;
+  error?: string;
+}
 
 const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
   socialMedias,
@@ -203,7 +204,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
           >
             <View style={styles.modalContent}>
               <LinearGradient
-                colors={["#0f172a", "#1e293b"]}
+                colors={colors.gradients.dark}
                 style={styles.pickerModal}
               >
                 <Text style={styles.pickerModalTitle}>Select Contact Type</Text>
@@ -242,7 +243,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
   return (
     <View style={styles.section}>
       <LinearGradient
-        colors={["#1e293b", "#334155"]}
+        colors={colors.gradients.section}
         style={styles.sectionContent}
       >
         <Text style={styles.sectionTitle}>🔗 Contact & Social (Optional)</Text>
@@ -316,26 +317,26 @@ const styles = StyleSheet.create({
   },
   sectionContent: {
     padding: 20,
-    borderRadius: 16,
+    borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: "#475569",
+    borderColor: colors.border.default,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: typography.size['2xl'],
+    fontWeight: typography.weight.bold,
     marginBottom: 16,
-    color: "#00f5ff",
-    letterSpacing: 0.5,
+    color: colors.text.accent,
+    letterSpacing: typography.letterSpacing.wide,
   },
   errorText: {
-    color: "#dc2626",
-    fontSize: 14,
+    color: colors.text.error,
+    fontSize: typography.size.base,
     marginBottom: 12,
-    fontWeight: "500",
+    fontWeight: typography.weight.medium,
   },
   emptyText: {
-    color: "#64748b",
-    fontSize: 14,
+    color: colors.text.muted,
+    fontSize: typography.size.base,
     fontStyle: "italic",
     marginBottom: 16,
     textAlign: "center",
@@ -343,10 +344,10 @@ const styles = StyleSheet.create({
   socialMediaRow: {
     marginBottom: 16,
     padding: 16,
-    backgroundColor: "#0f172a",
-    borderRadius: 12,
+    backgroundColor: colors.background.surface,
+    borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: "#334155",
+    borderColor: colors.border.light,
   },
   socialMediaContent: {
     flex: 1,
@@ -356,32 +357,32 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   pickerLabel: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: typography.size.xl,
+    fontWeight: typography.weight.semibold,
     marginBottom: 8,
-    color: "#e2e8f0",
-    letterSpacing: 0.5,
+    color: colors.text.primary,
+    letterSpacing: typography.letterSpacing.wide,
   },
   customPickerButton: {
-    backgroundColor: "#1e293b",
+    backgroundColor: colors.background.secondary,
     borderWidth: 2,
-    borderColor: "#475569",
-    borderRadius: 12,
+    borderColor: colors.border.default,
+    borderRadius: borderRadius.md,
     padding: 16,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   customPickerText: {
-    color: "#00f5ff",
-    fontSize: 16,
-    fontWeight: "500",
+    color: colors.text.accent,
+    fontSize: typography.size.xl,
+    fontWeight: typography.weight.medium,
     flex: 1,
   },
   customPickerArrow: {
-    color: "#00f5ff",
-    fontSize: 14,
-    fontWeight: "600",
+    color: colors.text.accent,
+    fontSize: typography.size.base,
+    fontWeight: typography.weight.semibold,
   },
   modalOverlay: {
     flex: 1,
@@ -392,41 +393,37 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "80%",
     maxHeight: "60%",
-    borderRadius: 16,
+    borderRadius: borderRadius.lg,
     overflow: "hidden",
-    elevation: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    ...shadows.lg,
   },
   pickerModal: {
     padding: 20,
   },
   pickerModalTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#00f5ff",
+    fontSize: typography.size['2xl'],
+    fontWeight: typography.weight.bold,
+    color: colors.text.accent,
     textAlign: "center",
     marginBottom: 16,
-    letterSpacing: 0.5,
+    letterSpacing: typography.letterSpacing.wide,
   },
   pickerOption: {
     padding: 16,
-    borderRadius: 8,
+    borderRadius: borderRadius.sm,
     marginBottom: 4,
   },
   pickerOptionSelected: {
-    backgroundColor: "#334155",
+    backgroundColor: colors.background.tertiary,
   },
   pickerOptionText: {
-    color: "#e2e8f0",
-    fontSize: 16,
-    fontWeight: "500",
+    color: colors.text.primary,
+    fontSize: typography.size.xl,
+    fontWeight: typography.weight.medium,
   },
   pickerOptionTextSelected: {
-    color: "#00f5ff",
-    fontWeight: "600",
+    color: colors.text.accent,
+    fontWeight: typography.weight.semibold,
   },
   handleInput: {
     marginBottom: 0,

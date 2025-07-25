@@ -18,6 +18,7 @@ import Button from "../components/atoms/Button";
 import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
 import { socialMediaDisplayNames } from "@/helpers/constants";
 import { formatDate } from "@linkbase/shared/src/date";
+import { colors, shadows, typography, borderRadius } from "@/theme/colors";
 
 type ConnectionDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -113,7 +114,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
   if (isLoading) {
     return (
-      <LinearGradient colors={["#0a0d14", "#1e293b"]} style={styles.container}>
+      <LinearGradient colors={colors.gradients.background} style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.centerContainer}>
             <Text style={styles.loadingText}>⚡ Loading...</Text>
@@ -125,7 +126,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
   if (error || !connection) {
     return (
-      <LinearGradient colors={["#0a0d14", "#1e293b"]} style={styles.container}>
+      <LinearGradient colors={colors.gradients.background} style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.centerContainer}>
             <Text style={styles.errorTitle}>⚠️ Error</Text>
@@ -142,7 +143,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   const socialMediasToShow = getSocialMediasToShow();
 
   return (
-    <LinearGradient colors={["#0a0d14", "#1e293b"]} style={styles.container}>
+    <LinearGradient colors={colors.gradients.background} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <ScrollView
           style={styles.scrollView}
@@ -151,7 +152,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           <View style={styles.content}>
             {/* Header Section */}
             <LinearGradient
-              colors={["#1e293b", "#334155"]}
+              colors={colors.gradients.section}
               style={styles.header}
             >
               <Text style={styles.name}>{connection.name}</Text>
@@ -160,7 +161,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             {/* Social Media Section */}
             {socialMediasToShow.length > 0 && (
               <LinearGradient
-                colors={["#1e293b", "#334155"]}
+                colors={colors.gradients.section}
                 style={styles.section}
               >
                 <Text style={styles.sectionTitle}>🔗 Social Media</Text>
@@ -174,7 +175,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                       style={styles.socialMediaItem}
                     >
                       <LinearGradient
-                        colors={["#00f5ff", "#bf00ff"]}
+                        colors={colors.gradients.primary}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                         style={styles.socialMediaGradient}
@@ -196,7 +197,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
             {/* Meeting Details */}
             <LinearGradient
-              colors={["#1e293b", "#334155"]}
+              colors={colors.gradients.section}
               style={styles.section}
             >
               <Text style={styles.sectionTitle}>🤝 Meeting Details</Text>
@@ -216,7 +217,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
             {/* Facts Section */}
             <LinearGradient
-              colors={["#1e293b", "#334155"]}
+              colors={colors.gradients.section}
               style={styles.section}
             >
               <Text style={styles.sectionTitle}>💡 Facts & Insights</Text>
@@ -232,7 +233,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
             {/* Timestamps */}
             <LinearGradient
-              colors={["#0f172a", "#1e293b"]}
+              colors={colors.gradients.dark}
               style={styles.timestampSection}
             >
               <Text style={styles.timestampTitle}>📊 Record Info</Text>
@@ -295,76 +296,62 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   loadingText: {
-    fontSize: 18,
-    color: "#00f5ff",
-    fontWeight: "600",
+    fontSize: typography.size['2xl'],
+    color: colors.text.accent,
+    fontWeight: typography.weight.semibold,
   },
   errorTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#e2e8f0",
+    fontSize: typography.size['4xl'],
+    fontWeight: typography.weight.bold,
+    color: colors.text.primary,
     marginBottom: 12,
     textAlign: "center",
   },
   errorText: {
-    fontSize: 16,
-    color: "#dc2626",
+    fontSize: typography.size.xl,
+    color: colors.text.error,
     textAlign: "center",
     marginBottom: 32,
     lineHeight: 24,
   },
   header: {
-    borderRadius: 16,
+    borderRadius: borderRadius.lg,
     padding: 24,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: "#475569",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 8,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
+    borderColor: colors.border.default,
+    ...shadows.lg,
   },
   name: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: "#e2e8f0",
+    fontSize: typography.size['5xl'],
+    fontWeight: typography.weight.extrabold,
+    color: colors.text.primary,
     marginBottom: 16,
-    letterSpacing: 0.5,
+    letterSpacing: typography.letterSpacing.wide,
   },
   section: {
-    borderRadius: 16,
+    borderRadius: borderRadius.lg,
     padding: 20,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: "#475569",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    borderColor: colors.border.default,
+    ...shadows.md,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#00f5ff",
+    fontSize: typography.size['3xl'],
+    fontWeight: typography.weight.bold,
+    color: colors.text.accent,
     marginBottom: 16,
-    letterSpacing: 0.5,
+    letterSpacing: typography.letterSpacing.wide,
   },
   socialMediaContainer: {
     gap: 12,
   },
   socialMediaItem: {
-    backgroundColor: "#0f172a",
-    borderRadius: 12,
+    backgroundColor: colors.background.surface,
+    borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: "#334155",
+    borderColor: colors.border.light,
     overflow: "hidden",
   },
   socialMediaGradient: {
@@ -374,18 +361,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   socialMediaPlatform: {
-    fontSize: 16,
-    color: "#0a0d14",
-    fontWeight: "700",
+    fontSize: typography.size.xl,
+    color: colors.text.onAccent,
+    fontWeight: typography.weight.bold,
   },
   socialMediaHandle: {
-    fontSize: 16,
-    color: "#0a0d14",
-    fontWeight: "600",
+    fontSize: typography.size.xl,
+    color: colors.text.onAccent,
+    fontWeight: typography.weight.semibold,
   },
   socialMediaSubtext: {
-    fontSize: 12,
-    color: "#64748b",
+    fontSize: typography.size.sm,
+    color: colors.text.muted,
     paddingHorizontal: 16,
     paddingVertical: 8,
     fontStyle: "italic",
@@ -393,11 +380,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   detailContainer: {
-    backgroundColor: "#0f172a",
+    backgroundColor: colors.background.surface,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: "#334155",
+    borderColor: colors.border.light,
   },
   detailRow: {
     flexDirection: "row",
@@ -405,24 +392,24 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   detailLabel: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#64748b",
+    fontSize: typography.size.lg,
+    fontWeight: typography.weight.semibold,
+    color: colors.text.muted,
     width: 80,
   },
   detailValue: {
-    fontSize: 15,
-    color: "#e2e8f0",
+    fontSize: typography.size.lg,
+    color: colors.text.primary,
     flex: 1,
-    fontWeight: "500",
+    fontWeight: typography.weight.medium,
     lineHeight: 22,
   },
   factsContainer: {
-    backgroundColor: "#0f172a",
+    backgroundColor: colors.background.surface,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: "#334155",
+    borderColor: colors.border.light,
   },
   factItem: {
     flexDirection: "row",
@@ -433,27 +420,27 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#00f5ff",
+    backgroundColor: colors.text.accent,
     marginTop: 8,
     marginRight: 16,
   },
   factText: {
-    fontSize: 15,
-    color: "#cbd5e1",
+    fontSize: typography.size.lg,
+    color: colors.text.secondary,
     flex: 1,
     lineHeight: 22,
   },
   timestampSection: {
-    borderRadius: 12,
+    borderRadius: borderRadius.md,
     padding: 16,
     marginBottom: 32,
     borderWidth: 1,
-    borderColor: "#334155",
+    borderColor: colors.border.light,
   },
   timestampTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#64748b",
+    fontSize: typography.size.xl,
+    fontWeight: typography.weight.semibold,
+    color: colors.text.muted,
     marginBottom: 12,
   },
   timestampContainer: {
@@ -464,13 +451,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   timestampLabel: {
-    fontSize: 14,
-    color: "#64748b",
+    fontSize: typography.size.base,
+    color: colors.text.muted,
   },
   timestampValue: {
-    fontSize: 14,
-    color: "#94a3b8",
-    fontWeight: "500",
+    fontSize: typography.size.base,
+    color: colors.slate[400],
+    fontWeight: typography.weight.medium,
   },
   actionButtons: {
     flexDirection: "row",
