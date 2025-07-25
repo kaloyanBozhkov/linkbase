@@ -60,10 +60,18 @@ process.env.RELEASE_HASH = ${JSON.stringify(process.env.RELEASE_HASH)};`,
             to: path.join(__dirname, "dist", "src", "pages"),
             context: path.join(__dirname, "src", "pages"),
           },
-          // Copy entire Prisma client directory (binaries + schema)
+          // Copy Prisma client files to the dist @prisma/client location
           {
             from: path.join(__dirname, "..", "packages", "prisma", "client"),
-            to: path.join(__dirname, "dist", "packages", "prisma", "client"),
+            to: path.join(__dirname, "dist", "node_modules", "@prisma", "client"),
+            globOptions: {
+              ignore: ["**/node_modules/**"],
+            },
+          },
+          // Copy to deployment root node_modules location (one level up from backend)
+          {
+            from: path.join(__dirname, "..", "packages", "prisma", "client"),
+            to: path.join(__dirname, "..", "node_modules", "@prisma", "client"),
             globOptions: {
               ignore: ["**/node_modules/**"],
             },

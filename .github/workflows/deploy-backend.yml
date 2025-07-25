@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
           version: 9
 
@@ -27,21 +27,50 @@ jobs:
       - name: Install all workspace project deps
         run: pnpm install
 
-      - name: Build backend
-        run: pnpm build:backend
-
-          
-      - name: Create ecosystem.config.js from template
+      - name: Build Docker image
         run: |
-          sed "s|__DATABASE_URL__|${{ secrets.DATABASE_URL }}|" backend/ecosystem.config.template.js > backend/ecosystem.config.js
-      
-      - name: Upload backend dist folder and ecosystem.config.js to VPS
-        uses: appleboy/scp-action@v0.1.4
+          cd backend
+          docker build -t linkbase-backend:latest -f Dockerfile ..
+          docker save linkbase-backend:latest > linkbase-backend.tar
+
+      - name: Create environment file
+        run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > backend/.env.production
+
+      - name: Upload Docker image and deployment files to VPS
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "backend/dist/,backend/ecosystem.config.js"
+          source: "backend/linkbase-backend.tar,backend/docker-compose.yml,backend/.env.production"
           target: ${{ secrets.REMOTE_DIR }}
+          strip_components: 1
 
+      - name: Deploy on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.REMOTE_DIR }}
+            
+            # Load the new Docker image
+            docker load < linkbase-backend.tar
+            
+            # Stop and remove existing container if it exists
+            docker compose down || true
+            
+            # Remove the old image to save space (optional)
+            docker image prune -f
+            
+            # Start the new container with environment variables
+            docker compose --env-file .env.production up -d
+            
+            # Clean up the tar file
+            rm -f linkbase-backend.tar
+            
+            # Show container status
+            docker compose ps
       

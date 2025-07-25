@@ -69,14 +69,15 @@ app.use(
   }
 );
 
-// For local development
-if (env.NODE_ENV === "development") {
+// Start server (for both development and production Docker deployment)
+// Only skip starting the server if explicitly in Vercel environment
+if (!process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`🚀 Linkbase API server running on port ${PORT}`);
     console.log(`Environment: ${env.NODE_ENV}`);
     console.log(`CORS origin: ${env.CORS_ORIGIN}`);
   });
+  console.log("Server started");
 }
-
 // Export for Vercel
 export default app;

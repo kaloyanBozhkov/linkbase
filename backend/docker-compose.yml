@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  linkbase-backend:
+    image: linkbase-backend:latest
+    container_name: linkbase-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - PORT=3000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"]
+      interval: 90s
+      timeout: 10s
+      retries: 3
+      start_period: 40s 
