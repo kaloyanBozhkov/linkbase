@@ -9,11 +9,12 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../atoms/Button";
-import { RouterOutput } from "~/src/types";
+import type { RouterOutput } from "@linkbase/backend/src/trpc/routers";
 import { socialMediaDisplayNames } from "@/helpers/constants";
+import { formatDate } from "@linkbase/shared/src/date";
 
 interface ConnectionCardProps {
-  connection: RouterOutput["linkbase"]["connections"]["getById"];
+  connection: NonNullable<RouterOutput["linkbase"]["connections"]["getById"]>;
   onPress: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -25,14 +26,6 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
   onEdit,
   onDelete,
 }) => {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   const handleSocialMediaPress = (url: string) => {
     if (url) {
       Linking.openURL(url);
@@ -40,19 +33,6 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
   };
 
   const getSocialMediasToShow = () => {
-    // // Show legacy Instagram if it exists and no new social medias
-    // if (
-    //   connection.igHandle &&
-    //   (!connection.socialMedias || connection.socialMedias.length === 0)
-    // ) {
-    //   return [
-    //     {
-    //       type: SocialMediaType.INSTAGRAM,
-    //       handle: connection.igHandle,
-    //       url: connection.igUrl,
-    //     },
-    //   ];
-    // }
     return connection.socialMedias || [];
   };
 

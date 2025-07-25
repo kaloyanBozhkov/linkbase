@@ -17,6 +17,7 @@ import { RootStackParamList } from "../../App";
 import Button from "../components/atoms/Button";
 import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
 import { socialMediaDisplayNames } from "@/helpers/constants";
+import { formatDate } from "@linkbase/shared/src/date";
 
 type ConnectionDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -96,14 +97,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     );
   };
 
-  const formatDate = (date: string | Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+
 
   const formatShortDate = (date: string | Date) => {
     return new Date(date).toLocaleDateString("en-US", {

@@ -221,39 +221,42 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     );
   }
 
+  const actionsHeader = (
+    <View style={styles.header}>
+      <Text style={styles.headerTitle}>Linkbase</Text>
+      <Text style={styles.headerSubtitle}>Your Connection Network</Text>
+
+      <SearchInputWrapper
+        isSearching={isSearching}
+        hasSearched={hasSearched}
+        searchQuery={searchQuery}
+        onSearch={handleSearch}
+        onClear={handleClearSearch}
+        containerStyle={styles.searchContainerWrapper}
+      >
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search by facts or questions..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholderTextColor="#64748b"
+          onSubmitEditing={handleSearch}
+          returnKeyType="search"
+        />
+      </SearchInputWrapper>
+
+      <Button
+        title="Add Connection"
+        onPress={() => navigation.navigate("AddConnection")}
+        style={styles.addButton}
+      />
+    </View>
+  );
+
   return (
     <LinearGradient colors={["#0a0d14", "#1e293b"]} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Linkbase</Text>
-          <Text style={styles.headerSubtitle}>Your Connection Network</Text>
-
-          <SearchInputWrapper
-            isSearching={isSearching}
-            hasSearched={hasSearched}
-            searchQuery={searchQuery}
-            onSearch={handleSearch}
-            onClear={handleClearSearch}
-            containerStyle={styles.searchContainerWrapper}
-          >
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search by facts or questions..."
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholderTextColor="#64748b"
-              onSubmitEditing={handleSearch}
-              returnKeyType="search"
-            />
-          </SearchInputWrapper>
-
-          <Button
-            title="Add Connection"
-            onPress={() => navigation.navigate("AddConnection")}
-            style={styles.addButton}
-          />
-        </View>
-
+        {actionsHeader}
         {isLoadingConnections ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#00f5ff" />
