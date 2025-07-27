@@ -23,6 +23,10 @@ export const env = createEnv({
       .url()
       .default("http://localhost:8081")
       .describe("CORS origin URL"),
+
+    // OpenAI
+    OPEN_AI_API_KEY: z.string().describe("OpenAI API key"),
+    OPENROUTER_API_KEY: z.string().describe("OpenRouter API key"),
   },
 
   /**

@@ -9,7 +9,8 @@
     "clean": "rimraf dist",
     "build": "pnpm clean && webpack --mode production",
     "dev": "webpack --mode development --watch",
-    "db:generate": "cd ../packages/prisma && pnpm run db:generate"
+    "db:generate": "cd ../packages/prisma && pnpm run db:generate",
+    "db:push": "cd ../packages/prisma && pnpm run db:push"
   },
   "keywords": [
     "linkbase",
@@ -20,13 +21,16 @@
   "dependencies": {
     "@linkbase/prisma": "workspace:*",
     "@linkbase/shared": "workspace:*",
+    "@paralleldrive/cuid2": "^2.2.2",
     "@t3-oss/env-core": "^0.7.1",
     "@trpc/server": "^11.4.3",
     "cors": "^2.8.5",
+    "deverything": "^4.0.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
     "helmet": "^7.1.0",
+    "openai": "^5.10.2",
     "superjson": "^1.13.3",
     "tsc-alias": "^1.8.16",
     "zod": "^3.22.4"

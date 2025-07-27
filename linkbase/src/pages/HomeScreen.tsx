@@ -37,10 +37,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     }
   );
-  
+
   const { mutateAsync: deleteConnection } =
     trpc.linkbase.connections.delete.useMutation();
-  
+
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -76,7 +76,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       setIsSearching(false);
     }
   }, [searchQuery, hasSearched]);
-  
+
   // Use search results if we've searched, otherwise use all connections
   const {
     data: connectionsData,
@@ -86,8 +86,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     isFetchingNextPage,
     hasNextPage,
   } = hasSearched ? searchItemsQuery : getAllQuery;
-  
-  const connections = hasSearched ? getInfiniteQueryItems(searchItemsQuery.data) : getInfiniteQueryItems(connectionsData);
+
+  const connections = hasSearched
+    ? getInfiniteQueryItems(searchItemsQuery.data)
+    : getInfiniteQueryItems(connectionsData);
 
   useEffect(() => {
     if (!connections.length) return;
@@ -96,7 +98,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    
+
     setIsSearching(true);
     searchItemsQuery.refetch();
   };
@@ -164,19 +166,20 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     item,
   }: {
     item: (typeof connections)[number];
-  }) => (
-    <ConnectionCard
-      connection={item}
-      onPress={() =>
-        navigation.navigate("ConnectionDetail", { connectionId: item.id })
-      }
-      onEdit={() =>
-        navigation.navigate("EditConnection", { connectionId: item.id })
-      }
-      onDelete={() => handleDeleteConnection(item.id, item.name)}
-    />
-  );
-
+  }) => {
+    return (
+      <ConnectionCard
+        connection={item}
+        onPress={() =>
+          navigation.navigate("ConnectionDetail", { connectionId: item.id })
+        }
+        onEdit={() =>
+          navigation.navigate("EditConnection", { connectionId: item.id })
+        }
+        onDelete={() => handleDeleteConnection(item.id, item.name)}
+      />
+    );
+  };
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Text style={styles.emptyStateTitle}>
@@ -197,11 +200,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     </View>
   );
 
-
-
   if (errorConnections) {
     return (
-      <LinearGradient colors={colors.gradients.background} style={styles.container}>
+      <LinearGradient
+        colors={colors.gradients.background}
+        style={styles.container}
+      >
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.errorContainer}>
             <Text style={styles.errorTitle}>⚠️ Connection Error</Text>
@@ -255,7 +259,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   );
 
   return (
-    <LinearGradient colors={colors.gradients.background} style={styles.container}>
+    <LinearGradient
+      colors={colors.gradients.background}
+      style={styles.container}
+    >
       <SafeAreaView style={styles.safeArea}>
         {actionsHeader}
         {isLoadingConnections ? (
@@ -314,7 +321,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border.light,
   },
   headerTitle: {
-    fontSize: typography.size['5xl'],
+    fontSize: typography.size["5xl"],
     fontWeight: typography.weight.extrabold,
     color: colors.text.primary,
     marginBottom: 4,
@@ -349,7 +356,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   emptyStateTitle: {
-    fontSize: typography.size['4xl'],
+    fontSize: typography.size["4xl"],
     fontWeight: typography.weight.bold,
     color: colors.text.primary,
     marginBottom: 12,
@@ -372,7 +379,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   errorTitle: {
-    fontSize: typography.size['4xl'],
+    fontSize: typography.size["4xl"],
     fontWeight: typography.weight.bold,
     color: colors.text.primary,
     marginBottom: 12,

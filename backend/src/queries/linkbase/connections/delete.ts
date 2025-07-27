@@ -24,7 +24,7 @@ export const deleteConnectionQuery = async (params: {
   await prisma.connection.delete({
     where: {
       id,
-      userId,
+      user_id: userId,
     },
   });
 };

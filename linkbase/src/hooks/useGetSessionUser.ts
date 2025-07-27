@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { User } from "@linkbase/prisma/client";
+import type { user } from "@linkbase/prisma";
 
-const USER_ID_KEY = "linkbase_user_id_15-07-2025";
+const USER_ID_KEY = "linkbase_user_id_27-07-2025.6";
 interface SessionUserStore {
   userId: string | null;
   isInitializing: boolean;
@@ -11,7 +11,7 @@ interface SessionUserStore {
   saveUserId: (id: string) => Promise<void>;
   clearUserId: () => Promise<void>;
   getStoredUserId: () => Promise<string | null>;
-  initializeUserId: (onInitialized: () => Promise<User["id"]>) => Promise<void>;
+  initializeUserId: (onInitialized: () => Promise<user["id"]>) => Promise<void>;
 }
 
 export const useSessionUserStore = create<SessionUserStore>((set, get) => ({
@@ -43,12 +43,11 @@ export const useSessionUserStore = create<SessionUserStore>((set, get) => ({
       console.error("Error clearing userId from AsyncStorage:", error);
     }
   },
-  initializeUserId: async (onInitialized: () => Promise<User["id"]>) => {
+  initializeUserId: async (onInitialized: () => Promise<user["id"]>) => {
     try {
       set({ isInitializing: true });
       const storedUserId = await get().getStoredUserId();
       console.log("storedUserId", storedUserId);
-      debugger;
       if (storedUserId) {
         set({
           userId: storedUserId,

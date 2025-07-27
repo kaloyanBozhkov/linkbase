@@ -7,13 +7,14 @@ import { prisma } from "@/helpers/prisma";
  * @returns Promise<User | null> - The user object or null if not found
  * @throws {Error} - If database operation fails
  */
-export const getUserByUuidQuery = async (uuid: string) => {
+export const getUserByUuidQuery = async (id: string) => {
   return await prisma.user.findUnique({
-    where: { uuid },
+    where: { id },
     include: {
       connections: {
         include: {
-          socialMedias: true,
+          social_medias: true,
+          facts: true,
         },
       },
     },

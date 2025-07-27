@@ -16,7 +16,7 @@ import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
 import SocialMediaSection from "../components/molecules/SocialMediaSection";
 import { camelCaseWords } from "../helpers/utils";
-import type { SocialMedia } from "@linkbase/prisma";
+import type { social_media } from "@linkbase/prisma";
 import { trpc, updateInfiniteQueryDataOnEdit } from "@/utils/trpc";
 import { colors, typography, borderRadius } from "@/theme/colors";
 
@@ -47,7 +47,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
     name: "",
     metAt: "",
     facts: [""],
-    socialMedias: [] as SocialMedia[],
+    socialMedias: [] as social_media[],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isNameAutoCapitalized, setIsNameAutoCapitalized] = useState(false); // Don't auto-cap when editing existing
@@ -90,9 +90,9 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
       {
         id: connectionId,
         name: formData.name.trim(),
-        metAt: formData.metAt.trim(),
+        met_at: formData.metAt.trim(),
         facts: validFacts, // Can be empty array
-        socialMedias: validSocialMedias,
+        social_medias: validSocialMedias,
       },
       {
         onSuccess: (updatedConnection) => {
@@ -151,7 +151,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
     }));
   };
 
-  const updateSocialMedias = (socialMedias: SocialMedia[]) => {
+  const updateSocialMedias = (socialMedias: social_media[]) => {
     setFormData((prev) => ({
       ...prev,
       socialMedias,
@@ -162,9 +162,9 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
     if (!connection) return;
     setFormData({
       name: connection.name,
-      metAt: connection.metAt,
-      facts: connection.facts,
-      socialMedias: connection.socialMedias,
+      metAt: connection.met_at,
+      facts: connection.facts.map((fact) => fact.text),
+      socialMedias: connection.social_medias,
     });
   }, [connection]);
 
@@ -267,7 +267,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
                 ))}
 
                 <Button
-                  title="+ Add Another Fact"
+                  title="+ Add Fact"
                   onPress={addFactField}
                   variant="ghost"
                   style={styles.addFactButton}

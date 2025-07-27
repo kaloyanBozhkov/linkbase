@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { prisma, generateSocialMediaUrl } from "@/helpers/prisma";
-import { SocialMediaType } from "@linkbase/prisma";
+import { social_media_type } from "@linkbase/prisma";
+import { getConnectionMemory } from "@/ai/memory";
 
 // Zod schema for social media entries
 export const socialMediaSchema = z.object({
-  type: z.nativeEnum(SocialMediaType),
+  type: z.nativeEnum(social_media_type),
   handle: z.string().min(1, "Handle is required"),
 });
 
@@ -41,15 +42,15 @@ export const updateConnectionQuery = async (
   data: Partial<UpdateConnectionInput>
 ) => {
   const validatedData = updateConnectionSchema.parse(data);
-  const { socialMedias, userId, ...connectionData } = validatedData;
+  const { socialMedias, userId, facts, ...connectionData } = validatedData;
 
-  return prisma.connection.update({
+  const updatedConnection = await prisma.connection.update({
     where: {
       id,
     },
     data: {
       ...connectionData,
-      socialMedias: socialMedias
+      social_medias: socialMedias
         ? {
             deleteMany: {},
             create: socialMedias.map((sm) => ({
@@ -61,7 +62,18 @@ export const updateConnectionQuery = async (
         : undefined,
     },
     include: {
-      socialMedias: true,
+      social_medias: true,
     },
   });
+
+  const connectionMemory = await getConnectionMemory({
+    connectionId: updatedConnection.id,
+  });
+  await connectionMemory.deleteAllFacts();
+  const latestFacts = await connectionMemory.upsertFacts(facts ?? [], true);
+
+  return {
+    ...updatedConnection,
+    facts: latestFacts,
+  };
 };

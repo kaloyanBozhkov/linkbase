@@ -16,7 +16,7 @@ export type SearchConnectionsInput = z.infer<typeof searchConnectionsSchema>;
 /**
  * Searches connections by name, facts, or meeting location in the database.
  *
- * @param params - Search parameters (query, userId?, limit, offset)
+ * @param params - Search parameters (query, user_id?, limit, offset)
  * @returns Promise<Connection[]> - Array of matching connections
  */
 export const searchConnectionsQuery = async (
@@ -27,7 +27,7 @@ export const searchConnectionsQuery = async (
 
   return prisma.connection.findMany({
     where: {
-      ...(userId && { userId }),
+      ...(userId && { user_id: userId }),
       OR: [
         {
           name: {
@@ -37,17 +37,22 @@ export const searchConnectionsQuery = async (
         },
         {
           facts: {
-            hasSome: [query],
+            some: {
+              text: {
+                contains: query,
+                mode: "insensitive",
+              },
+            },
           },
         },
         {
-          metAt: {
+          met_at: {
             contains: query,
             mode: "insensitive",
           },
         },
         {
-          socialMedias: {
+          social_medias: {
             some: {
               handle: {
                 contains: query,
@@ -59,12 +64,12 @@ export const searchConnectionsQuery = async (
       ],
     },
     include: {
-      socialMedias: true,
+      social_medias: true,
     },
     skip: cursor,
     take: pageSize,
     orderBy: {
-      createdAt: "desc",
+      created_at: "desc",
     },
   });
 };

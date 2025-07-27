@@ -1,17 +1,28 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Rules:
+// - model name always singular
+// - array property name always plural (1 to many)
+// - models and field snake_case, because postgres does not like uppercase (makes everything lowecase)
+// - model and field mapping (aliasing), to be avoided, because there is no corresponding field in the db
+// - foreign keys, must be `(name of target model)_id` e.g. `user_id` and the object called like the target model e.g. `user`
+// - field groups, core fields at the top (id, uuid, etc) then the actual fields A-Z, then the relations/foreign keys, then indexes
+// - Prefer prisma (DB) enums where the type is known a priori, instead of the classic integer mapped to a code enum
+// - all external ids must be prefixed by `external_` e.g. `external_kyc_id`
+// - counts and booleans should have a default value, to avoid nulls (useful for filtering)
+// - many to many, call relation `to_(name of target model in plural)` e.g. `to_users` where there is a relation between `user` and `group` and the relation is called `user_to_group`
 
 generator client {
-    provider      = "prisma-client"
-    output        = "../client"
+    provider        = "prisma-client"
+    output          = "../client"
+    previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+    provider   = "postgresql"
+    url        = env("DATABASE_URL")
+    extensions = [pgvector(map: "vector", schema: "linkbase")]
 }
 
-enum SocialMediaType {
+enum social_media_type {
     EMAIL
     PHONE
     INSTAGRAM
@@ -38,43 +49,120 @@ enum SocialMediaType {
     TUMBLR
     FLICKR
     VIMEO
+
+    @@map("social_media_type")
 }
 
-model User {
-    id          String       @id @default(cuid())
-    uuid        String       @unique @default(uuid())
-    email       String?
-    connections Connection[]
-    createdAt   DateTime     @default(now())
-    updatedAt   DateTime     @updatedAt
+enum vector_similarity_type {
+    COSINE
+    L2_DISTANCE
+    INNER_PRODUCT
 
-    @@map("users")
+    @@map("vector_similarity_type")
 }
 
-model Connection {
-    id           String        @id @default(cuid())
-    name         String
-    metAt        String
-    metWhen      DateTime      @default(now())
-    facts        String[]
-    socialMedias SocialMedia[]
-    userId       String
-    user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-    createdAt    DateTime      @default(now())
-    updatedAt    DateTime      @updatedAt
-
-    @@map("connections")
+enum ai_feature {
+    QUERY_EXPANSION
 }
 
-model SocialMedia {
-    id           String          @id @default(cuid())
-    type         SocialMediaType
-    handle       String
-    url          String?
-    connectionId String
-    connection   Connection      @relation(fields: [connectionId], references: [id], onDelete: Cascade)
-    createdAt    DateTime        @default(now())
-    updatedAt    DateTime        @updatedAt
+model user {
+    id         String   @id @default(cuid())
+    uuid       String   @unique @default(uuid())
+    email      String?
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now()) @updatedAt
 
-    @@map("social_medias")
+    // Relations
+    connections connection[]
+}
+
+model connection {
+    id         String   @id @default(cuid())
+    met_at     String
+    met_when   DateTime @default(now())
+    name       String
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now()) @updatedAt
+
+    // Foreign keys and relations
+    user_id       String
+    user          user           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    facts         fact[]
+    social_medias social_media[]
+}
+
+model fact {
+    id         String   @id @default(cuid())
+    text       String
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now()) @updatedAt
+
+    // Foreign keys and relations
+    embedding_id  String
+    embedding     ai_cached_embedding @relation(fields: [embedding_id], references: [id], onDelete: Cascade)
+    connection_id String
+    connection    connection          @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+}
+
+model social_media {
+    id         String            @id @default(cuid())
+    handle     String
+    type       social_media_type
+    url        String?
+    created_at DateTime          @default(now())
+    updated_at DateTime          @default(now()) @updatedAt
+
+    // Foreign keys and relations
+    connection_id String
+    connection    connection @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+}
+
+model ai_system_message {
+    id             String     @id @default(cuid())
+    ai_feature     ai_feature
+    system_message String
+    created_at     DateTime   @default(now())
+    updated_at     DateTime?  @default(now()) @updatedAt
+
+    // Relations
+    ai_text_generation_diagnostics ai_text_generation_diagnostic[]
+}
+
+model ai_text_generation_diagnostic {
+    id         String   @id @default(cuid())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now()) @updatedAt
+
+    // Foreign keys and relations
+    ai_system_message_id String?
+    ai_system_message    ai_system_message? @relation(fields: [ai_system_message_id], references: [id])
+}
+
+model ai_cached_embedding {
+    id         String                     @id @default(cuid())
+    embedding  Unsupported("vector(512)")
+    text       String                     @unique
+    created_at DateTime                   @default(now())
+    updated_at DateTime                   @default(now()) @updatedAt
+
+    ai_embedding_search_diagnostics ai_embedding_search_diagnostic[]
+    facts                           fact[]
+}
+
+model ai_embedding_search_diagnostic {
+    id                       String                 @id @default(cuid())
+    embedded_content_results String[]
+    limit                    Int
+    min_similarity           Float
+    parent_process_uuid      String?                @db.Uuid
+    search_text              String?
+    search_time_ms           Int
+    similarity_type          vector_similarity_type
+    skip_vector_ids          String[]
+    created_at               DateTime               @default(now())
+    updated_at               DateTime               @default(now()) @updatedAt
+
+    // Foreign keys and relations
+    search_embedding_id String
+    search_embedding    ai_cached_embedding @relation(fields: [search_embedding_id], references: [id], onDelete: Cascade)
 }

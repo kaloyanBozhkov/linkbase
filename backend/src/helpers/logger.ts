@@ -31,28 +31,28 @@ export const formatClientError = (error: LoggableError): { message: string; code
   };
 };
 
-export const logError = (error: LoggableError) => {
+export const logError = (error: LoggableError, extra?: unknown) => {
   if (isTrpcError(error)) {
     // TRPCError thrown by trpc endpoint
     if (error.code === "INTERNAL_SERVER_ERROR") {
       console.error("TRPC Internal Server Error:", error.message);
       if (error.cause) {
-        console.error("Caused by:", error.cause);
+        console.error("Caused by:", error.cause, extra);
       }
       // Log stack trace for internal server errors
-      console.error("Stack:", error.stack);
+      console.error("Stack:", error.stack, extra);
     } else {
       // Using console.log for non-server errors to avoid flooding error logs
-      console.log(`TRPC ${error.code}:`, error.message);
+      console.log(`TRPC ${error.code}:`, error.message, extra);
       if (process.env.NODE_ENV === "development" && error.stack) {
-        console.log("Stack:", error.stack);
+        console.log("Stack:", error.stack, extra);
       }
     }
   } else {
     // Generic Error (Prisma errors, etc.)
-    console.error("Error:", error.message);
+    console.error("Error:", error.message, extra);
     if (process.env.NODE_ENV === "development" && error.stack) {
-      console.error("Stack:", error.stack);
+      console.error("Stack:", error.stack, extra);
     }
   }
 

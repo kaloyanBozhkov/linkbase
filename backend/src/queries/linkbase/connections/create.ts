@@ -1,10 +1,11 @@
 import { z } from "zod";
-import { SocialMediaType } from "@linkbase/prisma";
+import { social_media_type } from "@linkbase/prisma";
 import { prisma, generateSocialMediaUrl } from "@/helpers/prisma";
+import { getConnectionMemory } from "@/ai/memory";
 
 // Zod schema for social media entries
 export const socialMediaSchema = z.object({
-  type: z.nativeEnum(SocialMediaType),
+  type: z.nativeEnum(social_media_type),
   handle: z.string().min(1, "Handle is required"),
 });
 
@@ -33,17 +34,16 @@ export type CreateConnectionInput = z.infer<typeof createConnectionSchema>;
  * @throws {ZodError} - If validation fails
  * @throws {Error} - If database operation fails
  */
-export const createConnectionQuery = async (data: unknown) => {
+export const createConnectionQuery = async (data: CreateConnectionInput) => {
   const validatedData = createConnectionSchema.parse(data);
   const { name, metAt, facts, socialMedias = [], userId } = validatedData;
 
-  return await prisma.connection.create({
+  const connection = await prisma.connection.create({
     data: {
       name,
-      metAt,
-      facts,
-      userId: userId || "default-user", // Provide default user ID until migration
-      socialMedias: {
+      met_at: metAt,
+      user_id: userId,
+      social_medias: {
         create: socialMedias.map((sm) => ({
           type: sm.type,
           handle: sm.handle,
@@ -52,7 +52,15 @@ export const createConnectionQuery = async (data: unknown) => {
       },
     },
     include: {
-      socialMedias: true,
+      social_medias: true,
     },
   });
+
+  const connectionMemory = getConnectionMemory({ connectionId: connection.id });
+  const addedFacts = await connectionMemory.addFacts(facts);
+
+  return {
+    ...connection,
+    facts: addedFacts,
+  };
 };

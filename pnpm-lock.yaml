@@ -23,6 +23,9 @@ importers:
       '@linkbase/shared':
         specifier: workspace:*
         version: link:../packages/shared
+      '@paralleldrive/cuid2':
+        specifier: ^2.2.2
+        version: 2.2.2
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.3(typescript@5.8.3)(zod@3.25.76)
@@ -32,6 +35,9 @@ importers:
       cors:
         specifier: ^2.8.5
         version: 2.8.5
+      deverything:
+        specifier: ^4.0.0
+        version: 4.0.0
       dotenv:
         specifier: ^16.3.1
         version: 16.6.1
@@ -44,6 +50,9 @@ importers:
       helmet:
         specifier: ^7.1.0
         version: 7.2.0
+      openai:
+        specifier: ^5.10.2
+        version: 5.10.2(ws@8.18.3)(zod@3.25.76)
       superjson:
         specifier: ^1.13.3
         version: 1.13.3
@@ -1132,6 +1141,10 @@ packages:
   '@napi-rs/wasm-runtime@0.2.12':
     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
 
+  '@noble/hashes@1.8.0':
+    resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
+    engines: {node: ^14.21.3 || >=16}
+
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -1147,6 +1160,9 @@ packages:
   '@nolyfill/is-core-module@1.0.39':
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
+
+  '@paralleldrive/cuid2@2.2.2':
+    resolution: {integrity: sha512-ZOBkgDwEdoYVlSeRbYYXs0S9MejQofiVYoTbKzy/6GQa39/q5tQU2IX46+shYnUkpEl3wc+J6wRlar7r2EK2xA==}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -2495,6 +2511,9 @@ packages:
   detect-libc@2.0.4:
     resolution: {integrity: sha512-3UDv+G9CsCKO1WKMGw9fwq/SWJYbI0c5Y7LU1AXYoDdbhE2AHQ6N6Nb34sG8Fj7T5APy8qXDCKuuIHd1BR0tVA==}
     engines: {node: '>=8'}
+
+  deverything@4.0.0:
+    resolution: {integrity: sha512-3bol5/G4Szr2PlqAKCWPYYtcffUbrVaNaC2k73ETdi7c9gVniMBFkuEHV5njUEEC6xSAByjjkJj0oHFfp/t5aA==}
 
   didyoumean@1.2.2:
     resolution: {integrity: sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==}
@@ -3921,6 +3940,7 @@ packages:
   metro-react-native-babel-preset@0.77.0:
     resolution: {integrity: sha512-HPPD+bTxADtoE4y/4t1txgTQ1LVR6imOBy7RMHUsqMVTbekoi8Ph5YI9vKX2VMPtVWeFt0w9YnCSLPa76GcXsA==}
     engines: {node: '>=18'}
+    deprecated: Use @react-native/babel-preset instead
     peerDependencies:
       '@babel/core': '*'
 
@@ -4184,6 +4204,18 @@ packages:
   open@8.4.2:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
+
+  openai@5.10.2:
+    resolution: {integrity: sha512-n+vi74LzHtvlKcDPn9aApgELGiu5CwhaLG40zxLTlFQdoSJCLACORIPC2uVQ3JEYAbqapM+XyRKFy2Thej7bIw==}
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.23.8
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -6381,7 +6413,7 @@ snapshots:
   '@expo/devcert@1.2.0':
     dependencies:
       '@expo/sudo-prompt': 9.3.2
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@5.5.0)
       glob: 10.4.5
     transitivePeerDependencies:
       - supports-color
@@ -6675,6 +6707,8 @@ snapshots:
       '@tybys/wasm-util': 0.10.0
     optional: true
 
+  '@noble/hashes@1.8.0': {}
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -6688,6 +6722,10 @@ snapshots:
       fastq: 1.19.1
 
   '@nolyfill/is-core-module@1.0.39': {}
+
+  '@paralleldrive/cuid2@2.2.2':
+    dependencies:
+      '@noble/hashes': 1.8.0
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -8178,10 +8216,6 @@ snapshots:
     dependencies:
       ms: 2.0.0
 
-  debug@3.2.7:
-    dependencies:
-      ms: 2.1.3
-
   debug@3.2.7(supports-color@5.5.0):
     dependencies:
       ms: 2.1.3
@@ -8239,6 +8273,8 @@ snapshots:
   detect-libc@1.0.3: {}
 
   detect-libc@2.0.4: {}
+
+  deverything@4.0.0: {}
 
   didyoumean@1.2.2: {}
 
@@ -8429,7 +8465,7 @@ snapshots:
 
   eslint-import-resolver-node@0.3.9:
     dependencies:
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@5.5.0)
       is-core-module: 2.16.1
       resolve: 1.22.10
     transitivePeerDependencies:
@@ -8452,7 +8488,7 @@ snapshots:
 
   eslint-module-utils@2.12.1(@typescript-eslint/parser@8.37.0(eslint@9.31.0(jiti@2.4.2))(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.31.0(jiti@2.4.2)):
     dependencies:
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@5.5.0)
     optionalDependencies:
       '@typescript-eslint/parser': 8.37.0(eslint@9.31.0(jiti@2.4.2))(typescript@5.8.3)
       eslint: 9.31.0(jiti@2.4.2)
@@ -8477,7 +8513,7 @@ snapshots:
       array.prototype.findlastindex: 1.2.6
       array.prototype.flat: 1.3.3
       array.prototype.flatmap: 1.3.3
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@5.5.0)
       doctrine: 2.1.0
       eslint: 9.31.0(jiti@2.4.2)
       eslint-import-resolver-node: 0.3.9
@@ -10230,6 +10266,11 @@ snapshots:
       define-lazy-prop: 2.0.0
       is-docker: 2.2.1
       is-wsl: 2.2.0
+
+  openai@5.10.2(ws@8.18.3)(zod@3.25.76):
+    optionalDependencies:
+      ws: 8.18.3
+      zod: 3.25.76
 
   optionator@0.9.4:
     dependencies:

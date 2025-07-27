@@ -11,8 +11,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
-import type { SocialMedia } from "@linkbase/prisma";
-import { SocialMediaType } from "@linkbase/prisma/client/enums";
+import type { social_media } from "@linkbase/prisma";
+import { social_media_type } from "@linkbase/prisma/client/enums";
 import { socialMediaDisplayNames } from "@/helpers/constants";
 import { colors, shadows, typography, borderRadius } from "@/theme/colors";
 
@@ -28,16 +28,16 @@ const validatePhone = (phone: string): boolean => {
   return phoneRegex.test(phone);
 };
 
-const getInputConfig = (type: SocialMediaType) => {
+const getInputConfig = (type: social_media_type) => {
   switch (type) {
-    case SocialMediaType.EMAIL:
+    case social_media_type.EMAIL:
       return {
         label: "Email Address",
         placeholder: "user@example.com",
         keyboardType: "email-address" as const,
         autoCapitalize: "none" as const,
       };
-    case SocialMediaType.PHONE:
+    case social_media_type.PHONE:
       return {
         label: "Phone Number",
         placeholder: "+1 (555) 123-4567",
@@ -55,8 +55,8 @@ const getInputConfig = (type: SocialMediaType) => {
 };
 
 interface SocialMediaSectionProps {
-  socialMedias: SocialMedia[];
-  onUpdateSocialMedias: (socialMedias: SocialMedia[]) => void;
+  socialMedias: social_media[];
+  onUpdateSocialMedias: (socialMedias: social_media[]) => void;
   error?: string;
 }
 
@@ -75,7 +75,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
   const addSocialMedia = () => {
     onUpdateSocialMedias([
       ...socialMedias,
-      { type: SocialMediaType.EMAIL, handle: "" } as SocialMedia,
+      { type: social_media_type.EMAIL, handle: "" } as social_media,
     ]);
   };
 
@@ -101,7 +101,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
 
   const updateSocialMedia = (
     index: number,
-    field: keyof SocialMedia,
+    field: keyof social_media,
     value: any
   ) => {
     onUpdateSocialMedias(
@@ -119,17 +119,17 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
   };
 
   const validateSocialMediaHandle = (
-    type: SocialMediaType,
+    type: social_media_type,
     handle: string
   ): string | null => {
     if (!handle.trim()) return "This field is required";
 
     switch (type) {
-      case SocialMediaType.EMAIL:
+      case social_media_type.EMAIL:
         return validateEmail(handle)
           ? null
           : "Please enter a valid email address";
-      case SocialMediaType.PHONE:
+      case social_media_type.PHONE:
         return validatePhone(handle)
           ? null
           : "Please enter a valid phone number";
@@ -138,7 +138,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
     }
   };
 
-  const handleBlur = (index: number, type: SocialMediaType, handle: string) => {
+  const handleBlur = (index: number, type: social_media_type, handle: string) => {
     const error = validateSocialMediaHandle(type, handle);
     if (error) {
       setValidationErrors((prev) => ({ ...prev, [index]: error }));
@@ -146,12 +146,12 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
   };
 
   const getSortedSocialMediaTypes = () => {
-    return Object.values(SocialMediaType).sort((a, b) => {
+    return Object.values(social_media_type).sort((a, b) => {
       // Put EMAIL and PHONE at the top
-      if (a === SocialMediaType.EMAIL) return -1;
-      if (b === SocialMediaType.EMAIL) return 1;
-      if (a === SocialMediaType.PHONE) return -1;
-      if (b === SocialMediaType.PHONE) return 1;
+      if (a === social_media_type.EMAIL) return -1;
+      if (b === social_media_type.EMAIL) return 1;
+      if (a === social_media_type.PHONE) return -1;
+      if (b === social_media_type.PHONE) return 1;
       return socialMediaDisplayNames[a].localeCompare(
         socialMediaDisplayNames[b]
       );
@@ -163,14 +163,14 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
     onValueChange,
     index,
   }: {
-    selectedValue: SocialMediaType;
-    onValueChange: (value: SocialMediaType) => void;
+    selectedValue: social_media_type;
+    onValueChange: (value: social_media_type) => void;
     index: number;
   }) => {
     const isOpen = activePickerIndex === index;
     const sortedTypes = getSortedSocialMediaTypes();
 
-    const selectOption = (value: SocialMediaType) => {
+    const selectOption = (value: social_media_type) => {
       onValueChange(value);
       setActivePickerIndex(null);
       // Clear validation error when type changes
@@ -264,7 +264,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
                   <Text style={styles.pickerLabel}>Contact Type</Text>
                   <CustomPicker
                     selectedValue={socialMedia.type}
-                    onValueChange={(value: SocialMediaType) =>
+                    onValueChange={(value: social_media_type) =>
                       updateSocialMedia(index, "type", value)
                     }
                     index={index}

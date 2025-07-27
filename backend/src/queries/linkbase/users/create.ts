@@ -1,13 +1,4 @@
-import { z } from "zod";
 import { prisma } from "@/helpers/prisma";
-
-// Validation schema for creating a user
-export const createUserSchema = z.object({
-  uuid: z.string().min(1, "UUID is required"),
-  email: z.string().email().optional(),
-});
-
-export type CreateUserInput = z.infer<typeof createUserSchema>;
 
 /**
  * Creates a new user record in the database.

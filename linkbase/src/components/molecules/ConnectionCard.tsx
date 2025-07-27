@@ -34,7 +34,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
   };
 
   const getSocialMediasToShow = () => {
-    return connection.socialMedias || [];
+    return connection.social_medias || [];
   };
 
   const socialMediasToShow = getSocialMediasToShow();
@@ -88,14 +88,14 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
             )}
           </View>
           <View style={styles.dateContainer}>
-            <Text style={styles.date}>{formatDate(connection.metWhen)}</Text>
+            <Text style={styles.date}>{formatDate(connection.created_at)}</Text>
           </View>
         </View>
 
         <View style={styles.cardBody}>
           <View style={styles.locationContainer}>
             <Text style={styles.locationIcon}>📍</Text>
-            <Text style={styles.location}>{connection.metAt}</Text>
+            <Text style={styles.location}>{connection.met_at}</Text>
           </View>
 
           <View style={styles.factsContainer}>
@@ -103,10 +103,10 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
             <View style={styles.factsList}>
               {connection.facts && connection.facts.length > 0 ? (
                 <>
-                  {connection.facts.slice(0, 2).map((fact, index) => (
-                    <View key={index} style={styles.factItem}>
+                  {connection.facts.slice(0, 2).map((fact) => (
+                    <View key={fact.id} style={styles.factItem}>
                       <View style={styles.factDot} />
-                      <Text style={styles.fact}>{fact}</Text>
+                      <Text style={styles.fact}>{fact.text}</Text>
                     </View>
                   ))}
                   {connection.facts.length > 2 && (
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontSize: typography.size['3xl'],
+    fontSize: typography.size["3xl"],
     fontWeight: typography.weight.bold,
     color: colors.text.primary,
     marginBottom: 8,

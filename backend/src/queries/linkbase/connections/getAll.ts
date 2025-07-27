@@ -22,16 +22,22 @@ export const getAllConnectionsQuery = async (
   params: GetAllConnectionsInput
 ) => {
   const { userId, cursor, pageSize } = getAllConnectionsSchema.parse(params);
-  const whereClause = userId ? { userId } : {};
+  const whereClause = userId ? { user_id: userId } : {};
   return prisma.connection.findMany({
     where: whereClause,
     skip: cursor,
     take: pageSize,
     include: {
-      socialMedias: true,
+      social_medias: true,
+      facts: {
+        select: {
+          id: true,
+          text: true,
+        },
+      },
     },
     orderBy: {
-      createdAt: "desc",
+      created_at: "desc",
     },
   });
 };

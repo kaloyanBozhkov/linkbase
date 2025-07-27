@@ -23,10 +23,16 @@ export const getConnectionByIdQuery = async (params: {
   return await prisma.connection.findUnique({
     where: {
       id,
-      userId,
+      user_id: userId,
     },
     include: {
-      socialMedias: true,
+      social_medias: true,
+      facts: {
+        select: {
+          id: true,
+          text: true,
+        },
+      },
     },
   });
 };

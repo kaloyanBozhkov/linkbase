@@ -13,7 +13,7 @@ import {
   searchConnectionsQuery,
 } from "@/queries/linkbase/connections";
 import { createUserQuery, getUserByUuidQuery } from "@/queries/linkbase/users";
-import { SocialMediaType } from "@linkbase/prisma";
+import { social_media_type } from "@linkbase/prisma";
 import { infiniteResponse } from "@/helpers/infiniteResponse";
 
 // Input schemas
@@ -24,7 +24,7 @@ const connectionCreateSchema = z.object({
   socialMedias: z
     .array(
       z.object({
-        type: z.nativeEnum(SocialMediaType),
+        type: z.nativeEnum(social_media_type),
         handle: z.string().min(1, "Handle is required"),
       })
     )
@@ -38,8 +38,8 @@ const connectionIdSchema = z.object({
   id: z.string().min(1, "Connection ID is required"),
 });
 
-const userUuidSchema = z.object({
-  uuid: z.string().min(1, "User UUID is required"),
+const userIdSchema = z.object({
+  id: z.string().min(1, "User ID is required"),
 });
 
 const PAGE_SIZE = 20;
@@ -107,9 +107,9 @@ export const linkbaseRouter = createTRPCRouter({
       }),
   }),
   users: createTRPCRouter({
-    getByUuid: protectedProcedure
-      .input(userUuidSchema)
-      .query(({ input: { uuid } }) => getUserByUuidQuery(uuid)),
+    getById: protectedProcedure
+      .input(userIdSchema)
+      .query(({ input: { id } }) => getUserByUuidQuery(id)),
     create: publicProcedure.mutation(async () => {
       return createUserQuery();
     }),

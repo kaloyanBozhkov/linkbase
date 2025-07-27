@@ -17,7 +17,7 @@ import SocialMediaSection from "../components/molecules/SocialMediaSection";
 import { useSessionUserStore } from "../hooks/useGetSessionUser";
 import { camelCaseWords } from "../helpers/utils";
 import { enableRateApp } from "../hooks/useRateApp";
-import type { SocialMedia } from "@linkbase/prisma";
+import type { social_media } from "@linkbase/prisma";
 import { trpc, updateInfiniteQueryDataOnAdd } from "@/utils/trpc";
 import { colors, typography, borderRadius } from "@/theme/colors";
 
@@ -37,7 +37,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
     name: "",
     metAt: "",
     facts: [""],
-    socialMedias: [] as SocialMedia[],
+    socialMedias: [] as social_media[],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isNameAutoCapitalized, setIsNameAutoCapitalized] = useState(true);
@@ -134,7 +134,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
     }));
   };
 
-  const updateSocialMedias = (socialMedias: SocialMedia[]) => {
+  const updateSocialMedias = (socialMedias: social_media[]) => {
     setFormData((prev) => ({
       ...prev,
       socialMedias,
@@ -223,7 +223,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
                 ))}
 
                 <Button
-                  title="+ Add Another Fact"
+                  title="+ Add Fact"
                   onPress={addFactField}
                   variant="ghost"
                   style={styles.addFactButton}
