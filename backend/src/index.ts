@@ -4,7 +4,13 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import indexRouter from "./router";
 import { env } from "./env";
-import { renderSupportPage, renderMarketingPage, renderPrivacyPage, renderTermsPage } from "./flows";
+import {
+  renderSupportPage,
+  renderMarketingPage,
+  renderPrivacyPage,
+  renderTermsPage,
+} from "./flows";
+import { getConnectionMemory } from "./ai/linkbase/memory";
 
 const app: Application = express();
 const PORT = env.PORT;
@@ -42,6 +48,22 @@ app.get("/health", (req, res) => {
     status: "OK",
     message: "API is running",
     environment: env.NODE_ENV,
+  });
+});
+
+app.get("/test-me", async (req, res) => {
+  const factMemory = getConnectionMemory({
+    userId: "cmdm4xuq60000y84as1j6p22h",
+  });
+
+  const results = await factMemory.searchFacts({
+    searchTopic: req.body.search,
+    similarity: 0.2,
+    limit: 10,
+  });
+
+  res.status(200).json({
+    results,
   });
 });
 

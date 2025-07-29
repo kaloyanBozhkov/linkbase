@@ -1,5 +1,5 @@
 import { prisma, fact } from "@linkbase/prisma";
-import { TextEmbedding } from "../../../ai/embeddings";
+import { TextEmbedding } from "../../../../ai/embeddings";
 
 export const updateFactQuery = async ({
   factId,

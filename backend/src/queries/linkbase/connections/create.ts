@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { social_media_type } from "@linkbase/prisma";
 import { prisma, generateSocialMediaUrl } from "@/helpers/prisma";
-import { getConnectionMemory } from "@/ai/memory";
+import { getConnectionMemory } from "@/ai/linkbase/memory";
 
 // Zod schema for social media entries
 export const socialMediaSchema = z.object({

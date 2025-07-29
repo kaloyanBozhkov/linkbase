@@ -67,10 +67,10 @@ enum ai_feature {
 
 model user {
     id         String   @id @default(cuid())
-    uuid       String   @unique @default(uuid())
-    email      String?
     created_at DateTime @default(now())
     updated_at DateTime @default(now()) @updatedAt
+
+    email String?
 
     // Relations
     connections connection[]
@@ -78,11 +78,12 @@ model user {
 
 model connection {
     id         String   @id @default(cuid())
-    met_at     String
-    met_when   DateTime @default(now())
-    name       String
     created_at DateTime @default(now())
     updated_at DateTime @default(now()) @updatedAt
+
+    met_at   String
+    met_when DateTime @default(now())
+    name     String
 
     // Foreign keys and relations
     user_id       String
@@ -138,30 +139,35 @@ model ai_text_generation_diagnostic {
     ai_system_message    ai_system_message? @relation(fields: [ai_system_message_id], references: [id])
 }
 
+enum embedding_feature_type {
+    FACT
+}
+
 model ai_cached_embedding {
-    id         String                     @id @default(cuid())
-    embedding  Unsupported("vector(512)")
-    text       String                     @unique
-    created_at DateTime                   @default(now())
-    updated_at DateTime                   @default(now()) @updatedAt
+    id         String   @id @default(cuid())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now()) @updatedAt
+
+    embedding    Unsupported("vector(512)")
+    text         String                     @unique
+    feature_type embedding_feature_type[]   @default([]) // use this to filter by feature first
 
     ai_embedding_search_diagnostics ai_embedding_search_diagnostic[]
     facts                           fact[]
 }
 
 model ai_embedding_search_diagnostic {
-    id                       String                 @id @default(cuid())
+    id         String   @id @default(cuid())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now()) @updatedAt
+
     embedded_content_results String[]
-    limit                    Int
+    similarity_type          vector_similarity_type
     min_similarity           Float
-    parent_process_uuid      String?                @db.Uuid
     search_text              String?
     search_time_ms           Int
-    similarity_type          vector_similarity_type
-    skip_vector_ids          String[]
-    created_at               DateTime               @default(now())
-    updated_at               DateTime               @default(now()) @updatedAt
-
+    limit                    Int
+    
     // Foreign keys and relations
     search_embedding_id String
     search_embedding    ai_cached_embedding @relation(fields: [search_embedding_id], references: [id], onDelete: Cascade)

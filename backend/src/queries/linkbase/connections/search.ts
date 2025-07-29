@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { prisma } from "@/helpers/prisma";
+import { getConnectionMemory } from "@/ai/linkbase/memory";
 
 const PAGE_SIZE = 20;
 
@@ -22,54 +23,5 @@ export type SearchConnectionsInput = z.infer<typeof searchConnectionsSchema>;
 export const searchConnectionsQuery = async (
   params: SearchConnectionsInput
 ) => {
-  const { query, userId, cursor, pageSize } =
-    searchConnectionsSchema.parse(params);
-
-  return prisma.connection.findMany({
-    where: {
-      ...(userId && { user_id: userId }),
-      OR: [
-        {
-          name: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
-        {
-          facts: {
-            some: {
-              text: {
-                contains: query,
-                mode: "insensitive",
-              },
-            },
-          },
-        },
-        {
-          met_at: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
-        {
-          social_medias: {
-            some: {
-              handle: {
-                contains: query,
-                mode: "insensitive",
-              },
-            },
-          },
-        },
-      ],
-    },
-    include: {
-      social_medias: true,
-    },
-    skip: cursor,
-    take: pageSize,
-    orderBy: {
-      created_at: "desc",
-    },
-  });
+  const x = getConnectionMemory({ userId: params.userId });
 };
