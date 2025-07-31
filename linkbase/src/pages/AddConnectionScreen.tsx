@@ -149,11 +149,19 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient colors={colors.gradients.background} style={styles.container}>
+    <LinearGradient
+      colors={colors.gradients.background}
+      style={styles.container}
+    >
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Add New Connection</Text>
-          <Text style={styles.headerSubtitle}>Build your network</Text>
+          <View>
+            <Text style={styles.headerTitle}>New Connection</Text>
+            <Text style={styles.headerSubtitle}>Build your network</Text>
+          </View>
+          <View>
+            // voice record action button
+          </View>
         </View>
 
         <KeyboardAvoidingView
@@ -179,7 +187,8 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
                   // If user deletes or manually edits, stop auto-capitalizing
                   if (
                     text.length < formData.name.length ||
-                    (text !== camelCaseWords(text) && text === text.toLowerCase())
+                    (text !== camelCaseWords(text) &&
+                      text === text.toLowerCase())
                   ) {
                     setIsNameAutoCapitalized(false);
                   }
@@ -228,7 +237,9 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
                       />
                       {/* Always show remove button since facts are optional */}
                       <Button
-                        icon={<Ionicons name="trash" size={18} color="#ffffff" />}
+                        icon={
+                          <Ionicons name="trash" size={18} color="#ffffff" />
+                        }
                         onPress={() => removeFactField(index)}
                         variant="danger"
                         size="small"
@@ -283,7 +294,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border.light,
   },
   headerTitle: {
-    fontSize: typography.size['5xl'],
+    fontSize: typography.size["5xl"],
     fontWeight: typography.weight.extrabold,
     color: colors.text.primary,
     marginBottom: 4,
@@ -310,7 +321,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border.default,
   },
   factsTitle: {
-    fontSize: typography.size['2xl'],
+    fontSize: typography.size["2xl"],
     fontWeight: typography.weight.bold,
     marginBottom: 16,
     color: colors.text.accent,
