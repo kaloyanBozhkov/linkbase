@@ -87,6 +87,7 @@ export const searchConnectionsByFactQuery = async ({
     },
     include: {
       facts: true,
+      social_medias: true,
     },
   });
 
