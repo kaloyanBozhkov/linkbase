@@ -50,6 +50,7 @@ const actions = ({
 
 const MIN_ACTION_DISTANCE = 40;
 const MAX_DRAG_DISTANCE = 50;
+const CONTROLS_HIDDEN_FOR_ACTIONS = ["search"];
 
 const getNormalizedDegrees = (dx: number, dy: number) => {
   const angle = Math.atan2(dy, dx);
@@ -188,7 +189,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
           y: (mainCirclePan.y as any)._value,
         });
       },
-      onPanResponderMove: (evt, gestureState) => {
+      onPanResponderMove: (_evt, gestureState) => {
         const { dx, dy } = gestureState;
         const distance = Math.sqrt(dx * dx + dy * dy);
         const maxDistance = MAX_DRAG_DISTANCE;
@@ -225,6 +226,12 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
         setDragState("dragging");
       },
       onPanResponderRelease: (_evt, gestureState) => {
+        const { dx, dy } = gestureState;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < MIN_ACTION_DISTANCE) {
+          resetMainCirclePosition();
+          return;
+        }
         mainCirclePan.flattenOffset();
         const normalizedDegrees = getNormalizedDegrees(
           gestureState.dx,
@@ -262,73 +269,84 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
     return <Ionicons name="flash" size={20} color={colors.text.primary} />;
   };
 
-  const renderFloatingControl = () => (
-    <View
-      style={[
-        styles.floatingControl,
-        {
-          right: 50,
-          bottom: 50,
-        },
-      ]}
-    >
-      {mode === "default" ? (
-        <>
-          {/* Search icon on the left - static */}
-          <Animated.View
-            style={[
-              styles.searchIcon,
-              {
-                transform: [{ scale: actionsScaleValues.search }],
-                opacity: actionsScaleValues.search,
-              },
-            ]}
-          >
-            <MaterialIcons
-              name="search"
-              size={16}
-              color={colors.text.primary}
-            />
-          </Animated.View>
-
-          {/* Main circle - draggable */}
-          <Animated.View
-            style={[
-              styles.mainCircle,
-              {
-                transform: [
-                  { translateX: mainCirclePan.x },
-                  { translateY: mainCirclePan.y },
-                  { scale: actionsScaleValues.main },
-                ],
-              },
-            ]}
-            {...panResponder.panHandlers}
-          >
-            {getCircleIcon()}
-          </Animated.View>
-
-          {/* Plus icon on top - static */}
-          <Animated.View
-            style={[
-              styles.plusIcon,
-              {
-                transform: [{ scale: actionsScaleValues.add }],
-                opacity: actionsScaleValues.add,
-              },
-            ]}
-          >
-            <MaterialIcons name="add" size={16} color={colors.text.primary} />
-          </Animated.View>
-        </>
-      ) : (
-        /* Close button when in any mode - static position */
-        <TouchableOpacity style={styles.closeButton} onPress={handleCloseMode}>
-          <MaterialIcons name="close" size={16} color={colors.text.onAccent} />
-        </TouchableOpacity>
-      )}
-    </View>
+  const closeButton = (
+    /* Close button when in any mode - static position */
+    <TouchableOpacity style={styles.closeButton} onPress={handleCloseMode}>
+      <MaterialIcons name="close" size={16} color={colors.text.primary} />
+    </TouchableOpacity>
   );
+
+  const renderFloatingControl = () => {
+    if (CONTROLS_HIDDEN_FOR_ACTIONS.includes(mode)) return null;
+    return (
+      <View
+        style={[
+          styles.floatingControl,
+          {
+            right: 50,
+            bottom: 50,
+          },
+        ]}
+      >
+        {mode === "default" ? (
+          <>
+            {/* Search icon on the left - static */}
+            <Animated.View
+              style={[
+                styles.searchIcon,
+                {
+                  transform: [{ scale: actionsScaleValues.search }],
+                  opacity: actionsScaleValues.search,
+                },
+              ]}
+            >
+              <MaterialIcons
+                name="search"
+                size={16}
+                color={colors.text.primary}
+              />
+            </Animated.View>
+
+            {/* Main circle - draggable */}
+            <Animated.View
+              style={[
+                styles.mainCircle,
+                {
+                  transform: [
+                    { translateX: mainCirclePan.x },
+                    { translateY: mainCirclePan.y },
+                    { scale: actionsScaleValues.main },
+                  ],
+                  backgroundColor:
+                    dragState !== "none" && dragState !== "dragging"
+                      ? colors.secondary[500]
+                      : colors.primary[600],
+                },
+              ]}
+              {...panResponder.panHandlers}
+            >
+              {getCircleIcon()}
+            </Animated.View>
+
+            {/* Plus icon on top - static */}
+            <Animated.View
+              style={[
+                styles.plusIcon,
+                {
+                  transform: [{ scale: actionsScaleValues.add }],
+                  opacity: actionsScaleValues.add,
+                },
+              ]}
+            >
+              <MaterialIcons name="add" size={16} color={colors.text.primary} />
+            </Animated.View>
+          </>
+        ) : (
+          closeButton
+        )}
+      </View>
+    );
+  };
 
   const renderSearchBar = () => {
     if (mode !== "search") return null;
@@ -338,6 +356,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
 
     return (
       <View style={[styles.searchBarContainer, { bottom: bottomPosition }]}>
+        <View style={styles.searchClose}>{closeButton}</View>
         <View style={styles.searchBar}>
           <TextInput
             style={styles.searchInput}
@@ -473,6 +492,11 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     zIndex: 999,
+  },
+  searchClose: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: 10,
   },
   searchBar: {
     flexDirection: "row",
