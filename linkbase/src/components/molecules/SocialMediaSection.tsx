@@ -58,12 +58,14 @@ interface SocialMediaSectionProps {
   socialMedias: social_media[];
   onUpdateSocialMedias: (socialMedias: social_media[]) => void;
   error?: string;
+  onInputFocus?: () => void;
 }
 
 const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
   socialMedias,
   onUpdateSocialMedias,
   error,
+  onInputFocus,
 }) => {
   const [activePickerIndex, setActivePickerIndex] = useState<number | null>(
     null
@@ -285,6 +287,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
                   autoCapitalize={inputConfig.autoCapitalize}
                   containerStyle={styles.handleInput}
                   error={validationErrors[index]}
+                  onFocus={onInputFocus}
                 />
               </View>
 

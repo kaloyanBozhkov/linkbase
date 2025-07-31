@@ -6,6 +6,8 @@ import {
   ScrollView,
   SafeAreaView,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,10 +17,11 @@ import { RootStackParamList } from "../../App";
 import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
 import SocialMediaSection from "../components/molecules/SocialMediaSection";
-import { camelCaseWords } from "../helpers/utils";
+import { camelCaseWords, getErrorMessage } from "../helpers/utils";
 import type { social_media } from "@linkbase/prisma";
 import { trpc, updateInfiniteQueryDataOnEdit } from "@/utils/trpc";
 import { colors, typography, borderRadius } from "@/theme/colors";
+import { useKeyboardScroll } from "@/hooks/useKeyboardScroll";
 
 type EditConnectionScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -52,6 +55,9 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isNameAutoCapitalized, setIsNameAutoCapitalized] = useState(false); // Don't auto-cap when editing existing
   const trpcUtils = trpc.useUtils();
+
+  // Refs for scroll functionality
+  const { scrollViewRef, scrollToFocusedInput } = useKeyboardScroll();
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -90,9 +96,9 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
       {
         id: connectionId,
         name: formData.name.trim(),
-        met_at: formData.metAt.trim(),
+        metAt: formData.metAt.trim(),
         facts: validFacts, // Can be empty array
-        social_medias: validSocialMedias,
+        socialMedias: validSocialMedias,
       },
       {
         onSuccess: (updatedConnection) => {
@@ -123,7 +129,8 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
           ]);
         },
         onError: (error) => {
-          Alert.alert("Error", error.message || "Failed to update connection");
+          const errorMessage = getErrorMessage(error);
+          Alert.alert("Error", errorMessage);
         },
       }
     );
@@ -190,109 +197,119 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
           </Text>
         </View>
 
-        <ScrollView
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
         >
-          <View style={styles.form}>
-            <Input
-              label="Name *"
-              value={formData.name}
-              onChangeText={(text) => {
-                // Auto-capitalize if user is just typing (not manually editing)
-                const processedText = isNameAutoCapitalized
-                  ? camelCaseWords(text)
-                  : text;
-                setFormData((prev) => ({ ...prev, name: processedText }));
+          <ScrollView
+            ref={scrollViewRef}
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.form}>
+              <Input
+                label="Name *"
+                value={formData.name}
+                onChangeText={(text) => {
+                  // Auto-capitalize if user is just typing (not manually editing)
+                  const processedText = isNameAutoCapitalized
+                    ? camelCaseWords(text)
+                    : text;
+                  setFormData((prev) => ({ ...prev, name: processedText }));
 
-                // If user deletes or manually edits, stop auto-capitalizing
-                if (
-                  text.length < formData.name.length ||
-                  (text !== camelCaseWords(text) && text === text.toLowerCase())
-                ) {
-                  setIsNameAutoCapitalized(false);
-                } else if (text.length > formData.name.length) {
-                  // If user is adding text, enable auto-capitalization
-                  setIsNameAutoCapitalized(true);
+                  // If user deletes or manually edits, stop auto-capitalizing
+                  if (
+                    text.length < formData.name.length ||
+                    (text !== camelCaseWords(text) && text === text.toLowerCase())
+                  ) {
+                    setIsNameAutoCapitalized(false);
+                  } else if (text.length > formData.name.length) {
+                    // If user is adding text, enable auto-capitalization
+                    setIsNameAutoCapitalized(true);
+                  }
+                }}
+                onFocus={() => scrollToFocusedInput()}
+                error={errors.name}
+                placeholder="Enter their name"
+              />
+
+              <Input
+                label="Where did you meet? *"
+                value={formData.metAt}
+                onChangeText={(text) =>
+                  setFormData((prev) => ({ ...prev, metAt: text }))
                 }
-              }}
-              error={errors.name}
-              placeholder="Enter their name"
-            />
+                onFocus={() => scrollToFocusedInput()}
+                error={errors.metAt}
+                placeholder="Coffee shop, conference, party, etc."
+              />
 
-            <Input
-              label="Where did you meet? *"
-              value={formData.metAt}
-              onChangeText={(text) =>
-                setFormData((prev) => ({ ...prev, metAt: text }))
-              }
-              error={errors.metAt}
-              placeholder="Coffee shop, conference, party, etc."
-            />
+              <SocialMediaSection
+                socialMedias={formData.socialMedias}
+                onUpdateSocialMedias={updateSocialMedias}
+                error={errors.socialMedias}
+                onInputFocus={scrollToFocusedInput}
+              />
 
-            <SocialMediaSection
-              socialMedias={formData.socialMedias}
-              onUpdateSocialMedias={updateSocialMedias}
-              error={errors.socialMedias}
-            />
+              <View style={styles.factsSection}>
+                <LinearGradient
+                  colors={colors.gradients.section}
+                  style={styles.factsSectionContent}
+                >
+                  <Text style={styles.factsTitle}>💡 Notes (Optional)</Text>
+                  {errors.facts && (
+                    <Text style={styles.errorText}>{errors.facts}</Text>
+                  )}
 
-            <View style={styles.factsSection}>
-              <LinearGradient
-                colors={colors.gradients.section}
-                style={styles.factsSectionContent}
-              >
-                <Text style={styles.factsTitle}>💡 Notes (Optional)</Text>
-                {errors.facts && (
-                  <Text style={styles.errorText}>{errors.facts}</Text>
-                )}
+                  {formData.facts.map((fact, index) => (
+                    <View key={index} style={styles.factRow}>
+                      <Input
+                        value={fact}
+                        onChangeText={(text) => updateFact(index, text)}
+                        onFocus={() => scrollToFocusedInput()}
+                        placeholder={`Interesting fact #${index + 1}`}
+                        containerStyle={styles.factInput}
+                      />
+                      {/* Always show remove button since facts are optional */}
+                      <Button
+                        icon={<Ionicons name="trash" size={18} color="#ffffff" />}
+                        onPress={() => removeFactField(index)}
+                        variant="danger"
+                        size="small"
+                        style={styles.removeButton}
+                        iconOnly
+                      />
+                    </View>
+                  ))}
 
-                {formData.facts.map((fact, index) => (
-                  <View key={index} style={styles.factRow}>
-                    <Input
-                      value={fact}
-                      onChangeText={(text) => updateFact(index, text)}
-                      placeholder={`Interesting fact #${index + 1}`}
-                      containerStyle={styles.factInput}
-                    />
-                    {/* Always show remove button since facts are optional */}
-                    <Button
-                      icon={<Ionicons name="trash" size={18} color="#ffffff" />}
-                      onPress={() => removeFactField(index)}
-                      variant="danger"
-                      size="small"
-                      style={styles.removeButton}
-                      iconOnly
-                    />
-                  </View>
-                ))}
+                  <Button
+                    title="+ Add Fact"
+                    onPress={addFactField}
+                    variant="ghost"
+                    style={styles.addFactButton}
+                  />
+                </LinearGradient>
+              </View>
 
+              <View style={styles.buttonContainer}>
                 <Button
-                  title="+ Add Fact"
-                  onPress={addFactField}
-                  variant="ghost"
-                  style={styles.addFactButton}
+                  title="Cancel"
+                  onPress={() => navigation.goBack()}
+                  variant="secondary"
+                  style={styles.cancelButton}
                 />
-              </LinearGradient>
+                <Button
+                  title={
+                    isUpdatingConnection ? "Updating..." : "Update Connection"
+                  }
+                  onPress={handleSubmit}
+                  disabled={isUpdatingConnection}
+                  style={styles.submitButton}
+                />
+              </View>
             </View>
-
-            <View style={styles.buttonContainer}>
-              <Button
-                title="Cancel"
-                onPress={() => navigation.goBack()}
-                variant="secondary"
-                style={styles.cancelButton}
-              />
-              <Button
-                title={
-                  isUpdatingConnection ? "Updating..." : "Update Connection"
-                }
-                onPress={handleSubmit}
-                disabled={isUpdatingConnection}
-                style={styles.submitButton}
-              />
-            </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </LinearGradient>
   );

@@ -40,7 +40,7 @@ export async function getEmbeddings({
 
   const result = await generateVectorEmbeddings(text);
   const embedding = result.data[0].embedding;
-  const cachedEmbedding = await createCachedEmbedding(text, embedding, embedding_feature_type.FACT);
+  const cachedEmbedding = await createCachedEmbedding(text, embedding, [embedding_feature_type.FACT]);
   return formatEmbeddings([cachedEmbedding], true)[0];
 }
 
@@ -57,7 +57,7 @@ export async function getManyEmbeddings({ texts }: { texts: string[] }) {
   for (const text of textsToEmbed) {
     const result = await generateVectorEmbeddings(text);
     const embedding = result.data[0].embedding;
-    const cachedEmbedding = await createCachedEmbedding(text, embedding, embedding_feature_type.FACT);
+    const cachedEmbedding = await createCachedEmbedding(text, embedding, [embedding_feature_type.FACT]);
     newEmbeddings.push(cachedEmbedding);
   }
 

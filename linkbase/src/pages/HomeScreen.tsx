@@ -20,6 +20,7 @@ import { rateApp } from "../hooks/useRateApp";
 import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
 import { minutesToMillis } from "@linkbase/shared/src/duration";
 import { getInfiniteQueryItems } from "@/hooks/getInfiniteQueryItems";
+import { getErrorMessage } from "@/helpers/utils";
 import { colors, typography, borderRadius } from "@/theme/colors";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
@@ -34,7 +35,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     {},
     {
       staleTime: minutesToMillis(2),
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      getNextPageParam: (lastPage) => {
+        console.log("lastPage", lastPage);
+        return lastPage.nextCursor;
+      },
     }
   );
 
@@ -209,7 +213,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.errorContainer}>
             <Text style={styles.errorTitle}>⚠️ Connection Error</Text>
-            <Text style={styles.errorText}>{errorConnections.message}</Text>
+            <Text style={styles.errorText}>{getErrorMessage(errorConnections)}</Text>
             <Button
               title="Try Again"
               onPress={() => {

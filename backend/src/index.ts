@@ -11,6 +11,7 @@ import {
   renderTermsPage,
 } from "./flows";
 import { getConnectionMemory } from "./ai/linkbase/memory";
+import testRouter from "./router/tests";
 
 const app: Application = express();
 const PORT = env.PORT;
@@ -35,6 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api", indexRouter);
+app.use("/test", testRouter);
 
 // Page routes - accessible directly without /api prefix
 app.get("/support/:appName", renderSupportPage);
@@ -48,22 +50,6 @@ app.get("/health", (req, res) => {
     status: "OK",
     message: "API is running",
     environment: env.NODE_ENV,
-  });
-});
-
-app.get("/test-me", async (req, res) => {
-  const factMemory = getConnectionMemory({
-    userId: "cmdm4xuq60000y84as1j6p22h",
-  });
-
-  const results = await factMemory.searchFacts({
-    searchTopic: req.body.search,
-    similarity: 0.2,
-    limit: 10,
-  });
-
-  res.status(200).json({
-    results,
   });
 });
 

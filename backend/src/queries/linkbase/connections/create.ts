@@ -56,8 +56,8 @@ export const createConnectionQuery = async (data: CreateConnectionInput) => {
     },
   });
 
-  const connectionMemory = getConnectionMemory({ connectionId: connection.id });
-  const addedFacts = await connectionMemory.addFacts(facts);
+  const connectionMemory = getConnectionMemory({ userId });
+  const addedFacts = await connectionMemory.addFacts(connection.id, facts);
 
   return {
     ...connection,

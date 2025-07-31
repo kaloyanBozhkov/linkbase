@@ -18,6 +18,7 @@ import Button from "../components/atoms/Button";
 import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
 import { socialMediaDisplayNames } from "@/helpers/constants";
 import { formatDate } from "@linkbase/shared/src/date";
+import { getErrorMessage } from "@/helpers/utils";
 import { colors, shadows, typography, borderRadius } from "@/theme/colors";
 
 type ConnectionDetailScreenNavigationProp = StackNavigationProp<
@@ -85,10 +86,8 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                   ]);
                 },
                 onError: (err: any) => {
-                  Alert.alert(
-                    "Error",
-                    err.message || "Failed to delete connection"
-                  );
+                  const errorMessage = getErrorMessage(err);
+                  Alert.alert("Error", errorMessage);
                 },
               }
             );

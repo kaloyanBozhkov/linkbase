@@ -23,6 +23,13 @@ type SearchFactsParams = {
   cursor?: SearchCursor;
 };
 
+type SearchContactsByFactParams = {
+  searchTopic?: string;
+  similarity?: number;
+  limit?: number;
+  cursor?: SearchCursor;
+};
+
 export const getConnectionMemory = ({ userId }: { userId: string }) => {
   const memory = {
     /**
@@ -62,6 +69,37 @@ export const getConnectionMemory = ({ userId }: { userId: string }) => {
       limit = 10,
       cursor,
     }: SearchFactsParams): Promise<SearchFactsResult> {
+      try {
+        if (!searchTopic) {
+          // List all facts when no search topic is provided
+          return { facts: [] };
+        }
+        // TODO expand search query
+
+        // Search by semantic similarity
+        const searchEmbedding = await getEmbeddings({ text: searchTopic });
+        return searchFactsQuery({
+          userId,
+          searchEmbedding,
+          minSimilarity: similarity,
+          limit,
+          cursor,
+        });
+      } catch (error) {
+        console.error("Failed to search facts:", error);
+        return { facts: [] };
+      }
+    },
+
+    /**
+     * Search contacts by fact semantic similarity
+     */
+    async searchContactsByFact({
+      searchTopic,
+      similarity = 0.2,
+      limit = 10,
+      cursor,
+    }: SearchFactsParams) {
       try {
         if (!searchTopic) {
           // List all facts when no search topic is provided
@@ -201,7 +239,6 @@ export const getConnectionMemory = ({ userId }: { userId: string }) => {
         searchTopic: factText,
         similarity,
         limit,
-        cursor: 0,
       });
     },
 

@@ -28,7 +28,7 @@ const getExpandedQuery = async (text: string, systemMessage: string) => {
     return text;
   }
 
-  return expandedText;
+  return text + ", " +expandedText;
 };
 
 export const expandQuery = async (text: string, withRetry = false): Promise<string> => {

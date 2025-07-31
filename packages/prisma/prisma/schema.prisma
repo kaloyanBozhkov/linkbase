@@ -90,6 +90,8 @@ model connection {
     user          user           @relation(fields: [user_id], references: [id], onDelete: Cascade)
     facts         fact[]
     social_medias social_media[]
+
+    @@index(user_id)
 }
 
 model fact {
@@ -103,6 +105,11 @@ model fact {
     embedding     ai_cached_embedding @relation(fields: [embedding_id], references: [id], onDelete: Cascade)
     connection_id String
     connection    connection          @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+    @@index([embedding_id, connection_id])
+    @@index([connection_id, embedding_id])
+    @@index([embedding_id])
+    @@index([connection_id])
 }
 
 model social_media {
@@ -154,6 +161,8 @@ model ai_cached_embedding {
 
     ai_embedding_search_diagnostics ai_embedding_search_diagnostic[]
     facts                           fact[]
+
+    @@index([feature_type])
 }
 
 model ai_embedding_search_diagnostic {
@@ -167,8 +176,10 @@ model ai_embedding_search_diagnostic {
     search_text              String?
     search_time_ms           Int
     limit                    Int
-    
+
     // Foreign keys and relations
     search_embedding_id String
     search_embedding    ai_cached_embedding @relation(fields: [search_embedding_id], references: [id], onDelete: Cascade)
+
+    @@index([similarity_type])
 }

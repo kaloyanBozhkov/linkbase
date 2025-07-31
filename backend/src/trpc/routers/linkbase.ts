@@ -15,6 +15,9 @@ import {
 import { createUserQuery, getUserByUuidQuery } from "@/queries/linkbase/users";
 import { social_media_type } from "@linkbase/prisma";
 import { infiniteResponse } from "@/helpers/infiniteResponse";
+import { searchConnectionsByFactQuery } from "@/queries/linkbase/ai/memory/searchConnectionsByFact";
+import { getEmbeddings } from "@/ai/embeddings";
+import { expandQuery } from "@/ai/expandQuery";
 
 // Input schemas
 const connectionCreateSchema = z.object({
@@ -42,7 +45,7 @@ const userIdSchema = z.object({
   id: z.string().min(1, "User ID is required"),
 });
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 5;
 
 export const linkbaseRouter = createTRPCRouter({
   connections: createTRPCRouter({
@@ -88,23 +91,32 @@ export const linkbaseRouter = createTRPCRouter({
       .input(
         z.object({
           query: z.string(),
+          isExpanded: z.boolean().default(false),
           cursor: z.number().default(0),
         })
       )
-      .query(async ({ ctx: { userId }, input: { query, cursor } }) => {
-        if (!query.trim()) {
-          return infiniteResponse([], cursor, PAGE_SIZE);
+      .query(
+        async ({ ctx: { userId }, input: { query, cursor, isExpanded } }) => {
+          if (!query.trim()) {
+            return {
+              items: [],
+              nextCursor: undefined,
+            };
+          }
+
+          const expandedQuery = isExpanded ? await expandQuery(query) : query;
+          const searchEmbedding = await getEmbeddings({ text: expandedQuery });
+          const result = await searchConnectionsByFactQuery({
+            userId,
+            searchEmbedding,
+            minSimilarity: 0.4,
+            limit: PAGE_SIZE,
+            offset: cursor,
+          });
+
+          return infiniteResponse(result.connections, cursor, PAGE_SIZE);
         }
-
-        const connections = await searchConnectionsQuery({
-          query,
-          cursor,
-          userId,
-          pageSize: PAGE_SIZE,
-        });
-
-        return infiniteResponse(connections, cursor, PAGE_SIZE);
-      }),
+      ),
   }),
   users: createTRPCRouter({
     getById: protectedProcedure
