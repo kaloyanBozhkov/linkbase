@@ -17,7 +17,6 @@ import { RootStackParamList } from "../../App";
 import Button from "../components/atoms/Button";
 import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
 import { socialMediaDisplayNames } from "@/helpers/constants";
-import { formatDate } from "@linkbase/shared/src/date";
 import { getErrorMessage } from "@/helpers/utils";
 import { colors, shadows, typography, borderRadius } from "@/theme/colors";
 
@@ -97,8 +96,6 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     );
   };
 
-
-
   const formatShortDate = (date: string | Date) => {
     return new Date(date).toLocaleDateString("en-US", {
       year: "numeric",
@@ -108,12 +105,15 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const getSocialMediasToShow = () => {
-    return connection?.socialMedias || [];
+    return connection?.social_medias || [];
   };
 
   if (isLoading) {
     return (
-      <LinearGradient colors={colors.gradients.background} style={styles.container}>
+      <LinearGradient
+        colors={colors.gradients.background}
+        style={styles.container}
+      >
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.centerContainer}>
             <Text style={styles.loadingText}>⚡ Loading...</Text>
@@ -125,7 +125,10 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
   if (error || !connection) {
     return (
-      <LinearGradient colors={colors.gradients.background} style={styles.container}>
+      <LinearGradient
+        colors={colors.gradients.background}
+        style={styles.container}
+      >
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.centerContainer}>
             <Text style={styles.errorTitle}>⚠️ Error</Text>
@@ -142,7 +145,10 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   const socialMediasToShow = getSocialMediasToShow();
 
   return (
-    <LinearGradient colors={colors.gradients.background} style={styles.container}>
+    <LinearGradient
+      colors={colors.gradients.background}
+      style={styles.container}
+    >
       <SafeAreaView style={styles.safeArea}>
         <ScrollView
           style={styles.scrollView}
@@ -203,12 +209,12 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
               <View style={styles.detailContainer}>
                 <View style={styles.detailRow}>
                   <Text style={styles.detailLabel}>📍 Where:</Text>
-                  <Text style={styles.detailValue}>{connection.metAt}</Text>
+                  <Text style={styles.detailValue}>{connection.met_at}</Text>
                 </View>
                 <View style={styles.detailRow}>
                   <Text style={styles.detailLabel}>📅 When:</Text>
                   <Text style={styles.detailValue}>
-                    {formatDate(connection.metWhen)}
+                    {formatShortDate(connection.created_at)}
                   </Text>
                 </View>
               </View>
@@ -224,7 +230,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                 {connection.facts.map((fact, index) => (
                   <View key={index} style={styles.factItem}>
                     <View style={styles.factDot} />
-                    <Text style={styles.factText}>{fact}</Text>
+                    <Text style={styles.factText}>{fact.text}</Text>
                   </View>
                 ))}
               </View>
@@ -240,13 +246,13 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                 <View style={styles.timestampRow}>
                   <Text style={styles.timestampLabel}>Added:</Text>
                   <Text style={styles.timestampValue}>
-                    {formatShortDate(connection.createdAt)}
+                    {formatShortDate(connection.created_at)}
                   </Text>
                 </View>
                 <View style={styles.timestampRow}>
                   <Text style={styles.timestampLabel}>Updated:</Text>
                   <Text style={styles.timestampValue}>
-                    {formatShortDate(connection.updatedAt)}
+                    {formatShortDate(connection.updated_at)}
                   </Text>
                 </View>
               </View>
@@ -295,12 +301,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   loadingText: {
-    fontSize: typography.size['2xl'],
+    fontSize: typography.size["2xl"],
     color: colors.text.accent,
     fontWeight: typography.weight.semibold,
   },
   errorTitle: {
-    fontSize: typography.size['4xl'],
+    fontSize: typography.size["4xl"],
     fontWeight: typography.weight.bold,
     color: colors.text.primary,
     marginBottom: 12,
@@ -322,7 +328,7 @@ const styles = StyleSheet.create({
     ...shadows.lg,
   },
   name: {
-    fontSize: typography.size['5xl'],
+    fontSize: typography.size["5xl"],
     fontWeight: typography.weight.extrabold,
     color: colors.text.primary,
     marginBottom: 16,
@@ -337,7 +343,7 @@ const styles = StyleSheet.create({
     ...shadows.md,
   },
   sectionTitle: {
-    fontSize: typography.size['3xl'],
+    fontSize: typography.size["3xl"],
     fontWeight: typography.weight.bold,
     color: colors.text.accent,
     marginBottom: 16,

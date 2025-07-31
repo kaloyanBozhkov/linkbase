@@ -11,9 +11,10 @@ import {
   VectorSimilarityType,
   assertMinSimilarityRange,
 } from "../../../../ai/embeddings";
+import { env } from "@/env";
 
 export interface SearchConnectionsByFactResult {
-  connections: Array<connection & { facts: fact[] }>;
+  connections: Array<connection & { facts: { id: string; text: string }[] }>;
   nextCursor?: number;
 }
 
@@ -89,12 +90,34 @@ export const searchConnectionsByFactQuery = async ({
     },
   });
 
+  const sortedConnectionsAndFacts = connections
+    .map((c) => ({
+      ...c,
+      facts: c.facts
+        .map((f) => {
+          const similarity = result.find((r) => r.id === f.id)?.similarity ?? 0;
+          return {
+            id: f.id,
+            text:
+              f.text +
+              (env.NODE_ENV === "development" ? " \n" + similarity : ""),
+            similarity,
+          };
+        })
+        .sort((a, b) => b.similarity - a.similarity), // make sure facts get sorted by similarity too for viewing
+    }))
+    .sort(
+      (a, b) =>
+        b.facts.reduce((acc, f) => acc + f.similarity, 0) -
+        a.facts.reduce((acc, f) => acc + f.similarity, 0)
+    );
+
   return {
-    connections: connections.map((c) => ({
+    connections: sortedConnectionsAndFacts.map((c) => ({
       ...c,
       facts: c.facts.map((f) => ({
-        ...f,
-        similarity: result.find((r) => r.id === f.id)?.similarity,
+        id: f.id,
+        text: f.text,
       })),
     })),
   };

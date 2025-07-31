@@ -21,7 +21,7 @@ import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
 import { minutesToMillis } from "@linkbase/shared/src/duration";
 import { getInfiniteQueryItems } from "@/hooks/getInfiniteQueryItems";
 import { getErrorMessage } from "@/helpers/utils";
-import { colors, typography, borderRadius } from "@/theme/colors";
+import { colors, typography } from "@/theme/colors";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -35,10 +35,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     {},
     {
       staleTime: minutesToMillis(2),
-      getNextPageParam: (lastPage) => {
-        console.log("lastPage", lastPage);
-        return lastPage.nextCursor;
-      },
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
     }
   );
 
@@ -91,9 +88,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     hasNextPage,
   } = hasSearched ? searchItemsQuery : getAllQuery;
 
-  const connections = hasSearched
-    ? getInfiniteQueryItems(searchItemsQuery.data)
-    : getInfiniteQueryItems(connectionsData);
+  const connections = getInfiniteQueryItems(connectionsData);
 
   useEffect(() => {
     if (!connections.length) return;
@@ -115,11 +110,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    if (hasSearched && searchQuery.trim()) {
-      // Re-run the search
+    if (hasSearched && searchQuery.trim().length > 0) {
       await searchItemsQuery.refetch();
     } else {
-      // Fetch all connections
       await trpcUtils.linkbase.connections.getAll.invalidate();
     }
     setRefreshing(false);
@@ -213,7 +206,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.errorContainer}>
             <Text style={styles.errorTitle}>⚠️ Connection Error</Text>
-            <Text style={styles.errorText}>{getErrorMessage(errorConnections)}</Text>
+            <Text style={styles.errorText}>
+              {getErrorMessage(errorConnections)}
+            </Text>
             <Button
               title="Try Again"
               onPress={() => {

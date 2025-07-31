@@ -106,15 +106,15 @@ export const linkbaseRouter = createTRPCRouter({
 
           const expandedQuery = isExpanded ? await expandQuery(query) : query;
           const searchEmbedding = await getEmbeddings({ text: expandedQuery });
-          const result = await searchConnectionsByFactQuery({
+          const { connections } = await searchConnectionsByFactQuery({
             userId,
             searchEmbedding,
-            minSimilarity: 0.4,
+            minSimilarity: 0.2,
             limit: PAGE_SIZE,
             offset: cursor,
           });
 
-          return infiniteResponse(result.connections, cursor, PAGE_SIZE);
+          return infiniteResponse(connections, cursor, PAGE_SIZE);
         }
       ),
   }),

@@ -49,7 +49,8 @@ export const updateConnectionQuery = async (
       id,
     },
     data: {
-      ...connectionData,
+      name: connectionData.name,
+      met_at: connectionData.metAt,
       social_medias: socialMedias
         ? {
             deleteMany: {},
@@ -67,10 +68,14 @@ export const updateConnectionQuery = async (
   });
 
   const connectionMemory = await getConnectionMemory({
-    connectionId: updatedConnection.id,
+    userId,
   });
-  await connectionMemory.deleteAllFacts();
-  const latestFacts = await connectionMemory.upsertFacts(facts ?? [], true);
+  await connectionMemory.deleteAllFacts(updatedConnection.id);
+  const latestFacts = await connectionMemory.upsertFacts(
+    updatedConnection.id,
+    facts ?? [],
+    true
+  );
 
   return {
     ...updatedConnection,

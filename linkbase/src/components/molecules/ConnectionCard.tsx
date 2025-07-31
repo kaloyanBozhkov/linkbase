@@ -103,17 +103,12 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
             <View style={styles.factsList}>
               {connection.facts && connection.facts.length > 0 ? (
                 <>
-                  {connection.facts.slice(0, 2).map((fact) => (
+                  {connection.facts.map((fact) => (
                     <View key={fact.id} style={styles.factItem}>
                       <View style={styles.factDot} />
                       <Text style={styles.fact}>{fact.text}</Text>
                     </View>
                   ))}
-                  {connection.facts.length > 2 && (
-                    <Text style={styles.moreFacts}>
-                      +{connection.facts.length - 2} more insights
-                    </Text>
-                  )}
                 </>
               ) : (
                 <Text style={styles.noFacts}>
