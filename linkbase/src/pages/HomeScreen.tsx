@@ -8,14 +8,13 @@ import {
   RefreshControl,
   SafeAreaView,
   ActivityIndicator,
-  TextInput,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../App";
 import Button from "../components/atoms/Button";
 import ConnectionCard from "../components/molecules/ConnectionCard";
-import SearchInputWrapper from "../components/molecules/SearchInputWrapper";
+import ActionsHeader from "../components/molecules/ActionsHeader";
 import { rateApp } from "../hooks/useRateApp";
 import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
 import { minutesToMillis } from "@linkbase/shared/src/duration";
@@ -31,6 +30,7 @@ interface Props {
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const trpcUtils = trpc.useUtils();
+  
   const getAllQuery = trpc.linkbase.connections.getAll.useInfiniteQuery(
     {},
     {
@@ -177,6 +177,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       />
     );
   };
+  
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Text style={styles.emptyStateTitle}>
@@ -225,45 +226,21 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     );
   }
 
-  const actionsHeader = (
-    <View style={styles.header}>
-      <Text style={styles.headerTitle}>Linkbase</Text>
-      <Text style={styles.headerSubtitle}>Your Connection Network</Text>
-
-      <SearchInputWrapper
-        isSearching={isSearching}
-        hasSearched={hasSearched}
-        searchQuery={searchQuery}
-        onSearch={handleSearch}
-        onClear={handleClearSearch}
-        containerStyle={styles.searchContainerWrapper}
-      >
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search by facts or questions..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholderTextColor={colors.text.muted}
-          onSubmitEditing={handleSearch}
-          returnKeyType="search"
-        />
-      </SearchInputWrapper>
-
-      <Button
-        title="Add Connection"
-        onPress={() => navigation.navigate("AddConnection")}
-        style={styles.addButton}
-      />
-    </View>
-  );
-
   return (
     <LinearGradient
       colors={colors.gradients.background}
       style={styles.container}
     >
       <SafeAreaView style={styles.safeArea}>
-        {actionsHeader}
+        <ActionsHeader
+          isSearching={isSearching}
+          hasSearched={hasSearched}
+          searchQuery={searchQuery}
+          onSearch={handleSearch}
+          onClearSearch={handleClearSearch}
+          onSearchQueryChange={setSearchQuery}
+          onAddConnection={() => navigation.navigate("AddConnection")}
+        />
         {isLoadingConnections ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={colors.loading} />
@@ -273,7 +250,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             data={connections}
             renderItem={renderConnectionCard}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.listContainer}
+            contentContainerStyle={styles.listContainerFloating}
             ListEmptyComponent={renderEmptyState}
             refreshControl={
               <RefreshControl
@@ -313,40 +290,10 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  header: {
-    padding: 20,
-    paddingTop: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
-  },
-  headerTitle: {
-    fontSize: typography.size["5xl"],
-    fontWeight: typography.weight.extrabold,
-    color: colors.text.primary,
-    marginBottom: 4,
-    letterSpacing: typography.letterSpacing.wider,
-  },
-  headerSubtitle: {
-    fontSize: typography.size.xl,
-    color: colors.text.muted,
-    marginBottom: 20,
-    fontWeight: typography.weight.medium,
-  },
-  searchContainerWrapper: {
-    marginBottom: 16,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: typography.size.xl,
-    color: colors.text.primary,
-    paddingRight: 8,
-  },
-  addButton: {
-    marginTop: 4,
-  },
-  listContainer: {
+  listContainerFloating: {
     padding: 20,
     flexGrow: 1,
+    paddingBottom: 120, // Add extra padding at bottom for search bar area
   },
   emptyState: {
     flex: 1,
