@@ -19,6 +19,7 @@ import { searchConnectionsByFactQuery } from "@/queries/linkbase/ai/memory/searc
 import { getEmbeddings } from "@/ai/embeddings";
 import { expandQuery } from "@/ai/expandQuery";
 import { getAddNewConnectionFilloutQuery } from "@/queries/linkbase/ai/getAddNewConnectionFilloutQuery";
+import { getMultipleConnectionsFilloutQuery } from "@/queries/linkbase/ai/getMultipleConnectionsFilloutQuery";
 
 // Input schemas
 const connectionCreateSchema = z.object({
@@ -126,6 +127,15 @@ export const linkbaseRouter = createTRPCRouter({
       )
       .query(({ input: { audioFileUrl } }) => {
         return getAddNewConnectionFilloutQuery({ audioFileUrl });
+      }),
+    getMultipleConnectionsFillout: protectedProcedure
+      .input(
+        z.object({
+          audioFileUrl: z.string().url(),
+        })
+      )
+      .query(({ input: { audioFileUrl } }) => {
+        return getMultipleConnectionsFilloutQuery({ audioFileUrl });
       }),
   }),
   users: createTRPCRouter({

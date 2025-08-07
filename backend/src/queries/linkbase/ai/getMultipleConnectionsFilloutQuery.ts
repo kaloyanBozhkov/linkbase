@@ -1,10 +1,10 @@
-import { getLLMResponse } from "@/ai/getLLMResponse";
 import { getAudioTranscription } from "@/ai/getAudioTranscription";
+import { getLLMResponse } from "@/ai/getLLMResponse";
+import { retry } from "@/helpers/retry";
 import { ai_feature, prisma } from "@linkbase/prisma";
 import z from "zod";
-import { retry } from "@/helpers/retry";
 
-const _getAddNewConnectionFilloutQuery = async ({
+const _getMultipleConnectionsFilloutQuery = async ({
   audioFileUrl,
 }: {
   audioFileUrl: string;
@@ -13,31 +13,35 @@ const _getAddNewConnectionFilloutQuery = async ({
     const transcription = await getAudioTranscription(audioFileUrl);
     const systemMessage = await prisma.ai_system_message.findFirstOrThrow({
       where: {
-        ai_feature: ai_feature.ADD_CONNECTION_FILL_OUT,
+        ai_feature: ai_feature.ADD_MULTIPLE_CONNECTIONS_FILL_OUT,
       },
     });
     const response = await getLLMResponse({
       userMessage: transcription,
       systemMessage: systemMessage.system_message,
-      schema: filloutSchema,
+      schema: multipleConnectionsFilloutSchema,
     });
     return response;
   } catch (error) {
-    console.error("error", error);
+    console.error("error parsing multiple connections", error);
     throw error;
   }
 };
 
-const filloutSchema = z.object({
+const connectionSchema = z.object({
   name: z.string(),
   metWhere: z.string().default("-"),
   facts: z.array(z.string()),
 });
 
-export const getAddNewConnectionFilloutQuery = async ({
+const multipleConnectionsFilloutSchema = z.object({
+  connections: z.array(connectionSchema),
+});
+
+export const getMultipleConnectionsFilloutQuery = async ({
   audioFileUrl,
 }: {
   audioFileUrl: string;
 }) => {
-  return retry(() => _getAddNewConnectionFilloutQuery({ audioFileUrl }), 3);
+  return retry(() => _getMultipleConnectionsFilloutQuery({ audioFileUrl }), 3);
 };

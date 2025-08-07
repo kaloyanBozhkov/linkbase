@@ -1,6 +1,7 @@
 import { prisma, ai_feature } from ".";
 import {
   AI_FILLOUT_CONNECTION_SYSTEM_MESSAGE,
+  AI_FILLOUT_MULTIPLE_CONNECTIONS_SYSTEM_MESSAGE,
   AI_QUERY_EXPANSION_SYSTEM_MESSAGE,
 } from "./seedData/systemMessages";
 
@@ -16,6 +17,10 @@ async function main() {
       {
         ai_feature: ai_feature.ADD_CONNECTION_FILL_OUT,
         system_message: AI_FILLOUT_CONNECTION_SYSTEM_MESSAGE,
+      },
+      {
+        ai_feature: ai_feature.ADD_MULTIPLE_CONNECTIONS_FILL_OUT,
+        system_message: AI_FILLOUT_MULTIPLE_CONNECTIONS_SYSTEM_MESSAGE,
       },
     ],
   });

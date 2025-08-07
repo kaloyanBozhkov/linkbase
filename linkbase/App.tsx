@@ -5,6 +5,7 @@ import { Provider as PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import HomeScreen from "./src/pages/HomeScreen";
 import AddConnectionScreen from "./src/pages/AddConnectionScreen";
+import AddVoiceConnectionsScreen from "./src/pages/AddVoiceConnectionsScreen";
 import ConnectionDetailScreen from "./src/pages/ConnectionDetailScreen";
 import EditConnectionScreen from "./src/pages/EditConnectionScreen";
 import { useSessionUserStore } from "./src/hooks/useGetSessionUser";
@@ -16,6 +17,7 @@ import { Alert } from "react-native";
 export type RootStackParamList = {
   Home: undefined;
   AddConnection: undefined;
+  AddVoiceConnections: undefined;
   ConnectionDetail: { connectionId: string };
   EditConnection: { connectionId: string };
 };
@@ -74,6 +76,11 @@ const App: React.FC = () => {
                   name="AddConnection"
                   component={AddConnectionScreen}
                   options={{ title: "Add Connection" }}
+                />
+                <Stack.Screen
+                  name="AddVoiceConnections"
+                  component={AddVoiceConnectionsScreen}
+                  options={{ title: "Voice Connections" }}
                 />
                 <Stack.Screen
                   name="ConnectionDetail"

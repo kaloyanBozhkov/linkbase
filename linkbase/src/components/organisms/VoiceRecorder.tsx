@@ -19,12 +19,14 @@ interface VoiceRecorderProps {
   onRecordingUploaded: (uploadedUrl: string) => void;
   userId: string;
   featureFolder: (typeof S3_FEATURE_FOLDERS)[number];
+  size?: 'small' | 'medium' | 'large';
 }
 
 const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   onRecordingUploaded,
   userId,
   featureFolder,
+  size = 'medium',
 }) => {
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
@@ -177,26 +179,69 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
+  // Size configurations
+  const sizeConfig = {
+    small: {
+      buttonSize: 40,
+      iconSize: 20,
+      stopButtonSize: 26,
+      actionButtonSize: 22,
+      fontSize: typography.size.xs,
+    },
+    medium: {
+      buttonSize: 48,
+      iconSize: 24,
+      stopButtonSize: 30,
+      actionButtonSize: 26,
+      fontSize: typography.size.xs,
+    },
+    large: {
+      buttonSize: 64,
+      iconSize: 32,
+      stopButtonSize: 40,
+      actionButtonSize: 34,
+      fontSize: typography.size.sm,
+    },
+  };
+
+  const config = sizeConfig[size];
+
   const renderIdleState = () => (
     <Pressable
-      style={[styles.button, styles.recordButton]}
+      style={[
+        styles.button, 
+        styles.recordButton,
+        {
+          width: config.buttonSize,
+          height: config.buttonSize,
+          borderRadius: config.buttonSize / 2,
+        }
+      ]}
       onPress={startRecording}
     >
-      <Ionicons name="mic" size={24} color="#ffffff" />
+      <Ionicons name="mic" size={config.iconSize} color="#ffffff" />
     </Pressable>
   );
 
   const renderRecordingState = () => (
     <View style={styles.recordingContainer}>
       <Pressable
-        style={[styles.button, styles.stopButton]}
+        style={[
+          styles.button, 
+          styles.stopButton,
+          {
+            width: config.stopButtonSize,
+            height: config.stopButtonSize,
+            borderRadius: config.stopButtonSize / 2,
+          }
+        ]}
         onPress={stopRecording}
       >
-        <Ionicons name="stop" size={16} color="#ffffff" />
+        <Ionicons name="stop" size={config.iconSize * 0.7} color="#ffffff" />
       </Pressable>
       <View style={styles.recordingInfo}>
         <View style={styles.recordingIndicator} />
-        <Text style={styles.durationText}>
+        <Text style={[styles.durationText, { fontSize: config.fontSize }]}>
           {formatDuration(recordingDuration)}
         </Text>
       </View>
@@ -207,29 +252,45 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
     <View style={styles.recordedContainer}>
       <View style={styles.actionsContainer}>
         <Pressable
-          style={[styles.button, styles.discardButton]}
+          style={[
+            styles.button, 
+            styles.discardButton,
+            {
+              width: config.actionButtonSize,
+              height: config.actionButtonSize,
+              borderRadius: config.actionButtonSize / 2,
+            }
+          ]}
           onPress={discardRecording}
           disabled={isUploading}
         >
-          <Ionicons name="close" size={14} color="#ffffff" />
+          <Ionicons name="close" size={config.iconSize * 0.6} color="#ffffff" />
         </Pressable>
         <Pressable
-          style={[styles.button, styles.acceptButton]}
+          style={[
+            styles.button, 
+            styles.acceptButton,
+            {
+              width: config.actionButtonSize,
+              height: config.actionButtonSize,
+              borderRadius: config.actionButtonSize / 2,
+            }
+          ]}
           onPress={acceptRecording}
           disabled={isUploading}
         >
           {isUploading ? (
-            <Text style={styles.uploadingText}>...</Text>
+            <Text style={[styles.uploadingText, { fontSize: config.fontSize }]}>...</Text>
           ) : (
-            <Ionicons name="checkmark" size={14} color="#ffffff" />
+            <Ionicons name="checkmark" size={config.iconSize * 0.6} color="#ffffff" />
           )}
         </Pressable>
       </View>
       <View style={styles.recordedTextContainer}>
-        <Text style={styles.recordedText}>
+        <Text style={[styles.recordedText, { fontSize: config.fontSize }]}>
           Recording: {formatDuration(recordingDuration)}
         </Text>
-        <Text style={styles.recordedText}>All good?</Text>
+        <Text style={[styles.recordedText, { fontSize: config.fontSize }]}>All good?</Text>
       </View>
     </View>
   );
@@ -237,7 +298,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   return (
     <View style={styles.container}>
       {recordingState === "idle" && renderIdleState()}
-      {recorderState.isRecording && renderRecordingState()}
+      {recordingState === "recording" && renderRecordingState()}
       {recordingState === "recorded" && renderRecordedState()}
     </View>
   );
