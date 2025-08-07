@@ -8,6 +8,7 @@ import AddConnectionScreen from "./src/pages/AddConnectionScreen";
 import AddVoiceConnectionsScreen from "./src/pages/AddVoiceConnectionsScreen";
 import ConnectionDetailScreen from "./src/pages/ConnectionDetailScreen";
 import EditConnectionScreen from "./src/pages/EditConnectionScreen";
+import SettingsScreen from "./src/pages/SettingsScreen";
 import { useSessionUserStore } from "./src/hooks/useGetSessionUser";
 import LoadingScreen from "./src/pages/LoadingScreen";
 import { TRPCProvider } from "./src/providers/TRPCProvider";
@@ -20,6 +21,7 @@ export type RootStackParamList = {
   AddVoiceConnections: undefined;
   ConnectionDetail: { connectionId: string };
   EditConnection: { connectionId: string };
+  Settings: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -91,6 +93,11 @@ const App: React.FC = () => {
                   name="EditConnection"
                   component={EditConnectionScreen}
                   options={{ title: "Edit Connection" }}
+                />
+                <Stack.Screen
+                  name="Settings"
+                  component={SettingsScreen}
+                  options={{ title: "Settings" }}
                 />
               </>
             )}

@@ -16,6 +16,7 @@ import {
   Platform,
 } from "react-native";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { colors, typography } from "@/theme/colors";
 import Button from "@/components/atoms/Button";
 import SearchBar from "./SearchBar";
@@ -29,6 +30,7 @@ interface ActionsHeaderProps {
   onSearchQueryChange: (text: string) => void;
   onAddConnection: () => void;
   onVoiceAddConnection: () => void;
+  onOpenSettings: () => void;
 }
 
 const actions = ({
@@ -38,6 +40,8 @@ const actions = ({
   onSearchAction,
   onVoiceAddDrag,
   onVoiceAddAction,
+  onSettingsDrag,
+  onSettingsAction,
 }: {
   onAddDrag: () => void;
   onSearchDrag: () => void;
@@ -45,6 +49,8 @@ const actions = ({
   onSearchAction: () => void;
   onVoiceAddDrag: () => void;
   onVoiceAddAction: () => void;
+  onSettingsDrag: () => void;
+  onSettingsAction: () => void;
 }) => [
   {
     min: 150,
@@ -64,12 +70,18 @@ const actions = ({
     dragCallback: onVoiceAddDrag,
     actionCallback: onVoiceAddAction,
   },
+  {
+    min: 0,
+    max: 90,
+    dragCallback: onSettingsDrag,
+    actionCallback: onSettingsAction,
+  },
 ];
 
 const SHOW_CONTROLS_FOR = 2000;
 const MIN_ACTION_DISTANCE = 40;
 const MAX_DRAG_DISTANCE = 50;
-const CONTROLS_HIDDEN_FOR_ACTIONS = ["search"];
+const CONTROLS_HIDDEN_FOR_ACTIONS = ["search", "settings"];
 
 const getNormalizedDegrees = (dx: number, dy: number) => {
   const angle = Math.atan2(dy, dx);
@@ -77,7 +89,7 @@ const getNormalizedDegrees = (dx: number, dy: number) => {
   return degrees < 0 ? degrees + 360 : degrees;
 };
 
-type Mode = "default" | "search" | "add";
+type Mode = "default" | "search" | "add" | "settings";
 
 const ActionsHeader: React.FC<ActionsHeaderProps> = ({
   isSearching: _isSearching,
@@ -88,12 +100,14 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
   onSearchQueryChange,
   onAddConnection,
   onVoiceAddConnection,
+  onOpenSettings,
 }) => {
   const [mode, setMode] = useState<Mode>("default");
   const [dragState, setDragState] = useState<
-    "none" | "search" | "add" | "voiceAdd" | "dragging"
+    "none" | "search" | "add" | "voiceAdd" | "dragging" | "settings"
   >("none");
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const lastHapticStateRef = useRef<string | null>(null);
 
   // Hover state for controls visibility
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -105,6 +119,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
     add: new Animated.Value(1),
     main: new Animated.Value(1),
     voiceAdd: new Animated.Value(1),
+    settings: new Animated.Value(1),
     controlIcons: new Animated.Value(0),
   }).current;
 
@@ -237,6 +252,15 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
         setDragState("none");
         onVoiceAddConnection();
       },
+      onSettingsDrag: () => {
+        setDragState("settings");
+      },
+      onSettingsAction: () => {
+        // Reset UI before navigating, matching add/voice add behavior
+        resetMainCirclePosition();
+        setDragState("none");
+        onOpenSettings();
+      },
     })
   );
 
@@ -264,6 +288,14 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
       ).start();
     }
   }, [dragState, actionsScaleValues]);
+
+  // Provide light haptic feedback when hovering over a distinct action
+  useEffect(() => {
+    if (lastHapticStateRef.current !== dragState) {
+      Haptics.selectionAsync();
+      lastHapticStateRef.current = dragState;
+    }
+  }, [dragState]);
 
   // Handle keyboard events to position search bar above keyboard
   useEffect(() => {
@@ -373,6 +405,8 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
               normalizedDegrees >= action.min && normalizedDegrees <= action.max
           );
           if (action) {
+            // Stronger haptic when an action is executed
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             action.actionCallback();
             return;
           }
@@ -405,11 +439,12 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
       return <MaterialIcons name="add" size={20} color={colors.text.primary} />;
     if (dragState === "voiceAdd")
       return <Ionicons name="mic" size={20} color={colors.text.primary} />;
+    if (dragState === "settings")
+      return <Ionicons name="settings" size={20} color={colors.text.primary} />;
     return <Ionicons name="flash" size={20} color={colors.text.primary} />;
   };
 
   const closeButton = (
-    /* Close button when in any mode - static position */
     <Button
       variant="danger"
       size="small"
@@ -418,7 +453,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
         <MaterialIcons
           name="close"
           size={16}
-          color={colors.button.danger.text}
+          color={colors.button?.danger?.text || colors.text.onAccent}
         />
       }
       iconOnly
@@ -522,11 +557,24 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
               >
                 <Ionicons name="mic" size={16} color={colors.text.primary} />
               </Animated.View>
+              <Animated.View
+                style={[
+                  styles.settingsIcon,
+                  {
+                    transform: [{ scale: actionsScaleValues.settings }],
+                    opacity: actionsScaleValues.settings,
+                  },
+                ]}
+              >
+                <Ionicons
+                  name="settings"
+                  size={16}
+                  color={colors.text.primary}
+                />
+              </Animated.View>
             </Animated.View>
           </>
-        ) : (
-          closeButton
-        )}
+        ) : null}
       </View>
     );
   };
@@ -554,6 +602,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
       </View>
     );
   };
+  // Open Settings via navigation; no inline overlay rendering
 
   const renderInstructions = () => {
     if (mode !== "default" || dragState === "dragging") return null;
@@ -564,6 +613,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
           {dragState === "search" && "Search connections"}
           {dragState === "add" && "Add a connection"}
           {dragState === "voiceAdd" && "Add connections by voice"}
+          {dragState === "settings" && "Open settings"}
           {dragState === "none" && "Drag to search or add a connection"}
         </Text>
       </View>
@@ -632,6 +682,17 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
+  settingsIcon: {
+    position: "absolute",
+    left: 50,
+    top: 50,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: colors.slate[100] + "50",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   plusIcon: {
     position: "absolute",
     top: -27.5,
@@ -662,13 +723,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  closeButton: {
-    width: 10,
-    height: 10,
-    borderRadius: 30,
-    padding: 0,
-    margin: 0,
-  },
+  // closeButton styles removed; not used anymore
   searchBarContainer: {
     position: "absolute",
     left: 20,
@@ -679,6 +734,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     marginBottom: 10,
+  },
+  closeButton: {
+    width: 10,
+    height: 10,
+    borderRadius: 30,
+    padding: 0,
+    margin: 0,
   },
   instructionsContainer: {
     position: "absolute",
@@ -698,6 +760,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
   },
+  // settings overlay styles removed; handled via navigation screen
 });
 
 export default ActionsHeader;
