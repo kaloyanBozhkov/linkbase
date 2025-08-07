@@ -65,3 +65,55 @@ export const getErrorMessage = (error: TRPCClientErrorLike<any>): string => {
 export const shouldRetryError = (error: any): boolean => {
   return isNetworkError(error);
 };
+
+/**
+ * Converts a local file URI to a File object for upload (React Native/Expo)
+ * @param uri - The local file URI from audio recording
+ * @param fileName - The name for the file
+ * @param fileType - The MIME type of the file
+ * @returns Promise<File> - The File object
+ * @throws Error if the conversion fails
+ */
+export const uriToFile = async (
+  uri: string,
+  fileName: string,
+  fileType: string
+): Promise<File> => {
+  try {
+    console.log(`Converting URI to File: ${uri}`);
+    
+    // For React Native/Expo, we need to read the file as base64 first
+    // then convert to blob
+    const response = await fetch(uri);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to read file: ${response.status} ${response.statusText}`);
+    }
+    
+    // Get the blob directly from the response
+    const blob = await response.blob();
+    // Create File object
+    const file = new File([blob], fileName, { type: fileType });
+    
+    console.log(`File created successfully:`);
+    console.log(`- Name: ${fileName}`);
+    console.log(`- Size: ${file.size} bytes`);
+    console.log(`- Type: ${file.type}`);
+    console.log(`- Blob size: ${blob.size} bytes`);
+    
+    if (file.size === 0) {
+      throw new Error('File size is 0 bytes - file may be corrupted or empty');
+    }
+    
+    return file;
+  } catch (error) {
+    console.error("Error converting URI to File:", error);
+    console.error("URI:", uri);
+    
+    if (error instanceof Error) {
+      throw new Error(`Failed to convert URI to File: ${error.message}`);
+    }
+    
+    throw new Error("Failed to convert URI to File: Unknown error");
+  }
+};

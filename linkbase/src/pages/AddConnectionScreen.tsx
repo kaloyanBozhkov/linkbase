@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import { RootStackParamList } from "../../App";
 import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
 import SocialMediaSection from "../components/molecules/SocialMediaSection";
+import VoiceRecorder from "../components/organisms/VoiceRecorder";
 import { useSessionUserStore } from "../hooks/useGetSessionUser";
 import { camelCaseWords, getErrorMessage } from "../helpers/utils";
 import { enableRateApp } from "../hooks/useRateApp";
@@ -23,6 +24,7 @@ import type { social_media } from "@linkbase/prisma";
 import { trpc, updateInfiniteQueryDataOnAdd } from "@/utils/trpc";
 import { colors, typography, borderRadius } from "@/theme/colors";
 import { useKeyboardScroll } from "@/hooks/useKeyboardScroll";
+import { ActivityIndicator } from "react-native-paper";
 
 type AddConnectionScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -36,6 +38,7 @@ interface Props {
 const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
   const { mutateAsync: createConnection, isPending: loading } =
     trpc.linkbase.connections.create.useMutation();
+  const { scrollViewRef, scrollToFocusedInput } = useKeyboardScroll();
   const [formData, setFormData] = useState({
     name: "",
     metAt: "",
@@ -45,9 +48,44 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isNameAutoCapitalized, setIsNameAutoCapitalized] = useState(true);
   const trpcUtils = trpc.useUtils();
+  
+  const [filloutAudioUrl, setFilloutAudioUrl] = useState<string | null>(null);
+  const {
+    data: filloutData,
+    isFetching: isFetchingFillout,
+    error: filloutError,
+  } = trpc.linkbase.connections.getAddNewConnectionFillout.useQuery(
+    {
+      audioFileUrl: filloutAudioUrl ?? "",
+    },
+    {
+      enabled: !!filloutAudioUrl,
+    }
+  );
+  useEffect(() => {
+    if (filloutError) {
+      Alert.alert(
+        "Error",
+        "Couldn't use your voice recording to fill out the form. Please try again later."
+      );
+    }
+  }, [filloutError]);
+  useEffect(() => {
+    if (filloutData) {
+      setFormData((prev) => ({
+        ...prev,
+        name: filloutData.name ?? prev.name,
+        metAt: filloutData.metWhere ?? prev.metAt,
+        facts: [...prev.facts.filter(Boolean), ...filloutData.facts],
+      }));
+    }
+  }, [filloutData]);
 
-  // Refs for scroll functionality
-  const { scrollViewRef, scrollToFocusedInput } = useKeyboardScroll();
+  // Handle voice recording transcription
+  const handleVoiceRecordingUploaded = (s3AudioUrl: string) => {
+    console.log("handleVoiceRecordingUploaded s3AudioUrl:", s3AudioUrl);
+    setFilloutAudioUrl(s3AudioUrl);
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -159,8 +197,16 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.headerTitle}>New Connection</Text>
             <Text style={styles.headerSubtitle}>Build your network</Text>
           </View>
-          <View>
-            // voice record action button
+          <View style={styles.voiceRec}>
+            {isFetchingFillout ? (
+              <ActivityIndicator size="small" color={colors.loading} />
+            ) : (
+              <VoiceRecorder
+                onRecordingUploaded={handleVoiceRecordingUploaded}
+                featureFolder="add-contact-recordings"
+                userId={useSessionUserStore.getState().userId!}
+              />
+            )}
           </View>
         </View>
 
@@ -292,6 +338,14 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     borderBottomWidth: 1,
     borderBottomColor: colors.border.light,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  voiceRec: {
+    display: "flex",
+    alignContent: "center",
+    justifyContent: "center",
   },
   headerTitle: {
     fontSize: typography.size["5xl"],

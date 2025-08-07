@@ -27,6 +27,9 @@ export const env = createEnv({
     // OpenAI
     OPEN_AI_API_KEY: z.string().describe("OpenAI API key"),
     OPENROUTER_API_KEY: z.string().describe("OpenRouter API key"),
+
+    S3_ACCESS_KEY_ID: z.string().describe("S3 access key ID"),
+    S3_SECRET_ACCESS_KEY: z.string().describe("S3 secret access key"),
   },
 
   /**

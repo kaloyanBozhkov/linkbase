@@ -1,17 +1,24 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   PanResponder,
   Animated,
-  TouchableOpacity,
   Keyboard,
   Platform,
 } from "react-native";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { colors, typography } from "@/theme/colors";
+import Button from "@/components/atoms/Button";
+import SearchBar from "./SearchBar";
 
 interface ActionsHeaderProps {
   isSearching: boolean;
@@ -21,6 +28,7 @@ interface ActionsHeaderProps {
   onClearSearch: () => void;
   onSearchQueryChange: (text: string) => void;
   onAddConnection: () => void;
+  onVoiceAddConnection: () => void;
 }
 
 const actions = ({
@@ -28,26 +36,37 @@ const actions = ({
   onSearchDrag,
   onAddAction,
   onSearchAction,
+  onVoiceAddDrag,
+  onVoiceAddAction,
 }: {
   onAddDrag: () => void;
   onSearchDrag: () => void;
   onAddAction: () => void;
   onSearchAction: () => void;
+  onVoiceAddDrag: () => void;
+  onVoiceAddAction: () => void;
 }) => [
   {
     min: 150,
-    max: 240,
+    max: 210,
     dragCallback: onSearchDrag,
     actionCallback: onSearchAction,
   },
   {
-    min: 240,
-    max: 360,
+    min: 210,
+    max: 270,
     dragCallback: onAddDrag,
     actionCallback: onAddAction,
   },
+  {
+    min: 270,
+    max: 360,
+    dragCallback: onVoiceAddDrag,
+    actionCallback: onVoiceAddAction,
+  },
 ];
 
+const SHOW_CONTROLS_FOR = 2000;
 const MIN_ACTION_DISTANCE = 40;
 const MAX_DRAG_DISTANCE = 50;
 const CONTROLS_HIDDEN_FOR_ACTIONS = ["search"];
@@ -68,12 +87,16 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
   onClearSearch,
   onSearchQueryChange,
   onAddConnection,
+  onVoiceAddConnection,
 }) => {
   const [mode, setMode] = useState<Mode>("default");
   const [dragState, setDragState] = useState<
-    "none" | "search" | "add" | "dragging"
+    "none" | "search" | "add" | "voiceAdd" | "dragging"
   >("none");
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  // Hover state for controls visibility
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Animated values for just the main circle movement
   const mainCirclePan = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
@@ -81,6 +104,8 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
     search: new Animated.Value(1),
     add: new Animated.Value(1),
     main: new Animated.Value(1),
+    voiceAdd: new Animated.Value(1),
+    controlIcons: new Animated.Value(0),
   }).current;
 
   const resetMainCirclePosition = useCallback(() => {
@@ -95,6 +120,99 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
       useNativeDriver: false,
     }).start();
   }, [mainCirclePan, actionsScaleValues]);
+
+  // Hover handlers for showing/hiding controls
+  const handleHoverStart = useCallback(() => {
+    // Clear any existing timeout
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+
+    // Show controls immediately
+    Animated.timing(actionsScaleValues.controlIcons, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [actionsScaleValues.controlIcons]);
+
+  const handleHoverEnd = useCallback(() => {
+    // Clear any existing timeout
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+
+    // Hide controls after specified duration
+    hoverTimeoutRef.current = setTimeout(() => {
+      Animated.timing(actionsScaleValues.controlIcons, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
+    }, SHOW_CONTROLS_FOR);
+  }, [actionsScaleValues.controlIcons]);
+
+  // Helper function to show controls with auto-hide
+  const showControlsWithAutoHide = useCallback(() => {
+    // Clear any existing timeout
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+
+    // Show controls immediately
+    Animated.timing(actionsScaleValues.controlIcons, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+
+    // Hide after specified duration
+    hoverTimeoutRef.current = setTimeout(() => {
+      Animated.timing(actionsScaleValues.controlIcons, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
+    }, SHOW_CONTROLS_FOR);
+  }, [actionsScaleValues.controlIcons]);
+
+  // Auto-hide controls after initial animation sequence
+  useEffect(() => {
+    // animate in on mount after 500ms delay
+    Animated.timing(actionsScaleValues.controlIcons, {
+      toValue: 1,
+      duration: 200,
+      delay: 500,
+      useNativeDriver: false,
+    }).start();
+
+    // Start the 3-second timer after the animation completes (500ms delay + 200ms animation + 3000ms visible)
+    hoverTimeoutRef.current = setTimeout(() => {
+      Animated.timing(actionsScaleValues.controlIcons, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
+    }, 500 + 200 + SHOW_CONTROLS_FOR); // delay + animation duration + x seconds visible
+  }, [actionsScaleValues.controlIcons]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (mode === "default") {
+        showControlsWithAutoHide();
+      }
+    }, [mode, showControlsWithAutoHide])
+  );
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const actionsRef = useRef(
     actions({
       onAddDrag: () => {
@@ -110,6 +228,14 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
       },
       onSearchAction: () => {
         setMode("search");
+      },
+      onVoiceAddDrag: () => {
+        setDragState("voiceAdd");
+      },
+      onVoiceAddAction: () => {
+        resetMainCirclePosition(); // page changes this rest is needed
+        setDragState("none");
+        onVoiceAddConnection();
       },
     })
   );
@@ -180,77 +306,88 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
     };
   }, [mode]);
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
-        mainCirclePan.setOffset({
-          x: (mainCirclePan.x as any)._value,
-          y: (mainCirclePan.y as any)._value,
-        });
-      },
-      onPanResponderMove: (_evt, gestureState) => {
-        const { dx, dy } = gestureState;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const maxDistance = MAX_DRAG_DISTANCE;
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderGrant: () => {
+          handleHoverStart(); // Show controls on touch start
+          mainCirclePan.setOffset({
+            x: (mainCirclePan.x as any)._value,
+            y: (mainCirclePan.y as any)._value,
+          });
+        },
+        onPanResponderMove: (_evt, gestureState) => {
+          const { dx, dy } = gestureState;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const maxDistance = MAX_DRAG_DISTANCE;
 
-        // Limit the drag distance
-        let limitedDx = dx;
-        let limitedDy = dy;
+          // Limit the drag distance
+          let limitedDx = dx;
+          let limitedDy = dy;
 
-        if (distance > maxDistance) {
-          const ratio = maxDistance / distance;
-          limitedDx = dx * ratio;
-          limitedDy = dy * ratio;
-        }
+          if (distance > maxDistance) {
+            const ratio = maxDistance / distance;
+            limitedDx = dx * ratio;
+            limitedDy = dy * ratio;
+          }
 
-        // Calculate scale based on distance (smaller as it gets further)
-        const scale = Math.max(0.6, 1 - (distance / maxDistance) * 0.4);
+          // Calculate scale based on distance (smaller as it gets further)
+          const scale = Math.max(0.6, 1 - (distance / maxDistance) * 0.4);
 
-        // Update positions
-        mainCirclePan.setValue({ x: limitedDx, y: limitedDy });
-        actionsScaleValues.main.setValue(scale);
+          // Update positions
+          mainCirclePan.setValue({ x: limitedDx, y: limitedDy });
+          actionsScaleValues.main.setValue(scale);
 
-        const normalizedDegrees = getNormalizedDegrees(limitedDx, limitedDy);
+          const normalizedDegrees = getNormalizedDegrees(limitedDx, limitedDy);
 
-        if (distance > MIN_ACTION_DISTANCE) {
-          const hoverAction = actionsRef.current.find(
+          if (distance > MIN_ACTION_DISTANCE) {
+            const hoverAction = actionsRef.current.find(
+              (action) =>
+                normalizedDegrees >= action.min &&
+                normalizedDegrees <= action.max
+            );
+            if (hoverAction) {
+              hoverAction.dragCallback();
+              return;
+            }
+          }
+          setDragState("dragging");
+        },
+        onPanResponderRelease: (_evt, gestureState) => {
+          handleHoverEnd(); // Start 3-second timer to hide controls
+          const { dx, dy } = gestureState;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < MIN_ACTION_DISTANCE) {
+            resetMainCirclePosition();
+            return;
+          }
+          mainCirclePan.flattenOffset();
+          const normalizedDegrees = getNormalizedDegrees(
+            gestureState.dx,
+            gestureState.dy
+          );
+
+          const action = actionsRef.current.find(
             (action) =>
               normalizedDegrees >= action.min && normalizedDegrees <= action.max
           );
-          if (hoverAction) {
-            hoverAction.dragCallback();
+          if (action) {
+            action.actionCallback();
             return;
           }
-        }
-        setDragState("dragging");
-      },
-      onPanResponderRelease: (_evt, gestureState) => {
-        const { dx, dy } = gestureState;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < MIN_ACTION_DISTANCE) {
+
           resetMainCirclePosition();
-          return;
-        }
-        mainCirclePan.flattenOffset();
-        const normalizedDegrees = getNormalizedDegrees(
-          gestureState.dx,
-          gestureState.dy
-        );
-
-        const action = actionsRef.current.find(
-          (action) =>
-            normalizedDegrees >= action.min && normalizedDegrees <= action.max
-        );
-        if (action) {
-          action.actionCallback();
-          return;
-        }
-
-        resetMainCirclePosition();
-      },
-    })
-  ).current;
+        },
+      }),
+    [
+      handleHoverStart,
+      handleHoverEnd,
+      mainCirclePan,
+      actionsScaleValues,
+      resetMainCirclePosition,
+    ]
+  );
 
   const handleCloseMode = () => {
     if (mode === "search") {
@@ -266,14 +403,27 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
       );
     if (dragState === "add")
       return <MaterialIcons name="add" size={20} color={colors.text.primary} />;
+    if (dragState === "voiceAdd")
+      return <Ionicons name="mic" size={20} color={colors.text.primary} />;
     return <Ionicons name="flash" size={20} color={colors.text.primary} />;
   };
 
   const closeButton = (
     /* Close button when in any mode - static position */
-    <TouchableOpacity style={styles.closeButton} onPress={handleCloseMode}>
-      <MaterialIcons name="close" size={16} color={colors.text.primary} />
-    </TouchableOpacity>
+    <Button
+      variant="danger"
+      size="small"
+      onPress={handleCloseMode}
+      icon={
+        <MaterialIcons
+          name="close"
+          size={16}
+          color={colors.button.danger.text}
+        />
+      }
+      iconOnly
+      style={styles.closeButton}
+    />
   );
 
   const renderFloatingControl = () => {
@@ -290,25 +440,14 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
       >
         {mode === "default" ? (
           <>
-            {/* Search icon on the left - static */}
-            <Animated.View
-              style={[
-                styles.searchIcon,
-                {
-                  transform: [{ scale: actionsScaleValues.search }],
-                  opacity: actionsScaleValues.search,
-                },
-              ]}
-            >
-              <MaterialIcons
-                name="search"
-                size={16}
-                color={colors.text.primary}
-              />
-            </Animated.View>
-
             {/* Main circle - draggable */}
             <Animated.View
+              onTouchStart={() => {
+                handleHoverStart();
+              }}
+              onTouchEnd={() => {
+                handleHoverEnd();
+              }}
               style={[
                 styles.mainCircle,
                 {
@@ -328,17 +467,61 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
               {getCircleIcon()}
             </Animated.View>
 
-            {/* Plus icon on top - static */}
             <Animated.View
               style={[
-                styles.plusIcon,
                 {
-                  transform: [{ scale: actionsScaleValues.add }],
-                  opacity: actionsScaleValues.add,
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  zIndex: -1,
+                  opacity: actionsScaleValues.controlIcons,
                 },
               ]}
             >
-              <MaterialIcons name="add" size={16} color={colors.text.primary} />
+              {/* Search icon on the left - static */}
+              <Animated.View
+                style={[
+                  styles.searchIcon,
+                  {
+                    transform: [{ scale: actionsScaleValues.search }],
+                    opacity: actionsScaleValues.search,
+                  },
+                ]}
+              >
+                <MaterialIcons
+                  name="search"
+                  size={16}
+                  color={colors.text.primary}
+                />
+              </Animated.View>
+
+              {/* Plus icon on top - static */}
+              <Animated.View
+                style={[
+                  styles.plusIcon,
+                  {
+                    transform: [{ scale: actionsScaleValues.add }],
+                    opacity: actionsScaleValues.add,
+                  },
+                ]}
+              >
+                <MaterialIcons
+                  name="add"
+                  size={16}
+                  color={colors.text.primary}
+                />
+              </Animated.View>
+              <Animated.View
+                style={[
+                  styles.voiceAddIcon,
+                  {
+                    transform: [{ scale: actionsScaleValues.voiceAdd }],
+                    opacity: actionsScaleValues.voiceAdd,
+                  },
+                ]}
+              >
+                <Ionicons name="mic" size={16} color={colors.text.primary} />
+              </Animated.View>
             </Animated.View>
           </>
         ) : (
@@ -355,23 +538,19 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
     const bottomPosition = keyboardHeight > 0 ? keyboardHeight + 20 : 40;
 
     return (
-      <View style={[styles.searchBarContainer, { bottom: bottomPosition }]}>
+      <View
+        style={[
+          styles.searchBarContainer,
+          { bottom: bottomPosition, pointerEvents: "box-none" },
+        ]}
+      >
         <View style={styles.searchClose}>{closeButton}</View>
-        <View style={styles.searchBar}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search by facts or questions..."
-            value={searchQuery}
-            onChangeText={onSearchQueryChange}
-            placeholderTextColor={colors.text.muted}
-            onSubmitEditing={onSearch}
-            returnKeyType="search"
-            autoFocus
-          />
-          <TouchableOpacity onPress={onSearch} style={styles.searchButton}>
-            <Text style={styles.searchButtonText}>Search</Text>
-          </TouchableOpacity>
-        </View>
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearchQueryChange={onSearchQueryChange}
+          onSearch={onSearch}
+          isSearching={_isSearching}
+        />
       </View>
     );
   };
@@ -384,6 +563,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
         <Text style={styles.instructionsText}>
           {dragState === "search" && "Search connections"}
           {dragState === "add" && "Add a connection"}
+          {dragState === "voiceAdd" && "Add connections by voice"}
           {dragState === "none" && "Drag to search or add a connection"}
         </Text>
       </View>
@@ -436,7 +616,7 @@ const styles = StyleSheet.create({
   searchIcon: {
     position: "absolute",
     left: -35,
-    top: 15,
+    top: 20,
     width: 30,
     height: 30,
     borderRadius: 15,
@@ -454,8 +634,8 @@ const styles = StyleSheet.create({
   },
   plusIcon: {
     position: "absolute",
-    top: -35,
-    left: 15,
+    top: -27.5,
+    left: -15,
     width: 30,
     height: 30,
     borderRadius: 15,
@@ -471,21 +651,23 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
-  closeButton: {
+  voiceAddIcon: {
+    position: "absolute",
+    top: -30,
+    left: 40,
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: colors.red[500],
+    backgroundColor: colors.slate[100] + "50",
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+  },
+  closeButton: {
+    width: 10,
+    height: 10,
+    borderRadius: 30,
+    padding: 0,
+    margin: 0,
   },
   searchBarContainer: {
     position: "absolute",
@@ -497,40 +679,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     marginBottom: 10,
-  },
-  searchBar: {
-    flexDirection: "row",
-    backgroundColor: colors.background.surface,
-    borderRadius: 25,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-    borderWidth: 1,
-    borderColor: colors.border.light,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: typography.size.lg,
-    color: colors.text.primary,
-    paddingRight: 12,
-  },
-  searchButton: {
-    backgroundColor: colors.primary[600],
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 16,
-  },
-  searchButtonText: {
-    color: colors.text.onAccent,
-    fontSize: typography.size.sm,
-    fontWeight: typography.weight.semibold,
   },
   instructionsContainer: {
     position: "absolute",

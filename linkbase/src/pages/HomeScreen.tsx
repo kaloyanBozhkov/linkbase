@@ -240,6 +240,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           onClearSearch={handleClearSearch}
           onSearchQueryChange={setSearchQuery}
           onAddConnection={() => navigation.navigate("AddConnection")}
+          onVoiceAddConnection={() => navigation.navigate("AddVoiceConnections")}
         />
         {isLoadingConnections ? (
           <View style={styles.loadingContainer}>

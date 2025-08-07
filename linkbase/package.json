@@ -38,6 +38,7 @@
     "@trpc/tanstack-react-query": "^11.4.3",
     "axios": "^1.10.0",
     "expo": "~53.0.17",
+    "expo-audio": "^0.4.8",
     "expo-blur": "~14.1.5",
     "expo-constants": "~17.1.7",
     "expo-font": "~13.3.2",
@@ -65,6 +66,7 @@
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
     "superjson": "^1.13.3",
+    "zod": "^4.0.14",
     "zustand": "^5.0.6"
   },
   "devDependencies": {

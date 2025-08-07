@@ -7,6 +7,7 @@ import {
 } from "./middleware";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { appRouter, createTRPCContext } from "@/trpc/index";
+import s3Router from "./s3";
 
 
 const router: Router = Router();
@@ -22,6 +23,8 @@ router.use(
     createContext: createTRPCContext,
   })
 );
+
+router.use("/s3", s3Router);  
 
 router.use("/hello", (req, res) => {
   res.json({

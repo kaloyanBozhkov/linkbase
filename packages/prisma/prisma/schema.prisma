@@ -63,6 +63,7 @@ enum vector_similarity_type {
 
 enum ai_feature {
     QUERY_EXPANSION
+    ADD_CONNECTION_FILL_OUT
 }
 
 model user {

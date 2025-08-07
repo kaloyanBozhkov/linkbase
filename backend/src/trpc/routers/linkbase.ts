@@ -13,11 +13,12 @@ import {
   searchConnectionsQuery,
 } from "@/queries/linkbase/connections";
 import { createUserQuery, getUserByUuidQuery } from "@/queries/linkbase/users";
-import { social_media_type } from "@linkbase/prisma";
+import { ai_feature, social_media_type } from "@linkbase/prisma";
 import { infiniteResponse } from "@/helpers/infiniteResponse";
 import { searchConnectionsByFactQuery } from "@/queries/linkbase/ai/memory/searchConnectionsByFact";
 import { getEmbeddings } from "@/ai/embeddings";
 import { expandQuery } from "@/ai/expandQuery";
+import { getAddNewConnectionFilloutQuery } from "@/queries/linkbase/ai/getAddNewConnectionFilloutQuery";
 
 // Input schemas
 const connectionCreateSchema = z.object({
@@ -117,6 +118,15 @@ export const linkbaseRouter = createTRPCRouter({
           return infiniteResponse(connections, cursor, PAGE_SIZE);
         }
       ),
+    getAddNewConnectionFillout: protectedProcedure
+      .input(
+        z.object({
+          audioFileUrl: z.string().url(),
+        })
+      )
+      .query(({ input: { audioFileUrl } }) => {
+        return getAddNewConnectionFilloutQuery({ audioFileUrl });
+      }),
   }),
   users: createTRPCRouter({
     getById: protectedProcedure
