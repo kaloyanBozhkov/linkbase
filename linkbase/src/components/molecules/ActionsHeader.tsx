@@ -595,9 +595,16 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
         <View style={styles.searchClose}>{closeButton}</View>
         <SearchBar
           searchQuery={searchQuery}
-          onSearchQueryChange={onSearchQueryChange}
+          onSearchQueryChange={(text) => {
+            if (_hasSearched) {
+              onClearSearch();
+            }
+            onSearchQueryChange(text);
+          }}
           onSearch={onSearch}
           isSearching={_isSearching}
+          hasSearched={_hasSearched}
+          onClearSearch={onClearSearch}
         />
       </View>
     );

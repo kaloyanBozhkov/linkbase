@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -22,6 +22,8 @@ interface SearchBarProps {
   buttonStyle?: ViewStyle;
   buttonTextStyle?: TextStyle;
   autoFocus?: boolean;
+  hasSearched?: boolean;
+  onClearSearch?: () => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -35,13 +37,53 @@ const SearchBar: React.FC<SearchBarProps> = ({
   buttonStyle,
   buttonTextStyle,
   autoFocus = true,
+  hasSearched = false,
+  onClearSearch,
 }) => {
+  const lastSubmittedQueryRef = useRef<string>("");
+
+  // Reset the last submitted query whenever the active search is cleared externally
+  useEffect(() => {
+    if (!hasSearched) {
+      lastSubmittedQueryRef.current = "";
+    }
+  }, [hasSearched]);
+
+  // If a search is already active when mounting or toggling into searched state,
+  // initialize the last submitted query to match the current value so the button shows Clear.
+  useEffect(() => {
+    if (hasSearched && !lastSubmittedQueryRef.current) {
+      lastSubmittedQueryRef.current = searchQuery;
+    }
+  }, [hasSearched, searchQuery]);
+
+  const isDirty = useMemo(() => {
+    if (!hasSearched) return false;
+    return searchQuery.trim() !== lastSubmittedQueryRef.current.trim();
+  }, [hasSearched, searchQuery]);
+
+  const shouldShowClear = useMemo(() => {
+    return hasSearched && !isDirty && !isSearching;
+  }, [hasSearched, isDirty, isSearching]);
+
+  const handlePress = () => {
+    if (shouldShowClear) {
+      onClearSearch?.();
+      return;
+    }
+    // Record what we searched for so we can detect dirty state
+    lastSubmittedQueryRef.current = searchQuery;
+    onSearch();
+  };
+
   const renderSearchButtonContent = () => {
     if (isSearching) {
       return <ActivityIndicator size={16} color={colors.text.onAccent} />;
     }
     return (
-      <Text style={[styles.searchButtonText, buttonTextStyle]}>Search</Text>
+      <Text style={[styles.searchButtonText, buttonTextStyle]}>
+        {shouldShowClear ? "Clear" : "Search"}
+      </Text>
     );
   };
 
@@ -53,15 +95,18 @@ const SearchBar: React.FC<SearchBarProps> = ({
         value={searchQuery}
         onChangeText={onSearchQueryChange}
         placeholderTextColor={colors.text.muted}
-        onSubmitEditing={onSearch}
+        onSubmitEditing={() => {
+          lastSubmittedQueryRef.current = searchQuery;
+          onSearch();
+        }}
         returnKeyType="search"
         autoFocus={autoFocus}
         editable={!isSearching}
       />
       <TouchableOpacity
-        onPress={onSearch}
+        onPress={handlePress}
         style={[styles.searchButton, buttonStyle]}
-        disabled={isSearching || !searchQuery.trim()}
+        disabled={isSearching || (!shouldShowClear && !searchQuery.trim())}
       >
         {renderSearchButtonContent()}
       </TouchableOpacity>
