@@ -17,12 +17,14 @@ interface VoiceConnectionCardProps {
   connection: VoiceConnectionData;
   onUpdate: (updatedData: Partial<VoiceConnectionData>) => void;
   onRemove: () => void;
+  onInputFocus?: () => void;
 }
 
 const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
   connection,
   onUpdate,
   onRemove,
+  onInputFocus,
 }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isNameAutoCapitalized, setIsNameAutoCapitalized] = useState(true);
@@ -132,6 +134,7 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
             onChangeText={handleNameChange}
             error={errors.name}
             placeholder="Enter their name"
+            onFocus={() => onInputFocus && onInputFocus()}
           />
 
           <Input
@@ -140,6 +143,7 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
             onChangeText={handleMetWhereChange}
             error={errors.metWhere}
             placeholder="Coffee shop, conference, party, etc."
+            onFocus={() => onInputFocus && onInputFocus()}
           />
 
           <View style={styles.factsSection}>
@@ -156,6 +160,7 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
                     onChangeText={(text) => updateFact(index, text)}
                     placeholder={`Interesting fact #${index + 1}`}
                     containerStyle={styles.factInput}
+                    onFocus={() => onInputFocus && onInputFocus()}
                   />
                   <Button
                     icon={<Ionicons name="trash" size={16} color="#ffffff" />}

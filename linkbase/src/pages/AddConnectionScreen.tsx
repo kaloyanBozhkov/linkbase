@@ -304,22 +304,22 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
                 </LinearGradient>
               </View>
 
-              <View style={styles.buttonContainer}>
-                <Button
-                  title="Cancel"
-                  onPress={() => navigation.goBack()}
-                  variant="secondary"
-                  style={styles.cancelButton}
-                />
-                <Button
-                  title={loading ? "Adding..." : "Add Connection"}
-                  onPress={handleSubmit}
-                  disabled={loading}
-                  style={styles.submitButton}
-                />
-              </View>
             </View>
           </ScrollView>
+          <View style={styles.bottomActions}>
+            <Button
+              title="Cancel"
+              onPress={() => navigation.goBack()}
+              variant="secondary"
+              style={styles.cancelButton}
+            />
+            <Button
+              title={loading ? "Adding..." : "Add Connection"}
+              onPress={handleSubmit}
+              disabled={loading}
+              style={styles.submitButton}
+            />
+          </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </LinearGradient>
@@ -397,6 +397,13 @@ const styles = StyleSheet.create({
   },
   addFactButton: {
     marginTop: 12,
+  },
+  bottomActions: {
+    flexDirection: "row",
+    gap: 16,
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.light,
   },
   buttonContainer: {
     flexDirection: "row",

@@ -19,6 +19,8 @@ const Input: React.FC<InputProps> = ({
   error,
   containerStyle,
   style,
+  onFocus,
+  onBlur,
   ...props
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -33,8 +35,14 @@ const Input: React.FC<InputProps> = ({
           error && styles.inputError,
           style,
         ]}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onFocus={(e) => {
+          setIsFocused(true);
+          if (onFocus) onFocus(e);
+        }}
+        onBlur={(e) => {
+          setIsFocused(false);
+          if (onBlur) onBlur(e);
+        }}
         placeholderTextColor={colors.input.placeholder}
         {...props}
       />

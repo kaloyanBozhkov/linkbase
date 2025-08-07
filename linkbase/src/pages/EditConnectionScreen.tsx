@@ -291,24 +291,24 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
                 </LinearGradient>
               </View>
 
-              <View style={styles.buttonContainer}>
-                <Button
-                  title="Cancel"
-                  onPress={() => navigation.goBack()}
-                  variant="secondary"
-                  style={styles.cancelButton}
-                />
-                <Button
-                  title={
-                    isUpdatingConnection ? "Updating..." : "Update Connection"
-                  }
-                  onPress={handleSubmit}
-                  disabled={isUpdatingConnection}
-                  style={styles.submitButton}
-                />
-              </View>
             </View>
           </ScrollView>
+          <View style={styles.bottomActions}>
+            <Button
+              title="Cancel"
+              onPress={() => navigation.goBack()}
+              variant="secondary"
+              style={styles.cancelButton}
+            />
+            <Button
+              title={
+                isUpdatingConnection ? "Updating..." : "Update Connection"
+              }
+              onPress={handleSubmit}
+              disabled={isUpdatingConnection}
+              style={styles.submitButton}
+            />
+          </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </LinearGradient>
@@ -388,6 +388,13 @@ const styles = StyleSheet.create({
   },
   addFactButton: {
     marginTop: 12,
+  },
+  bottomActions: {
+    flexDirection: "row",
+    gap: 16,
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.light,
   },
   buttonContainer: {
     flexDirection: "row",

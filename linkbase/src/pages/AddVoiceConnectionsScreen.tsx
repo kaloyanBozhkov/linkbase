@@ -7,6 +7,8 @@ import {
   SafeAreaView,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -18,6 +20,7 @@ import { useSessionUserStore } from "../hooks/useGetSessionUser";
 import { getErrorMessage } from "../helpers/utils";
 import { trpc, updateInfiniteQueryDataOnAdd } from "@/utils/trpc";
 import { colors, typography } from "@/theme/colors";
+import { useKeyboardScroll } from "@/hooks/useKeyboardScroll";
 
 type AddVoiceConnectionsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -41,6 +44,7 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
   const [connections, setConnections] = useState<VoiceConnectionData[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isCreating, setIsCreating] = useState(false);
+  const { scrollViewRef, scrollToFocusedInput } = useKeyboardScroll();
 
   const {
     data: filloutData,
@@ -222,25 +226,32 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
               </View>
             </View>
 
-            <ScrollView
-              style={styles.scrollView}
-              showsVerticalScrollIndicator={false}
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : undefined}
+              style={{ flex: 1 }}
             >
-              {connections[currentIndex] && (
-                <VoiceConnectionCard
-                  connection={connections[currentIndex]}
-                  onUpdate={(updatedData) =>
-                    handleConnectionUpdate(
-                      connections[currentIndex].id,
-                      updatedData
-                    )
-                  }
-                  onRemove={() =>
-                    handleRemoveConnection(connections[currentIndex].id)
-                  }
-                />
-              )}
-            </ScrollView>
+              <ScrollView
+                ref={scrollViewRef}
+                style={styles.scrollView}
+                showsVerticalScrollIndicator={false}
+              >
+                {connections[currentIndex] && (
+                  <VoiceConnectionCard
+                    connection={connections[currentIndex]}
+                    onUpdate={(updatedData) =>
+                      handleConnectionUpdate(
+                        connections[currentIndex].id,
+                        updatedData
+                      )
+                    }
+                    onRemove={() =>
+                      handleRemoveConnection(connections[currentIndex].id)
+                    }
+                    onInputFocus={scrollToFocusedInput}
+                  />
+                )}
+              </ScrollView>
+            </KeyboardAvoidingView>
 
             <View style={styles.bottomActions}>
               <Button
