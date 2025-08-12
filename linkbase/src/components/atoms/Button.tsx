@@ -13,7 +13,7 @@ interface ButtonProps {
   title?: string;
   onPress: () => void;
   variant?: "primary" | "secondary" | "danger" | "ghost";
-  size?: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large" | "xsmall";
   disabled?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
@@ -132,6 +132,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.button.ghost.background,
     borderWidth: 1,
     borderColor: colors.button.ghost.border,
+  },
+  xsmall: {
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    minWidth: 4,
+    minHeight: 4,
   },
   small: {
     paddingHorizontal: 16,

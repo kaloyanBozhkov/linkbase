@@ -66,6 +66,7 @@ export const colors = {
     secondary: '#1e293b',   // slate.800
     tertiary: '#334155',    // slate.700
     surface: '#0f172a',     // slate.900
+    accent: '#00f5ff',      // primary.500
   },
 
   text: {

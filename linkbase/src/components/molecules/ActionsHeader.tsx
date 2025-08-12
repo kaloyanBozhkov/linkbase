@@ -446,15 +446,11 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
 
   const closeButton = (
     <Button
-      variant="danger"
-      size="small"
+      variant="secondary"
+      size="xsmall"
       onPress={handleCloseMode}
       icon={
-        <MaterialIcons
-          name="close"
-          size={16}
-          color={colors.button?.danger?.text || colors.text.onAccent}
-        />
+        <MaterialIcons name="close" size={12} color={colors.text.secondary} />
       }
       iconOnly
       style={styles.closeButton}
@@ -594,6 +590,13 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
       >
         <View style={styles.searchClose}>{closeButton}</View>
         <SearchBar
+          containerStyle={{
+            shadowColor: colors.background.accent,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
           searchQuery={searchQuery}
           onSearchQueryChange={(text) => {
             if (_hasSearched) {
@@ -730,7 +733,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  // closeButton styles removed; not used anymore
   searchBarContainer: {
     position: "absolute",
     left: 20,
@@ -743,11 +745,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   closeButton: {
-    width: 10,
-    height: 10,
     borderRadius: 30,
-    padding: 0,
-    margin: 0,
+    backgroundColor: colors.slate[100] + "50",
   },
   instructionsContainer: {
     position: "absolute",
