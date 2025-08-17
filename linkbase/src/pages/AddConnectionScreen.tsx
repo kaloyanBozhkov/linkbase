@@ -22,7 +22,8 @@ import { camelCaseWords, getErrorMessage } from "../helpers/utils";
 import { enableRateApp } from "../hooks/useRateApp";
 import type { social_media } from "@linkbase/prisma";
 import { trpc, updateInfiniteQueryDataOnAdd } from "@/utils/trpc";
-import { colors, typography, borderRadius } from "@/theme/colors";
+import { colors as baseColors, typography, borderRadius } from "@/theme/colors";
+import { useThemeStore } from "@/hooks/useThemeStore";
 import { useKeyboardScroll } from "@/hooks/useKeyboardScroll";
 import { ActivityIndicator } from "react-native-paper";
 
@@ -186,20 +187,19 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
     }));
   };
 
+  const { colors } = useThemeStore();
+
   return (
-    <LinearGradient
-      colors={colors.gradients.background}
-      style={styles.container}
-    >
+    <LinearGradient colors={colors.gradients.background} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.headerTitle}>New Connection</Text>
-            <Text style={styles.headerSubtitle}>Build your network</Text>
+            <Text style={[styles.headerTitle, { color: colors.text.primary }]}>New Connection</Text>
+            <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}>Build your network</Text>
           </View>
           <View style={styles.voiceRec}>
             {isFetchingFillout ? (
-              <ActivityIndicator size="small" color={colors.loading} />
+              <ActivityIndicator size="small" color={baseColors.loading} />
             ) : (
               <VoiceRecorder
                 onRecordingUploaded={handleVoiceRecordingUploaded}
@@ -263,13 +263,10 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
               />
 
               <View style={styles.factsSection}>
-                <LinearGradient
-                  colors={colors.gradients.section}
-                  style={styles.factsSectionContent}
-                >
-                  <Text style={styles.factsTitle}>💡 Notes (Optional)</Text>
+                <LinearGradient colors={colors.gradients.section} style={styles.factsSectionContent}>
+                  <Text style={[styles.factsTitle, { color: colors.text.accent }]}>💡 Notes (Optional)</Text>
                   {errors.facts && (
-                    <Text style={styles.errorText}>{errors.facts}</Text>
+                    <Text style={[styles.errorText, { color: colors.text.error }]}>{errors.facts}</Text>
                   )}
 
                   {formData.facts.map((fact, index) => (
@@ -306,7 +303,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
 
             </View>
           </ScrollView>
-          <View style={styles.bottomActions}>
+          <View style={[styles.bottomActions, { borderTopColor: colors.border.light }]}>
             <Button
               title="Cancel"
               onPress={() => navigation.goBack()}
@@ -337,7 +334,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
+    borderBottomColor: baseColors.border.light,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
@@ -350,13 +347,13 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: typography.size["5xl"],
     fontWeight: typography.weight.extrabold,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     marginBottom: 4,
     letterSpacing: typography.letterSpacing.wide,
   },
   headerSubtitle: {
     fontSize: typography.size.xl,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
     fontWeight: typography.weight.medium,
   },
   scrollView: {
@@ -372,13 +369,13 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: colors.border.default,
+    borderColor: baseColors.border.default,
   },
   factsTitle: {
     fontSize: typography.size["2xl"],
     fontWeight: typography.weight.bold,
     marginBottom: 16,
-    color: colors.text.accent,
+    color: baseColors.text.accent,
     letterSpacing: typography.letterSpacing.wide,
   },
   factRow: {
@@ -403,7 +400,7 @@ const styles = StyleSheet.create({
     gap: 16,
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: colors.border.light,
+    borderTopColor: baseColors.border.light,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -417,7 +414,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   errorText: {
-    color: colors.text.error,
+    color: baseColors.text.error,
     fontSize: typography.size.base,
     marginBottom: 12,
     fontWeight: typography.weight.medium,

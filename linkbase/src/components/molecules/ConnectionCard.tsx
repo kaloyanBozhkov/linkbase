@@ -12,7 +12,8 @@ import Button from "../atoms/Button";
 import type { RouterOutput } from "@linkbase/backend/src/trpc/routers";
 import { socialMediaDisplayNames } from "@/helpers/constants";
 import { formatDate } from "@linkbase/shared/src/date";
-import { colors, shadows, typography, borderRadius } from "@/theme/colors";
+import { colors as baseColors, shadows, typography, borderRadius } from "@/theme/colors";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 interface ConnectionCardProps {
   connection: NonNullable<RouterOutput["linkbase"]["connections"]["getById"]>;
@@ -39,6 +40,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
 
   const socialMediasToShow = getSocialMediasToShow();
 
+  const { colors } = useThemeStore();
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -53,7 +55,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
       >
         <View style={styles.cardHeader}>
           <View style={styles.nameContainer}>
-            <Text style={styles.name}>{connection.name}</Text>
+            <Text style={[styles.name, { color: colors.text.primary }]}>{connection.name}</Text>
             {socialMediasToShow.length > 0 && (
               <View style={styles.socialMediaContainer}>
                 {socialMediasToShow.slice(0, 3).map((socialMedia, index) => (
@@ -70,7 +72,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
                       end={{ x: 1, y: 0 }}
                       style={styles.socialMediaGradient}
                     >
-                      <Text style={styles.socialMediaText}>
+                      <Text style={[styles.socialMediaText, { color: colors.text.onAccent }]}>
                         {socialMediaDisplayNames[socialMedia.type] ||
                           socialMedia.type}
                       </Text>
@@ -78,8 +80,8 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
                   </TouchableOpacity>
                 ))}
                 {socialMediasToShow.length > 3 && (
-                  <View style={styles.moreSocialMedia}>
-                    <Text style={styles.moreSocialMediaText}>
+                  <View style={[styles.moreSocialMedia, { backgroundColor: colors.border.default }]}>
+                    <Text style={[styles.moreSocialMediaText, { color: colors.text.secondary }]}>
                       +{socialMediasToShow.length - 3}
                     </Text>
                   </View>
@@ -88,30 +90,30 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
             )}
           </View>
           <View style={styles.dateContainer}>
-            <Text style={styles.date}>{formatDate(connection.created_at)}</Text>
+            <Text style={[styles.date, { color: colors.text.secondary }]}>{formatDate(connection.created_at)}</Text>
           </View>
         </View>
 
         <View style={styles.cardBody}>
           <View style={styles.locationContainer}>
             <Text style={styles.locationIcon}>📍</Text>
-            <Text style={styles.location}>{connection.met_at}</Text>
+            <Text style={[styles.location, { color: colors.text.secondary }]}>{connection.met_at}</Text>
           </View>
 
           <View style={styles.factsContainer}>
-            <Text style={styles.factsLabel}>💡 Notes</Text>
+            <Text style={[styles.factsLabel, { color: colors.text.accent }]}>💡 Notes</Text>
             <View style={styles.factsList}>
               {connection.facts && connection.facts.length > 0 ? (
                 <>
                   {connection.facts.map((fact) => (
                     <View key={fact.id} style={styles.factItem}>
-                      <View style={styles.factDot} />
-                      <Text style={styles.fact}>{fact.text}</Text>
+                      <View style={[styles.factDot, { backgroundColor: colors.text.accent }]} />
+                      <Text style={[styles.fact, { color: colors.text.secondary }]}>{fact.text}</Text>
                     </View>
                   ))}
                 </>
               ) : (
-                <Text style={styles.noFacts}>
+                <Text style={[styles.noFacts, { color: colors.text.muted }]}>
                   No notes added, click edit and some!
                 </Text>
               )}
@@ -149,7 +151,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: 20,
     borderWidth: 1,
-    borderColor: colors.border.default,
+    borderColor: baseColors.border.default,
     ...shadows.lg,
   },
   cardHeader: {
@@ -164,7 +166,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: typography.size["3xl"],
     fontWeight: typography.weight.bold,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     marginBottom: 8,
     letterSpacing: typography.letterSpacing.wide,
   },
@@ -184,29 +186,29 @@ const styles = StyleSheet.create({
   },
   socialMediaText: {
     fontSize: typography.size.xs,
-    color: colors.text.onAccent,
+    color: baseColors.text.onAccent,
     fontWeight: typography.weight.semibold,
   },
   moreSocialMedia: {
-    backgroundColor: colors.border.default,
+    backgroundColor: baseColors.border.default,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: borderRadius.sm,
   },
   moreSocialMediaText: {
     fontSize: typography.size.xs,
-    color: colors.text.secondary,
+    color: baseColors.text.secondary,
     fontWeight: typography.weight.semibold,
   },
   dateContainer: {
-    backgroundColor: colors.border.default,
+    backgroundColor: baseColors.border.default,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: borderRadius.full,
   },
   date: {
     fontSize: typography.size.sm,
-    color: colors.text.secondary,
+    color: baseColors.text.secondary,
     fontWeight: typography.weight.medium,
   },
   cardBody: {
@@ -216,12 +218,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
-    backgroundColor: colors.background.surface,
+    backgroundColor: baseColors.background.surface,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: colors.border.light,
+    borderColor: baseColors.border.light,
   },
   locationIcon: {
     fontSize: typography.size.xl,
@@ -229,21 +231,21 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: typography.size.lg,
-    color: colors.text.secondary,
+    color: baseColors.text.secondary,
     fontWeight: typography.weight.medium,
     flex: 1,
   },
   factsContainer: {
-    backgroundColor: colors.background.surface,
+    backgroundColor: baseColors.background.surface,
     padding: 16,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: colors.border.light,
+    borderColor: baseColors.border.light,
   },
   factsLabel: {
     fontSize: typography.size.xl,
     fontWeight: typography.weight.semibold,
-    color: colors.text.accent,
+    color: baseColors.text.accent,
     marginBottom: 12,
     letterSpacing: typography.letterSpacing.wide,
   },
@@ -258,26 +260,26 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: colors.text.accent,
+    backgroundColor: baseColors.text.accent,
     marginTop: 6,
     marginRight: 12,
   },
   fact: {
     fontSize: typography.size.base,
-    color: colors.text.secondary,
+    color: baseColors.text.secondary,
     lineHeight: 20,
     flex: 1,
   },
   moreFacts: {
     fontSize: typography.size.sm,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
     fontStyle: "italic",
     marginTop: 8,
     textAlign: "center",
   },
   noFacts: {
     fontSize: typography.size.sm,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
     fontStyle: "italic",
     marginTop: 8,
     textAlign: "center",

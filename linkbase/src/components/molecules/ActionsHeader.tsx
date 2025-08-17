@@ -17,7 +17,8 @@ import {
 } from "react-native";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { colors, typography } from "@/theme/colors";
+import { colors as baseColors, typography } from "@/theme/colors";
+import { useThemeStore } from "@/hooks/useThemeStore";
 import Button from "@/components/atoms/Button";
 import SearchBar from "./SearchBar";
 
@@ -103,6 +104,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
   onOpenSettings,
 }) => {
   const [mode, setMode] = useState<Mode>("default");
+  const { colors } = useThemeStore();
   const [dragState, setDragState] = useState<
     "none" | "search" | "add" | "voiceAdd" | "dragging" | "settings"
   >("none");
@@ -487,10 +489,10 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
                     { translateY: mainCirclePan.y },
                     { scale: actionsScaleValues.main },
                   ],
-                  backgroundColor:
-                    dragState !== "none" && dragState !== "dragging"
-                      ? colors.secondary[500]
-                      : colors.primary[600],
+          backgroundColor:
+            dragState !== "none" && dragState !== "dragging"
+              ? baseColors.secondary[500]
+              : baseColors.primary[600],
                 },
               ]}
               {...panResponder.panHandlers}
@@ -519,7 +521,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
                   },
                 ]}
               >
-                <MaterialIcons
+                 <MaterialIcons
                   name="search"
                   size={16}
                   color={colors.text.primary}
@@ -536,7 +538,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
                   },
                 ]}
               >
-                <MaterialIcons
+                 <MaterialIcons
                   name="add"
                   size={16}
                   color={colors.text.primary}
@@ -551,7 +553,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
                   },
                 ]}
               >
-                <Ionicons name="mic" size={16} color={colors.text.primary} />
+                 <Ionicons name="mic" size={16} color={colors.text.primary} />
               </Animated.View>
               <Animated.View
                 style={[
@@ -562,7 +564,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
                   },
                 ]}
               >
-                <Ionicons
+                 <Ionicons
                   name="settings"
                   size={16}
                   color={colors.text.primary}
@@ -619,7 +621,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
 
     return (
       <View style={styles.instructionsContainer}>
-        <Text style={styles.instructionsText}>
+        <Text style={[styles.instructionsText, { color: colors.text.muted, backgroundColor: colors.background.surface }]}>
           {dragState === "search" && "Search connections"}
           {dragState === "add" && "Add a connection"}
           {dragState === "voiceAdd" && "Add connections by voice"}
@@ -661,7 +663,7 @@ const styles = StyleSheet.create({
     height: 60,
     zIndex: 1000,
     borderRadius: 30,
-    backgroundColor: colors.primary[600],
+    backgroundColor: baseColors.primary[600],
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -680,7 +682,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: colors.slate[100] + "50",
+    backgroundColor: baseColors.slate[100] + "50",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -699,7 +701,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: colors.slate[100] + "50",
+    backgroundColor: baseColors.slate[100] + "50",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -710,7 +712,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: colors.slate[100] + "50",
+    backgroundColor: baseColors.slate[100] + "50",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -729,7 +731,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: colors.slate[100] + "50",
+    backgroundColor: baseColors.slate[100] + "50",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -746,7 +748,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     borderRadius: 30,
-    backgroundColor: colors.slate[100] + "50",
+    backgroundColor: baseColors.slate[100] + "50",
   },
   instructionsContainer: {
     position: "absolute",
@@ -758,9 +760,9 @@ const styles = StyleSheet.create({
   },
   instructionsText: {
     fontSize: typography.size.sm,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
     textAlign: "center",
-    backgroundColor: colors.background.surface,
+    backgroundColor: baseColors.background.surface,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 12,

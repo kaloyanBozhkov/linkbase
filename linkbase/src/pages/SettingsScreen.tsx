@@ -5,48 +5,61 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
+  TouchableOpacity,
+  Linking,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
-import { colors, typography } from "@/theme/colors";
+import { colors as baseColors, typography } from "@/theme/colors";
+import { useNavigation } from "@react-navigation/native";
+import type { StackNavigationProp } from "@react-navigation/stack";
+import type { RootStackParamList } from "../../App";
+import { API_CONFIG } from "@/config/api.config";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 const SettingsScreen: React.FC = () => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const { colors } = useThemeStore();
+
   const settingsItems = [
     {
       icon: "notifications",
       title: "Notifications",
       subtitle: "Manage your notification preferences",
       iconFamily: "MaterialIcons" as const,
-    },
-    {
-      icon: "person",
-      title: "Account",
-      subtitle: "Manage your account settings",
-      iconFamily: "MaterialIcons" as const,
+      onPress: () => navigation.navigate("Notifications"),
     },
     {
       icon: "cloud-sync",
       title: "Sync",
       subtitle: "Backup and sync your connections",
       iconFamily: "MaterialIcons" as const,
+      onPress: () => navigation.navigate("Sync"),
     },
     {
       icon: "palette",
       title: "Appearance",
       subtitle: "Customize the app's look and feel",
       iconFamily: "MaterialIcons" as const,
+      onPress: () => navigation.navigate("Appearance"),
     },
     {
       icon: "shield-checkmark",
       title: "Privacy",
       subtitle: "Privacy and security settings",
       iconFamily: "Ionicons" as const,
+      onPress: () => {
+        const base = API_CONFIG.BASE_URL.replace(/\/?api$/, "");
+        const appSlug = "linkbase";
+        Linking.openURL(`${base}/privacy/${appSlug}`);
+      },
     },
     {
       icon: "help-circle",
       title: "Help & Support",
       subtitle: "Get help and contact support",
       iconFamily: "Ionicons" as const,
+      onPress: () => navigation.navigate("HelpSupport"),
     },
   ];
 
@@ -54,8 +67,8 @@ const SettingsScreen: React.FC = () => {
     const IconComponent = item.iconFamily === "MaterialIcons" ? MaterialIcons : Ionicons;
     
     return (
-      <View key={index} style={styles.settingsItem}>
-        <View style={styles.settingsItemIcon}>
+      <TouchableOpacity key={index} style={styles.settingsItem} onPress={item.onPress}>
+        <View style={[styles.settingsItemIcon, { backgroundColor: colors.background.secondary }]}>
           <IconComponent 
             name={item.icon as any} 
             size={24} 
@@ -63,20 +76,20 @@ const SettingsScreen: React.FC = () => {
           />
         </View>
         <View style={styles.settingsItemContent}>
-          <Text style={styles.settingsItemTitle}>{item.title}</Text>
-          <Text style={styles.settingsItemSubtitle}>{item.subtitle}</Text>
+          <Text style={[styles.settingsItemTitle, { color: colors.text.primary }]}>{item.title}</Text>
+          <Text style={[styles.settingsItemSubtitle, { color: colors.text.muted }]}>{item.subtitle}</Text>
         </View>
         <MaterialIcons 
           name="chevron-right" 
           size={20} 
           color={colors.text.muted} 
         />
-      </View>
+      </TouchableOpacity>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background.primary }]}>
       <LinearGradient
         colors={colors.gradients.background}
         style={styles.gradient}
@@ -84,26 +97,26 @@ const SettingsScreen: React.FC = () => {
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Settings</Text>
-            <Text style={styles.headerSubtitle}>
+            <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Settings</Text>
+            <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}>
               Customize your Linkbase experience
             </Text>
           </View>
 
           {/* Settings Items */}
-          <View style={styles.settingsSection}>
+          <View style={[styles.settingsSection, { backgroundColor: colors.background.surface }]}>
             {settingsItems.map(renderSettingsItem)}
           </View>
 
           {/* App Info Section */}
-          <View style={styles.appInfoSection}>
-            <View style={styles.appInfoItem}>
-              <Text style={styles.appInfoLabel}>Version</Text>
-              <Text style={styles.appInfoValue}>1.0.0</Text>
+          <View style={[styles.appInfoSection, { backgroundColor: colors.background.surface }]}>
+            <View style={[styles.appInfoItem, { borderBottomColor: colors.border.light }]}>
+              <Text style={[styles.appInfoLabel, { color: colors.text.secondary }]}>Version</Text>
+              <Text style={[styles.appInfoValue, { color: colors.text.primary }]}>1.0.0</Text>
             </View>
-            <View style={styles.appInfoItem}>
-              <Text style={styles.appInfoLabel}>Build</Text>
-              <Text style={styles.appInfoValue}>2024.1</Text>
+            <View style={[styles.appInfoItem, { borderBottomColor: colors.border.light }]}>
+              <Text style={[styles.appInfoLabel, { color: colors.text.secondary }]}>Build</Text>
+              <Text style={[styles.appInfoValue, { color: colors.text.primary }]}>2024.1</Text>
             </View>
           </View>
 
@@ -114,16 +127,16 @@ const SettingsScreen: React.FC = () => {
                 colors={colors.gradients.primary}
                 style={styles.logoGradient}
               >
-                <Text style={styles.logoText}>K</Text>
+                <Text style={[styles.logoText, { color: colors.text.onAccent }]}>K</Text>
               </LinearGradient>
             </View>
-            <Text style={styles.footerText}>
+            <Text style={[styles.footerText, { color: colors.text.secondary }]}>
               Created by{" "}
-              <Text style={styles.footerHighlight}>K-BITS</Text>
+              <Text style={[styles.footerHighlight, { color: colors.text.accent }]}>K-BITS</Text>
               {" "}with{" "}
               <Text style={styles.heartIcon}>❤️</Text>
             </Text>
-            <Text style={styles.footerSubtext}>
+            <Text style={[styles.footerSubtext, { color: colors.text.muted }]}>
               Building connections, one link at a time
             </Text>
           </View>
@@ -136,7 +149,7 @@ const SettingsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: baseColors.background.primary,
   },
   gradient: {
     flex: 1,
@@ -153,16 +166,16 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: typography.size["3xl"],
     fontWeight: typography.weight.bold,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     marginBottom: 8,
   },
   headerSubtitle: {
     fontSize: typography.size.base,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
     textAlign: "center",
   },
   settingsSection: {
-    backgroundColor: colors.background.surface,
+    backgroundColor: baseColors.background.surface,
     borderRadius: 16,
     padding: 4,
     marginBottom: 24,
@@ -179,7 +192,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.background.secondary,
+    backgroundColor: baseColors.background.secondary,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 16,
@@ -190,15 +203,15 @@ const styles = StyleSheet.create({
   settingsItemTitle: {
     fontSize: typography.size.lg,
     fontWeight: typography.weight.medium,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     marginBottom: 4,
   },
   settingsItemSubtitle: {
     fontSize: typography.size.sm,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
   },
   appInfoSection: {
-    backgroundColor: colors.background.surface,
+    backgroundColor: baseColors.background.surface,
     borderRadius: 16,
     padding: 20,
     marginBottom: 40,
@@ -209,16 +222,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
+    borderBottomColor: baseColors.border.light,
   },
   appInfoLabel: {
     fontSize: typography.size.base,
-    color: colors.text.secondary,
+    color: baseColors.text.secondary,
     fontWeight: typography.weight.medium,
   },
   appInfoValue: {
     fontSize: typography.size.base,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     fontWeight: typography.weight.medium,
   },
   footer: {
@@ -239,16 +252,16 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 24,
     fontWeight: typography.weight.bold,
-    color: colors.text.onAccent,
+    color: baseColors.text.onAccent,
   },
   footerText: {
     fontSize: typography.size.lg,
-    color: colors.text.secondary,
+    color: baseColors.text.secondary,
     textAlign: "center",
     marginBottom: 8,
   },
   footerHighlight: {
-    color: colors.text.accent,
+    color: baseColors.text.accent,
     fontWeight: typography.weight.bold,
   },
   heartIcon: {
@@ -256,7 +269,7 @@ const styles = StyleSheet.create({
   },
   footerSubtext: {
     fontSize: typography.size.sm,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
     textAlign: "center",
     fontStyle: "italic",
   },

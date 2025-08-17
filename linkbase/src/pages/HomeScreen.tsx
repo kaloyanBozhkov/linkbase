@@ -20,7 +20,8 @@ import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
 import { minutesToMillis } from "@linkbase/shared/src/duration";
 import { getInfiniteQueryItems } from "@/hooks/getInfiniteQueryItems";
 import { getErrorMessage } from "@/helpers/utils";
-import { colors, typography } from "@/theme/colors";
+import { colors as baseColors, typography } from "@/theme/colors";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -30,6 +31,7 @@ interface Props {
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const trpcUtils = trpc.useUtils();
+  const { colors } = useThemeStore();
   
   const getAllQuery = trpc.linkbase.connections.getAll.useInfiniteQuery(
     {},
@@ -180,10 +182,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <Text style={styles.emptyStateTitle}>
+      <Text style={[styles.emptyStateTitle, { color: colors.text.primary }]}>
         {hasSearched ? "🔍 No Results" : "🌟 Start Building"}
       </Text>
-      <Text style={styles.emptyStateText}>
+      <Text style={[styles.emptyStateText, { color: colors.text.muted }]}>
         {hasSearched
           ? "No connections found matching your search. Try different keywords."
           : "Your connection network is empty. Add your first connection and start building meaningful relationships!"}
@@ -200,14 +202,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   if (errorConnections) {
     return (
-      <LinearGradient
-        colors={colors.gradients.background}
-        style={styles.container}
-      >
+      <LinearGradient colors={colors.gradients.background} style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.errorContainer}>
-            <Text style={styles.errorTitle}>⚠️ Connection Error</Text>
-            <Text style={styles.errorText}>
+            <Text style={[styles.errorTitle, { color: colors.text.primary }]}>⚠️ Connection Error</Text>
+            <Text style={[styles.errorText, { color: colors.text.error }]}>
               {getErrorMessage(errorConnections)}
             </Text>
             <Button
@@ -227,10 +226,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   return (
-    <LinearGradient
-      colors={colors.gradients.background}
-      style={styles.container}
-    >
+    <LinearGradient colors={colors.gradients.background} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <ActionsHeader
           isSearching={isSearching}
@@ -245,7 +241,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         />
         {isLoadingConnections ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={colors.loading} />
+            <ActivityIndicator size="large" color={baseColors.loading} />
           </View>
         ) : (
           <FlatList
@@ -258,8 +254,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
-                tintColor={colors.loading}
-                colors={[colors.loading, colors.secondary[500]]}
+                tintColor={baseColors.loading}
+                colors={[baseColors.loading, baseColors.secondary[500]]}
               />
             }
             showsVerticalScrollIndicator={false}
@@ -270,7 +266,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             onEndReachedThreshold={0.5}
             ListFooterComponent={() =>
               isFetchingNextPage && hasNextPage ? (
-                <ActivityIndicator size="large" color={colors.loading} />
+                <ActivityIndicator size="large" color={baseColors.loading} />
               ) : null
             }
           />
@@ -306,13 +302,13 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     fontSize: typography.size["4xl"],
     fontWeight: typography.weight.bold,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     marginBottom: 12,
     textAlign: "center",
   },
   emptyStateText: {
     fontSize: typography.size.xl,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
     textAlign: "center",
     marginBottom: 32,
     lineHeight: 24,
@@ -329,13 +325,13 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: typography.size["4xl"],
     fontWeight: typography.weight.bold,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     marginBottom: 12,
     textAlign: "center",
   },
   errorText: {
     fontSize: typography.size.xl,
-    color: colors.text.error,
+    color: baseColors.text.error,
     textAlign: "center",
     marginBottom: 32,
     lineHeight: 24,

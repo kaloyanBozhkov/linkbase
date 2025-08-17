@@ -12,7 +12,8 @@ import {
   deleteConnectionQuery,
   searchConnectionsQuery,
 } from "@/queries/linkbase/connections";
-import { createUserQuery, getUserByUuidQuery } from "@/queries/linkbase/users";
+import { createUserQuery, getUserByUuidQuery, getUserByEmailQuery } from "@/queries/linkbase/users";
+import { setEmailAndMergeQuery } from "@/queries/linkbase/users/setEmailAndMerge";
 import { ai_feature, social_media_type } from "@linkbase/prisma";
 import { infiniteResponse } from "@/helpers/infiniteResponse";
 import { searchConnectionsByFactQuery } from "@/queries/linkbase/ai/memory/searchConnectionsByFact";
@@ -142,6 +143,14 @@ export const linkbaseRouter = createTRPCRouter({
     getById: protectedProcedure
       .input(userIdSchema)
       .query(({ input: { id } }) => getUserByUuidQuery(id)),
+    getByEmail: protectedProcedure
+      .input(z.object({ email: z.string().email() }))
+      .query(({ input: { email } }) => getUserByEmailQuery(email)),
+    setEmailAndMerge: protectedProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(({ ctx: { userId }, input: { email } }) => {
+        return setEmailAndMergeQuery(userId!, email);
+      }),
     create: publicProcedure.mutation(async () => {
       return createUserQuery();
     }),

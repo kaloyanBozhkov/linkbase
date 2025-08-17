@@ -18,7 +18,8 @@ import Button from "../components/atoms/Button";
 import { trpc, updateInfiniteQueryDataOnDelete } from "@/utils/trpc";
 import { socialMediaDisplayNames } from "@/helpers/constants";
 import { getErrorMessage } from "@/helpers/utils";
-import { colors, shadows, typography, borderRadius } from "@/theme/colors";
+import { colors as baseColors, shadows, typography, borderRadius } from "@/theme/colors";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 type ConnectionDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -108,6 +109,8 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     return connection?.social_medias || [];
   };
 
+  const { colors } = useThemeStore();
+
   if (isLoading) {
     return (
       <LinearGradient
@@ -116,7 +119,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
       >
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.centerContainer}>
-            <Text style={styles.loadingText}>⚡ Loading...</Text>
+            <Text style={[styles.loadingText, { color: colors.text.accent }]}>⚡ Loading...</Text>
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -131,8 +134,8 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
       >
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.centerContainer}>
-            <Text style={styles.errorTitle}>⚠️ Error</Text>
-            <Text style={styles.errorText}>
+            <Text style={[styles.errorTitle, { color: colors.text.primary }]}>⚠️ Error</Text>
+            <Text style={[styles.errorText, { color: colors.text.error }]}>
               {error?.message ?? "Connection not found"}
             </Text>
             <Button title="Try Again" onPress={fetchConnection} />
@@ -156,20 +159,14 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
         >
           <View style={styles.content}>
             {/* Header Section */}
-            <LinearGradient
-              colors={colors.gradients.section}
-              style={styles.header}
-            >
-              <Text style={styles.name}>{connection.name}</Text>
+            <LinearGradient colors={colors.gradients.section} style={styles.header}>
+              <Text style={[styles.name, { color: colors.text.primary }]}>{connection.name}</Text>
             </LinearGradient>
 
             {/* Social Media Section */}
             {socialMediasToShow.length > 0 && (
-              <LinearGradient
-                colors={colors.gradients.section}
-                style={styles.section}
-              >
-                <Text style={styles.sectionTitle}>🔗 Social Media</Text>
+              <LinearGradient colors={colors.gradients.section} style={styles.section}>
+                <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>🔗 Social Media</Text>
                 <View style={styles.socialMediaContainer}>
                   {socialMediasToShow.map((socialMedia, index) => (
                     <TouchableOpacity
@@ -185,15 +182,15 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                         end={{ x: 1, y: 0 }}
                         style={styles.socialMediaGradient}
                       >
-                        <Text style={styles.socialMediaPlatform}>
+                        <Text style={[styles.socialMediaPlatform, { color: colors.text.onAccent }]}>
                           {socialMediaDisplayNames[socialMedia.type] ||
                             socialMedia.type}
                         </Text>
-                        <Text style={styles.socialMediaHandle}>
+                        <Text style={[styles.socialMediaHandle, { color: colors.text.onAccent }]}>
                           @{socialMedia.handle}
                         </Text>
                       </LinearGradient>
-                      <Text style={styles.socialMediaSubtext}>Tap to open</Text>
+                      <Text style={[styles.socialMediaSubtext, { color: colors.text.muted }]}>Tap to open</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -201,19 +198,16 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             )}
 
             {/* Meeting Details */}
-            <LinearGradient
-              colors={colors.gradients.section}
-              style={styles.section}
-            >
-              <Text style={styles.sectionTitle}>🤝 Meeting Details</Text>
+            <LinearGradient colors={colors.gradients.section} style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>🤝 Meeting Details</Text>
               <View style={styles.detailContainer}>
                 <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>📍 Where:</Text>
-                  <Text style={styles.detailValue}>{connection.met_at}</Text>
+                  <Text style={[styles.detailLabel, { color: colors.text.muted }]}>📍 Where:</Text>
+                  <Text style={[styles.detailValue, { color: colors.text.primary }]}>{connection.met_at}</Text>
                 </View>
                 <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>📅 When:</Text>
-                  <Text style={styles.detailValue}>
+                  <Text style={[styles.detailLabel, { color: colors.text.muted }]}>📅 When:</Text>
+                  <Text style={[styles.detailValue, { color: colors.slate[400] }]}>
                     {formatShortDate(connection.created_at)}
                   </Text>
                 </View>
@@ -221,37 +215,31 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             </LinearGradient>
 
             {/* Facts Section */}
-            <LinearGradient
-              colors={colors.gradients.section}
-              style={styles.section}
-            >
-              <Text style={styles.sectionTitle}>💡 Facts & Insights</Text>
+            <LinearGradient colors={colors.gradients.section} style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>💡 Facts & Insights</Text>
               <View style={styles.factsContainer}>
                 {connection.facts.map((fact, index) => (
                   <View key={index} style={styles.factItem}>
-                    <View style={styles.factDot} />
-                    <Text style={styles.factText}>{fact.text}</Text>
+                    <View style={[styles.factDot, { backgroundColor: colors.text.accent }]} />
+                    <Text style={[styles.factText, { color: colors.text.secondary }]}>{fact.text}</Text>
                   </View>
                 ))}
               </View>
             </LinearGradient>
 
             {/* Timestamps */}
-            <LinearGradient
-              colors={colors.gradients.dark}
-              style={styles.timestampSection}
-            >
-              <Text style={styles.timestampTitle}>📊 Record Info</Text>
+            <LinearGradient colors={colors.gradients.dark} style={styles.timestampSection}>
+              <Text style={[styles.timestampTitle, { color: colors.text.muted }]}>📊 Record Info</Text>
               <View style={styles.timestampContainer}>
                 <View style={styles.timestampRow}>
-                  <Text style={styles.timestampLabel}>Added:</Text>
-                  <Text style={styles.timestampValue}>
+                  <Text style={[styles.timestampLabel, { color: colors.text.muted }]}>Added:</Text>
+                  <Text style={[styles.timestampValue, { color: colors.slate[400] }]}>
                     {formatShortDate(connection.created_at)}
                   </Text>
                 </View>
                 <View style={styles.timestampRow}>
-                  <Text style={styles.timestampLabel}>Updated:</Text>
-                  <Text style={styles.timestampValue}>
+                  <Text style={[styles.timestampLabel, { color: colors.text.muted }]}>Updated:</Text>
+                  <Text style={[styles.timestampValue, { color: colors.slate[400] }]}>
                     {formatShortDate(connection.updated_at)}
                   </Text>
                 </View>
@@ -302,19 +290,19 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: typography.size["2xl"],
-    color: colors.text.accent,
+    color: baseColors.text.accent,
     fontWeight: typography.weight.semibold,
   },
   errorTitle: {
     fontSize: typography.size["4xl"],
     fontWeight: typography.weight.bold,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     marginBottom: 12,
     textAlign: "center",
   },
   errorText: {
     fontSize: typography.size.xl,
-    color: colors.text.error,
+    color: baseColors.text.error,
     textAlign: "center",
     marginBottom: 32,
     lineHeight: 24,
@@ -324,13 +312,13 @@ const styles = StyleSheet.create({
     padding: 24,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: colors.border.default,
+    borderColor: baseColors.border.default,
     ...shadows.lg,
   },
   name: {
     fontSize: typography.size["5xl"],
     fontWeight: typography.weight.extrabold,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     marginBottom: 16,
     letterSpacing: typography.letterSpacing.wide,
   },
@@ -339,13 +327,13 @@ const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: colors.border.default,
+    borderColor: baseColors.border.default,
     ...shadows.md,
   },
   sectionTitle: {
     fontSize: typography.size["3xl"],
     fontWeight: typography.weight.bold,
-    color: colors.text.accent,
+    color: baseColors.text.accent,
     marginBottom: 16,
     letterSpacing: typography.letterSpacing.wide,
   },
@@ -353,10 +341,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   socialMediaItem: {
-    backgroundColor: colors.background.surface,
+    backgroundColor: baseColors.background.surface,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: colors.border.light,
+    borderColor: baseColors.border.light,
     overflow: "hidden",
   },
   socialMediaGradient: {
@@ -367,17 +355,17 @@ const styles = StyleSheet.create({
   },
   socialMediaPlatform: {
     fontSize: typography.size.xl,
-    color: colors.text.onAccent,
+    color: baseColors.text.onAccent,
     fontWeight: typography.weight.bold,
   },
   socialMediaHandle: {
     fontSize: typography.size.xl,
-    color: colors.text.onAccent,
+    color: baseColors.text.onAccent,
     fontWeight: typography.weight.semibold,
   },
   socialMediaSubtext: {
     fontSize: typography.size.sm,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
     paddingHorizontal: 16,
     paddingVertical: 8,
     fontStyle: "italic",
@@ -385,11 +373,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   detailContainer: {
-    backgroundColor: colors.background.surface,
+    backgroundColor: baseColors.background.surface,
     padding: 16,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: colors.border.light,
+    borderColor: baseColors.border.light,
   },
   detailRow: {
     flexDirection: "row",
@@ -399,22 +387,22 @@ const styles = StyleSheet.create({
   detailLabel: {
     fontSize: typography.size.lg,
     fontWeight: typography.weight.semibold,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
     width: 80,
   },
   detailValue: {
     fontSize: typography.size.lg,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     flex: 1,
     fontWeight: typography.weight.medium,
     lineHeight: 22,
   },
   factsContainer: {
-    backgroundColor: colors.background.surface,
+    backgroundColor: baseColors.background.surface,
     padding: 16,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: colors.border.light,
+    borderColor: baseColors.border.light,
   },
   factItem: {
     flexDirection: "row",
@@ -425,13 +413,13 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.text.accent,
+    backgroundColor: baseColors.text.accent,
     marginTop: 8,
     marginRight: 16,
   },
   factText: {
     fontSize: typography.size.lg,
-    color: colors.text.secondary,
+    color: baseColors.text.secondary,
     flex: 1,
     lineHeight: 22,
   },
@@ -440,12 +428,12 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 32,
     borderWidth: 1,
-    borderColor: colors.border.light,
+    borderColor: baseColors.border.light,
   },
   timestampTitle: {
     fontSize: typography.size.xl,
     fontWeight: typography.weight.semibold,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
     marginBottom: 12,
   },
   timestampContainer: {
@@ -457,11 +445,11 @@ const styles = StyleSheet.create({
   },
   timestampLabel: {
     fontSize: typography.size.base,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
   },
   timestampValue: {
     fontSize: typography.size.base,
-    color: colors.slate[400],
+    color: baseColors.slate[400],
     fontWeight: typography.weight.medium,
   },
   actionButtons: {

@@ -19,7 +19,8 @@ import VoiceConnectionCard from "../components/molecules/VoiceConnectionCard";
 import { useSessionUserStore } from "../hooks/useGetSessionUser";
 import { getErrorMessage } from "../helpers/utils";
 import { trpc, updateInfiniteQueryDataOnAdd } from "@/utils/trpc";
-import { colors, typography } from "@/theme/colors";
+import { colors as baseColors, typography } from "@/theme/colors";
+import { useThemeStore } from "@/hooks/useThemeStore";
 import { useKeyboardScroll } from "@/hooks/useKeyboardScroll";
 
 type AddVoiceConnectionsScreenNavigationProp = StackNavigationProp<
@@ -183,16 +184,14 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
     setCurrentIndex(0);
   };
 
+  const { colors } = useThemeStore();
   return (
-    <LinearGradient
-      colors={colors.gradients.background}
-      style={styles.container}
-    >
+    <LinearGradient colors={colors.gradients.background} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.headerTitle}>Voice Connections</Text>
-            <Text style={styles.headerSubtitle}>
+            <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Voice Connections</Text>
+            <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}> 
               Tell me about who you&apos;ve met
             </Text>
           </View>
@@ -200,8 +199,8 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
 
         {connections.length > 0 && (
           <>
-            <View style={styles.navigationHeader}>
-              <Text style={styles.navigationText}>
+            <View style={[styles.navigationHeader, { borderBottomColor: colors.border.light }]}>
+              <Text style={[styles.navigationText, { color: colors.text.primary }]}>
                 {currentIndex + 1} of {connections.length}
               </Text>
               <View style={styles.navigationButtons}>
@@ -280,9 +279,9 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
 
         {isFetchingFillout && (
           <View style={styles.processingState}>
-            <ActivityIndicator size="large" color={colors.loading} />
-            <Text style={styles.processingTitle}>🤖 Processing Your Recording</Text>
-            <Text style={styles.processingText}>
+            <ActivityIndicator size="large" color={baseColors.loading} />
+            <Text style={[styles.processingTitle, { color: colors.text.primary }]}>🤖 Processing Your Recording</Text>
+            <Text style={[styles.processingText, { backgroundColor: colors.background.surface, borderColor: colors.border.light, color: colors.text.muted }]}>
               We&apos;re analyzing what you just said and filling out your mentioned 
               connections. This usually takes a few seconds... please wait!
             </Text>
@@ -291,8 +290,8 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
 
         {connections.length === 0 && !isFetchingFillout && (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyStateTitle}>🎤 Ready to Record</Text>
-            <Text style={styles.emptyStateText}>
+            <Text style={[styles.emptyStateTitle, { color: colors.text.primary }]}>🎤 Ready to Record</Text>
+            <Text style={[styles.emptyStateText, { color: colors.text.muted }]}>
               Tap the microphone below and tell me about the people you&apos;ve met.
               You can mention multiple people in one recording!
             </Text>
@@ -304,7 +303,7 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
                 size="large"
               />
             </View>
-            <Text style={styles.emptyStateExample}>
+            <Text style={[styles.emptyStateExample, { backgroundColor: colors.background.surface, borderColor: colors.border.light, color: colors.text.secondary }]}>
               For example: &quot;I met John at the coffee shop, he&apos;s a
               software engineer from San Francisco. I also met Sarah at the
               conference, she works in marketing and loves hiking.&quot;
@@ -327,18 +326,18 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
+    borderBottomColor: baseColors.border.light,
   },
   headerTitle: {
     fontSize: typography.size["5xl"],
     fontWeight: typography.weight.extrabold,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     marginBottom: 4,
     letterSpacing: typography.letterSpacing.wide,
   },
   headerSubtitle: {
     fontSize: typography.size.xl,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
     fontWeight: typography.weight.medium,
   },
   navigationHeader: {
@@ -348,12 +347,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
+    borderBottomColor: baseColors.border.light,
   },
   navigationText: {
     fontSize: typography.size.lg,
     fontWeight: typography.weight.semibold,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
   },
   navigationButtons: {
     flexDirection: "row",
@@ -368,7 +367,7 @@ const styles = StyleSheet.create({
     gap: 16,
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: colors.border.light,
+    borderTopColor: baseColors.border.light,
   },
   actionButton: {
     flex: 1,
@@ -386,22 +385,22 @@ const styles = StyleSheet.create({
   processingTitle: {
     fontSize: typography.size["4xl"],
     fontWeight: typography.weight.bold,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     marginTop: 20,
     marginBottom: 12,
     textAlign: "center",
   },
   processingText: {
     fontSize: typography.size.xl,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
     textAlign: "center",
     lineHeight: 24,
     paddingHorizontal: 16,
-    backgroundColor: colors.background.surface,
+    backgroundColor: baseColors.background.surface,
     paddingVertical: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.border.light,
+    borderColor: baseColors.border.light,
   },
   emptyState: {
     flex: 1,
@@ -412,13 +411,13 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     fontSize: typography.size["4xl"],
     fontWeight: typography.weight.bold,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     marginBottom: 12,
     textAlign: "center",
   },
   emptyStateText: {
     fontSize: typography.size.xl,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
     textAlign: "center",
     marginBottom: 24,
     lineHeight: 24,
@@ -429,16 +428,16 @@ const styles = StyleSheet.create({
   },
   emptyStateExample: {
     fontSize: typography.size.base,
-    color: colors.text.secondary,
+    color: baseColors.text.secondary,
     textAlign: "center",
     fontStyle: "italic",
     lineHeight: 22,
     paddingHorizontal: 16,
-    backgroundColor: colors.background.surface,
+    backgroundColor: baseColors.background.surface,
     paddingVertical: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.border.light,
+    borderColor: baseColors.border.light,
   },
 });
 

@@ -7,7 +7,8 @@ import {
   TextStyle,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { colors, shadows, typography, borderRadius } from "@/theme/colors";
+import { shadows, typography, borderRadius } from "@/theme/colors";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 interface ButtonProps {
   title?: string;
@@ -32,6 +33,8 @@ const Button: React.FC<ButtonProps> = ({
   icon,
   iconOnly = false,
 }) => {
+  const { colors } = useThemeStore();
+
   const renderButton = () => {
     if (variant === "primary") {
       return (
@@ -49,7 +52,7 @@ const Button: React.FC<ButtonProps> = ({
         >
           {icon && <>{icon}</>}
           {title && !iconOnly && (
-            <Text style={[styles.text, styles.primaryText, textStyle]}>
+            <Text style={[styles.text, { color: colors.button.primary.text, fontWeight: typography.weight.bold }, textStyle]}>
               {title}
             </Text>
           )}
@@ -61,7 +64,21 @@ const Button: React.FC<ButtonProps> = ({
       <TouchableOpacity
         style={[
           styles.button,
-          styles[variant],
+          // dynamic variant styles
+          variant === "secondary" && {
+            backgroundColor: colors.button.secondary.background,
+            borderWidth: 1,
+            borderColor: colors.button.secondary.border,
+          },
+          variant === "danger" && {
+            backgroundColor: colors.button.danger.background,
+            ...(shadows.danger as any),
+          },
+          variant === "ghost" && {
+            backgroundColor: colors.button.ghost.background,
+            borderWidth: 1,
+            borderColor: colors.button.ghost.border,
+          },
           styles[size],
           iconOnly && styles.iconButton,
           disabled && styles.disabled,
@@ -73,7 +90,15 @@ const Button: React.FC<ButtonProps> = ({
       >
         {icon && <>{icon}</>}
         {title && !iconOnly && (
-          <Text style={[styles.text, styles[`${variant}Text`], textStyle]}>
+          <Text
+            style={[
+              styles.text,
+              variant === "secondary" && { color: colors.button.secondary.text },
+              variant === "danger" && { color: colors.button.danger.text },
+              variant === "ghost" && { color: colors.button.ghost.text },
+              textStyle,
+            ]}
+          >
             {title}
           </Text>
         )}
@@ -119,20 +144,9 @@ const styles = StyleSheet.create({
   primary: {
     // This is handled by LinearGradient
   },
-  secondary: {
-    backgroundColor: colors.button.secondary.background,
-    borderWidth: 1,
-    borderColor: colors.button.secondary.border,
-  },
-  danger: {
-    backgroundColor: colors.button.danger.background,
-    ...shadows.danger,
-  },
-  ghost: {
-    backgroundColor: colors.button.ghost.background,
-    borderWidth: 1,
-    borderColor: colors.button.ghost.border,
-  },
+  secondary: {},
+  danger: {},
+  ghost: {},
   xsmall: {
     paddingHorizontal: 0,
     paddingVertical: 0,
@@ -159,19 +173,10 @@ const styles = StyleSheet.create({
     fontSize: typography.size.xl,
     letterSpacing: typography.letterSpacing.wide,
   },
-  primaryText: {
-    color: colors.button.primary.text,
-    fontWeight: typography.weight.bold,
-  },
-  secondaryText: {
-    color: colors.button.secondary.text,
-  },
-  dangerText: {
-    color: colors.button.danger.text,
-  },
-  ghostText: {
-    color: colors.button.ghost.text,
-  },
+  primaryText: {},
+  secondaryText: {},
+  dangerText: {},
+  ghostText: {},
 });
 
 export default Button;

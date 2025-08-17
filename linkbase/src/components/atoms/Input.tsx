@@ -6,7 +6,8 @@ import {
   StyleSheet,
   TextInputProps,
 } from "react-native";
-import { colors, shadows, typography, borderRadius } from "@/theme/colors";
+import { colors as baseColors, shadows, typography, borderRadius } from "@/theme/colors";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -24,15 +25,31 @@ const Input: React.FC<InputProps> = ({
   ...props
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const { colors } = useThemeStore();
 
   return (
     <View style={[styles.container, containerStyle]}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={[styles.label, { color: colors.input.label }]}>{label}</Text>}
       <TextInput
         style={[
           styles.input,
-          isFocused && styles.inputFocused,
-          error && styles.inputError,
+          {
+            borderColor: colors.input.border,
+            backgroundColor: colors.input.background,
+            color: colors.input.text,
+          },
+          isFocused && {
+            borderColor: colors.input.borderFocus,
+            shadowColor: colors.input.borderFocus,
+            shadowOpacity: 0.3,
+            shadowRadius: 8,
+            elevation: 6,
+          },
+          error && {
+            borderColor: colors.input.borderError,
+            shadowColor: colors.input.borderError,
+            shadowOpacity: 0.3,
+          },
           style,
         ]}
         onFocus={(e) => {
@@ -46,7 +63,7 @@ const Input: React.FC<InputProps> = ({
         placeholderTextColor={colors.input.placeholder}
         {...props}
       />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text style={[styles.errorText, { color: colors.text.error }]}>{error}</Text>}
     </View>
   );
 };
@@ -59,34 +76,22 @@ const styles = StyleSheet.create({
     fontSize: typography.size.xl,
     fontWeight: typography.weight.semibold,
     marginBottom: 8,
-    color: colors.input.label,
+    color: baseColors.input.label,
     letterSpacing: typography.letterSpacing.wide,
   },
   input: {
     borderWidth: 2,
-    borderColor: colors.input.border,
+    borderColor: baseColors.input.border,
     borderRadius: borderRadius.md,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: typography.size.xl,
-    backgroundColor: colors.input.background,
-    color: colors.input.text,
+    backgroundColor: baseColors.input.background,
+    color: baseColors.input.text,
     ...shadows.sm,
   },
-  inputFocused: {
-    borderColor: colors.input.borderFocus,
-    shadowColor: colors.input.borderFocus,
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  inputError: {
-    borderColor: colors.input.borderError,
-    shadowColor: colors.input.borderError,
-    shadowOpacity: 0.3,
-  },
   errorText: {
-    color: colors.text.error,
+    color: baseColors.text.error,
     fontSize: typography.size.base,
     marginTop: 6,
     fontWeight: typography.weight.medium,

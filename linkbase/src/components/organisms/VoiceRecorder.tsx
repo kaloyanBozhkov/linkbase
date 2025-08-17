@@ -8,7 +8,7 @@ import {
   setAudioModeAsync,
   useAudioRecorderState,
 } from "expo-audio";
-import { colors, typography, borderRadius } from "@/theme/colors";
+import { colors as baseColors, typography, borderRadius } from "@/theme/colors";
 import { S3Service } from "@/utils/s3";
 import { S3_FEATURE_FOLDERS } from "@linkbase/shared/src";
 import { uriToFile } from "@/helpers/utils";
@@ -320,22 +320,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
-  recordButton: {
-    backgroundColor: colors.primary[600],
+   recordButton: {
+    backgroundColor: baseColors.primary[600],
   },
   stopButton: {
     width: 30,
     height: 30,
-    backgroundColor: colors.red[600],
+    backgroundColor: baseColors.red[600],
   },
   acceptButton: {
-    backgroundColor: colors.success,
+    backgroundColor: baseColors.success,
     width: 26,
     height: 26,
     borderRadius: 13,
   },
   discardButton: {
-    backgroundColor: colors.red[600],
+    backgroundColor: baseColors.red[600],
     width: 26,
     height: 26,
     borderRadius: 13,
@@ -350,23 +350,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: colors.background.secondary,
+    backgroundColor: baseColors.background.secondary,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: colors.border.default,
+    borderColor: baseColors.border.default,
   },
   recordingIndicator: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: colors.red[600],
+    backgroundColor: baseColors.red[600],
   },
   durationText: {
     fontSize: typography.size.xs,
     fontWeight: typography.weight.medium,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     fontFamily: "monospace",
   },
   recordedContainer: {
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   recordedText: {
     fontSize: typography.size.xs,
     fontWeight: typography.weight.medium,
-    color: colors.text.muted,
+    color: baseColors.text.muted,
   },
   actionsContainer: {
     flexDirection: "row",

@@ -8,7 +8,8 @@ import {
   ViewStyle,
   TextStyle,
 } from "react-native";
-import { colors, typography } from "@/theme/colors";
+import { colors as baseColors, typography } from "@/theme/colors";
+import { useThemeStore } from "@/hooks/useThemeStore";
 import { ActivityIndicator } from "react-native-paper";
 
 interface SearchBarProps {
@@ -41,6 +42,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onClearSearch,
 }) => {
   const lastSubmittedQueryRef = useRef<string>("");
+  const { colors } = useThemeStore();
 
   // Reset the last submitted query whenever the active search is cleared externally
   useEffect(() => {
@@ -88,9 +90,18 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <View style={[styles.searchBar, containerStyle]}>
+    <View
+      style={[
+        styles.searchBar,
+        {
+          backgroundColor: colors.background.surface,
+          borderColor: colors.border.light,
+        },
+        containerStyle,
+      ]}
+    >
       <TextInput
-        style={[styles.searchInput, inputStyle]}
+        style={[styles.searchInput, { color: colors.text.primary }, inputStyle]}
         placeholder={placeholder}
         value={searchQuery}
         onChangeText={onSearchQueryChange}
@@ -105,7 +116,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
       />
       <TouchableOpacity
         onPress={handlePress}
-        style={[styles.searchButton, buttonStyle]}
+        style={[
+          styles.searchButton,
+          { backgroundColor: colors.background.accent },
+          buttonStyle,
+        ]}
         disabled={isSearching || (!shouldShowClear && !searchQuery.trim())}
       >
         {renderSearchButtonContent()}
@@ -117,7 +132,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 const styles = StyleSheet.create({
   searchBar: {
     flexDirection: "row",
-    backgroundColor: colors.background.surface,
+    backgroundColor: baseColors.background.surface,
     borderRadius: 25,
     paddingHorizontal: 20,
     paddingVertical: 12,
@@ -130,16 +145,16 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 8,
     borderWidth: 1,
-    borderColor: colors.border.light,
+    borderColor: baseColors.border.light,
   },
   searchInput: {
     flex: 1,
     fontSize: typography.size.lg,
-    color: colors.text.primary,
+    color: baseColors.text.primary,
     paddingRight: 12,
   },
   searchButton: {
-    backgroundColor: colors.primary[600],
+    backgroundColor: baseColors.primary[600],
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 16,
@@ -148,7 +163,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   searchButtonText: {
-    color: colors.text.onAccent,
+    color: baseColors.text.onAccent,
     fontSize: typography.size.sm,
     fontWeight: typography.weight.semibold,
   },
