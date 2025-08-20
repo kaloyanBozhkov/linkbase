@@ -30,6 +30,10 @@ export const env = createEnv({
 
     S3_ACCESS_KEY_ID: z.string().describe("S3 access key ID"),
     S3_SECRET_ACCESS_KEY: z.string().describe("S3 secret access key"),
+
+    // Resend
+    RESEND_API_KEY: z.string().describe("Resend API key"),
+    EMAIL_ENCRYPTION_KEY: z.string().describe("Email encryption key"),
   },
 
   /**

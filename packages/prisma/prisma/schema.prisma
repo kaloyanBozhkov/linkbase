@@ -67,15 +67,33 @@ enum ai_feature {
     ADD_MULTIPLE_CONNECTIONS_FILL_OUT
 }
 
+enum locale {
+    EN_US
+    BG_BG
+    DE_DE
+    ES_ES
+    FR_FR
+    IT_IT
+    NL_NL
+    PL_PL
+    PT_PT
+    RU_RU
+    TR_TR
+    ZH_CN
+    ZH_TW
+}
+
 model user {
     id         String   @id @default(cuid())
     created_at DateTime @default(now())
     updated_at DateTime @default(now()) @updatedAt
 
-    email String?
+    email  String?
+    locale locale  @default(EN_US)
 
     // Relations
-    connections connection[]
+    connections       connection[]
+    sso_verifications sso_verification[]
 }
 
 model connection {
@@ -165,6 +183,23 @@ model ai_cached_embedding {
     facts                           fact[]
 
     @@index([feature_type])
+}
+
+model sso_verification {
+    id         String   @id @default(cuid())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now()) @updatedAt
+
+    user_id     String
+    email       String
+    is_verified Boolean @default(false)
+    secret_salt String  @unique // Random salt for encryption key derivation
+
+    // Foreign keys and relations
+    user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+    @@index(user_id)
+    @@index(email)
 }
 
 model ai_embedding_search_diagnostic {

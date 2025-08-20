@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,16 +13,83 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { trpc } from "@/utils/trpc";
 import { useSessionUserStore } from "@/hooks/useGetSessionUser";
+import * as Linking from "expo-linking";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SyncScreen: React.FC = () => {
   const { colors } = useThemeStore();
   const [email, setEmail] = useState("");
-  const { saveUserId, saveUserEmail, userId, userEmail, loadUserEmail } =
-    useSessionUserStore();
-  const setEmailAndMerge = trpc.linkbase.users.setEmailAndMerge.useMutation();
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
+  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  React.useEffect(() => {
-    loadUserEmail();
+  // Storage keys for email sent state
+  const EMAIL_SENT_KEY = "linkbase_email_sent_27-07-2025.6";
+  const PENDING_EMAIL_KEY = "linkbase_pending_email_27-07-2025.6";
+  const { saveUserEmail, userEmail, loadUserEmail } =
+    useSessionUserStore();
+  const sendVerificationEmail = trpc.linkbase.users.sendVerificationEmail.useMutation();
+
+  useEffect(() => {
+    const loadInitialState = async () => {
+      try {
+        await loadUserEmail();
+        
+        // Load email sent state from storage
+        const storedEmailSent = await AsyncStorage.getItem(EMAIL_SENT_KEY);
+        const storedPendingEmail = await AsyncStorage.getItem(PENDING_EMAIL_KEY);
+        
+        if (storedEmailSent === "1" && storedPendingEmail) {
+          setIsEmailSent(true);
+          setPendingEmail(storedPendingEmail);
+        }
+      } catch (error) {
+        console.error("Error loading initial state:", error);
+      }
+    };
+    
+    loadInitialState();
+  }, []);
+
+  // Handle deep linking for email verification
+  useEffect(() => {
+    const handleDeepLink = async (url: string) => {
+      const parsed = Linking.parse(url);
+      if (parsed.path === 'sync' && parsed.queryParams?.verified === 'true') {
+        const verifiedEmail = parsed.queryParams.email as string;
+        if (verifiedEmail) {
+          saveUserEmail(verifiedEmail);
+          loadUserEmail();
+          setIsEmailSent(false);
+          setPendingEmail(null);
+          
+          // Clear email sent state from storage since verification is complete
+          await AsyncStorage.removeItem(EMAIL_SENT_KEY);
+          await AsyncStorage.removeItem(PENDING_EMAIL_KEY);
+          
+          Alert.alert(
+            "Email Verified!", 
+            "Your email has been successfully verified. Your account is now synced across devices."
+          );
+        }
+      }
+    };
+
+    // Handle initial URL if app was opened via deep link
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        handleDeepLink(url);
+      }
+    });
+
+    // Listen for incoming links
+    const subscription = Linking.addEventListener('url', (event) => {
+      handleDeepLink(event.url);
+    });
+
+    return () => {
+      subscription?.remove();
+    };
   }, []);
 
   const handleVerify = async () => {
@@ -31,15 +98,34 @@ const SyncScreen: React.FC = () => {
         Alert.alert("Invalid email", "Please enter a valid email address");
         return;
       }
-      const res = await setEmailAndMerge.mutateAsync({ email });
-      if (res.userId && res.userId !== userId) {
-        await saveUserId(res.userId);
-      }
-      await saveUserEmail(email);
-      await loadUserEmail();
-      Alert.alert("Email verified", "Your account is linked for SSO recovery.");
+      
+      setIsLoading(true);
+      await sendVerificationEmail.mutateAsync({ email });
+      setPendingEmail(email);
+      setIsEmailSent(true);
+      setEmail(""); // Clear the input
+      
+      // Save email sent state to storage
+      await AsyncStorage.setItem(EMAIL_SENT_KEY, "1");
+      await AsyncStorage.setItem(PENDING_EMAIL_KEY, email);
     } catch (e: any) {
-      Alert.alert("Error", e?.message || "Failed to verify email");
+      Alert.alert("Error", e?.message || "Failed to send verification email");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleTryAgain = async () => {
+    try {
+      setIsEmailSent(false);
+      setPendingEmail(null);
+      setEmail("");
+      
+      // Clear email sent state from storage
+      await AsyncStorage.removeItem(EMAIL_SENT_KEY);
+      await AsyncStorage.removeItem(PENDING_EMAIL_KEY);
+    } catch (error) {
+      console.error("Error clearing email sent state:", error);
     }
   };
 
@@ -121,6 +207,83 @@ const SyncScreen: React.FC = () => {
                 </Text>
               </View>
             </View>
+          ) : isEmailSent ? (
+            // Email sent - show pending verification state
+            <>
+              <View
+                style={[
+                  styles.card,
+                  {
+                    backgroundColor: colors.background.surface,
+                    borderColor: colors.border.light,
+                  },
+                ]}
+              >
+                <View style={styles.syncedHeader}>
+                  <Text
+                    style={[styles.syncedTitle, { color: colors.text.primary }]}
+                  >
+                    📧 Check Your Email
+                  </Text>
+                  <Text
+                    style={[styles.syncedEmail, { color: colors.text.accent }]}
+                  >
+                    {pendingEmail}
+                  </Text>
+                </View>
+
+                <View style={styles.infoSection}>
+                  <Text
+                    style={[styles.infoText, { color: colors.text.secondary }]}
+                  >
+                    We&apos;ve sent a verification link to your email address. Click the link to complete the setup.
+                  </Text>
+                </View>
+              </View>
+
+              {/* Separate card for troubleshooting */}
+              <View
+                style={[
+                  styles.card,
+                  {
+                    backgroundColor: colors.background.surface,
+                    borderColor: colors.border.light,
+                  },
+                ]}
+              >
+                <Text
+                  style={[styles.infoTitle, { color: colors.text.primary }]}
+                >
+                  Didn&apos;t receive the email?
+                </Text>
+                <Text
+                  style={[styles.infoText, { color: colors.text.secondary }]}
+                >
+                  Check your spam folder or try a different email address.
+                </Text>
+
+                <TouchableOpacity
+                  onPress={handleTryAgain}
+                  style={[
+                    styles.verifyButton,
+                    {
+                      backgroundColor: colors.button.secondary.background,
+                      borderColor: colors.button.secondary.border,
+                      marginTop: 12,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.verifyButtonText,
+                      { color: colors.button.secondary.text },
+                    ]}
+                  >
+                    Try Different Email
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
           ) : (
             // Email not set up - show verification flow
             <View
@@ -142,12 +305,14 @@ const SyncScreen: React.FC = () => {
                 placeholderTextColor={colors.input.placeholder}
                 autoCapitalize="none"
                 keyboardType="email-address"
+                editable={!isLoading}
                 style={[
                   styles.emailInput,
                   {
                     borderColor: colors.input.border,
                     color: colors.input.text,
                     backgroundColor: colors.input.background,
+                    opacity: isLoading ? 0.7 : 1,
                   },
                 ]}
                 value={email}
@@ -155,11 +320,15 @@ const SyncScreen: React.FC = () => {
               />
               <TouchableOpacity
                 onPress={handleVerify}
+                disabled={isLoading}
                 style={[
                   styles.verifyButton,
                   {
-                    backgroundColor: colors.button.secondary.background,
+                    backgroundColor: isLoading 
+                      ? colors.button.secondary.background + '80' // Add transparency when loading
+                      : colors.button.secondary.background,
                     borderColor: colors.button.secondary.border,
+                    opacity: isLoading ? 0.7 : 1,
                   },
                 ]}
               >
@@ -169,7 +338,7 @@ const SyncScreen: React.FC = () => {
                     { color: colors.button.secondary.text },
                   ]}
                 >
-                  Verify & Link
+                  {isLoading ? "Sending..." : "Verify & Link"}
                 </Text>
               </TouchableOpacity>
             </View>

@@ -16,6 +16,7 @@ export const trpcClient = trpc.createClient({
         const { userId } = useSessionUserStore.getState();
         return {
           "x-user-id": userId || "",
+          "x-app-name": "linkbase",
         };
       },
     }),

@@ -207,7 +207,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                 </View>
                 <View style={styles.detailRow}>
                   <Text style={[styles.detailLabel, { color: colors.text.muted }]}>📅 When:</Text>
-                  <Text style={[styles.detailValue, { color: colors.slate[400] }]}>
+                  <Text style={[styles.detailValue, { color: colors.text.secondary }]}>
                     {formatShortDate(connection.created_at)}
                   </Text>
                 </View>
@@ -233,13 +233,13 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
               <View style={styles.timestampContainer}>
                 <View style={styles.timestampRow}>
                   <Text style={[styles.timestampLabel, { color: colors.text.muted }]}>Added:</Text>
-                  <Text style={[styles.timestampValue, { color: colors.slate[400] }]}>
+                  <Text style={[styles.timestampValue, { color: colors.text.secondary }]}>
                     {formatShortDate(connection.created_at)}
                   </Text>
                 </View>
                 <View style={styles.timestampRow}>
                   <Text style={[styles.timestampLabel, { color: colors.text.muted }]}>Updated:</Text>
-                  <Text style={[styles.timestampValue, { color: colors.slate[400] }]}>
+                  <Text style={[styles.timestampValue, { color: colors.text.secondary }]}>
                     {formatShortDate(connection.updated_at)}
                   </Text>
                 </View>

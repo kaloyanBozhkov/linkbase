@@ -8,10 +8,14 @@ export interface AppError extends Error {
   code?: string;
 }
 
-// tprc paths handled by createTRPCContext and protectedProcedure and publicProcedure
+// Public paths that don't require authentication
 const isPublicPath = (path: string) => {
   console.log("path", path);
-  return path.includes("/trpc/");
+  return (
+    path.includes("/trpc/") ||
+    path.includes("/verify-email") ||
+    path.includes("/email-verification.html")
+  );
 };
 
 // Middleware to extract userId from headers and set up request context

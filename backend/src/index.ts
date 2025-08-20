@@ -10,7 +10,6 @@ import {
   renderPrivacyPage,
   renderTermsPage,
 } from "./flows";
-import { getConnectionMemory } from "./ai/linkbase/memory";
 import testRouter from "./router/tests";
 
 const app: Application = express();

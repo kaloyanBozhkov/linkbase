@@ -6,6 +6,7 @@ import superjson from "superjson";
 // Define context interface explicitly
 export interface TRPCContext {
   userId?: string;
+  appName: "linkbase";
 }
 
 // Create context for tRPC
@@ -18,8 +19,10 @@ export function createTRPCContext({
 }): TRPCContext {
   // Get user ID from header (set by your existing middleware)
   const userId = req.headers["x-user-id"] as string;
+  const appName = req.headers["x-app-name"] as "linkbase";
   const context: TRPCContext = {
     userId,
+    appName,
   };
   return context;
 }
