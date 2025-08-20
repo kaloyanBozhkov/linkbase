@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Verification - Linkbase</title>
+    <title id="page-title">Email Verification</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -77,45 +77,62 @@
             margin: 0 0 15px 0;
             color: #666;
         }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">Linkbase</div>
+        <div class="loading" id="loading">Loading...</div>
         
         <div id="success-content" style="display: none;">
-            <div class="status success">✓ Email Verified!</div>
-            <div class="message">
+            <div class="status success" id="success-title">✓ Email Verified!</div>
+            <div class="message" id="success-message">
                 Your email has been successfully verified. Your account is now synced across devices.
             </div>
             
             <div class="app-link">
-                <h3>Open Linkbase App</h3>
-                <p>Click the button below to open the app and see your synced account:</p>
-                <a href="linkbase://sync?verified=true&email=" id="app-link" class="button">Open Linkbase</a>
+                <h3 id="open-app-title">Open App</h3>
+                <p id="open-app-description">Click the button below to open the app and see your synced account:</p>
+                <a href="#" id="app-link" class="button">Open App</a>
             </div>
             
             <div style="margin-top: 20px;">
-                <a href="https://apps.apple.com/app/linkbase" class="button secondary">Download iOS App</a>
-                <a href="https://play.google.com/store/apps/details?id=com.kbits.linkbase" class="button secondary">Download Android App</a>
+                <a href="https://apps.apple.com/app/linkbase" class="button secondary" id="download-ios">Download iOS App</a>
+                <a href="https://play.google.com/store/apps/details?id=com.kbits.linkbase" class="button secondary" id="download-android">Download Android App</a>
             </div>
         </div>
         
         <div id="error-content" style="display: none;">
-            <div class="status error">Verification Failed</div>
+            <div class="status error" id="error-title">Verification Failed</div>
             <div class="message" id="error-message">
                 There was an error verifying your email address.
             </div>
-            <a href="mailto:kaloyan@bozhkov.com" class="button">Contact Support</a>
+            <a href="mailto:kaloyan@bozhkov.com" class="button" id="contact-support">Contact Support</a>
         </div>
     </div>
 
     <script>
+        // Helper function to interpolate placeholders
+        function interpolate(text, params) {
+            return text.replace(/\{(\w+)\}/g, (match, key) => {
+                return params[key] || match;
+            });
+        }
+
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const status = urlParams.get('status');
         const message = urlParams.get('message');
         const email = urlParams.get('email');
+        const locale = urlParams.get('locale') || 'EN_US';
+        const appName = urlParams.get('appName') || 'linkbase';
+        
+        // Capitalize app name for display
+        const capitalizedAppName = appName.charAt(0).toUpperCase() + appName.slice(1);
         
         // Detect if we're in development mode (localhost or local IP)
         const isDevelopment = window.location.hostname === 'localhost' || 
@@ -127,7 +144,6 @@
         // Use different deep link format based on environment
         const getDeepLink = (email) => {
             if (isDevelopment) {
-                // In development, use Expo development URL
                 // Try to detect the IP from the current URL or use a fallback
                 const currentHost = window.location.hostname;
                 const expoPort = '8081'; // Default Expo development port
@@ -142,49 +158,149 @@
                 }
             } else {
                 // In production, use the app scheme
-                return `linkbase://sync?verified=true&email=${encodeURIComponent(email)}`;
+                return `${appName}://sync?verified=true&email=${encodeURIComponent(email)}`;
             }
         };
-        
-        if (status === 'success') {
-            document.getElementById('success-content').style.display = 'block';
-            
-            // Update the deep link with the email parameter
-            if (email) {
-                const appLink = document.getElementById('app-link');
-                appLink.href = getDeepLink(email);
-            }
-        } else {
-            document.getElementById('error-content').style.display = 'block';
-            if (message) {
-                document.getElementById('error-message').textContent = message;
+
+        // Load translations from backend
+        async function loadTranslations() {
+            try {
+                console.log('Loading translations for locale:', locale);
+                const response = await fetch(`/api/email-verification-translations?locale=${encodeURIComponent(locale)}`);
+                console.log('Translation response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load translations: ${response.status}`);
+                }
+                
+                const translations = await response.json();
+                console.log('Loaded translations:', translations);
+                return translations;
+            } catch (error) {
+                console.error('Error loading translations:', error);
+                // Fallback to basic English translations
+                return {
+                    emailVerificationPage: {
+                        title: "Email Verification - {appName}",
+                        success: {
+                            title: "✓ Email Verified!",
+                            message: "Your email has been successfully verified. Your account is now synced across devices.",
+                            openApp: "Open {appName} App",
+                            openAppDescription: "Click the button below to open the app and see your synced account:",
+                            openAppButton: "Open {appName}",
+                            downloadIos: "Download iOS App",
+                            downloadAndroid: "Download Android App"
+                        },
+                        error: {
+                            title: "Verification Failed",
+                            defaultMessage: "There was an error verifying your email address.",
+                            contactSupport: "Contact Support"
+                        },
+                        debug: {
+                            title: "Debug Info (Development Mode):",
+                            hostname: "Hostname: {hostname}",
+                            deepLink: "Deep Link: {deepLink}",
+                            note: "If the app doesn't open, make sure Expo is running and try clicking the link manually."
+                        }
+                    }
+                };
             }
         }
-        
-        // Auto-redirect to app after 3 seconds if verification was successful
-        if (status === 'success' && email) {
-            const deepLink = getDeepLink(email);
-            console.log('Development mode:', isDevelopment);
-            console.log('Deep link URL:', deepLink);
-            console.log('Current hostname:', window.location.hostname);
+
+        // Initialize the page
+        async function initializePage() {
+            console.log('Initializing page...');
+            console.log('URL params:', { status, message, email, locale, appName });
             
-            // Show the deep link URL for debugging in development
-            if (isDevelopment) {
-                const debugInfo = document.createElement('div');
-                debugInfo.style.cssText = 'background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace; font-size: 12px; word-break: break-all;';
-                debugInfo.innerHTML = `
-                    <strong>Debug Info (Development Mode):</strong><br>
-                    Hostname: ${window.location.hostname}<br>
-                    Deep Link: ${deepLink}<br>
-                    <small>If the app doesn't open, make sure Expo is running and try clicking the link manually.</small>
-                `;
-                document.querySelector('.container').appendChild(debugInfo);
+            try {
+                const translations = await loadTranslations();
+                const t = translations.emailVerificationPage;
+                
+                console.log('Using translations:', t);
+                
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
+                // Update page title
+                document.getElementById('page-title').textContent = interpolate(t.title, { appName: capitalizedAppName });
+                
+                // Hide both content divs initially
+                document.getElementById('success-content').style.display = 'none';
+                document.getElementById('error-content').style.display = 'none';
+                
+                if (status === 'success') {
+                    document.getElementById('success-content').style.display = 'block';
+                    
+                    // Update translations with appName interpolation
+                    document.getElementById('success-title').textContent = interpolate(t.success.title, { appName: capitalizedAppName });
+                    document.getElementById('success-message').textContent = interpolate(t.success.message, { appName: capitalizedAppName });
+                    document.getElementById('open-app-title').textContent = interpolate(t.success.openApp, { appName: capitalizedAppName });
+                    document.getElementById('open-app-description').textContent = interpolate(t.success.openAppDescription, { appName: capitalizedAppName });
+                    document.getElementById('app-link').textContent = interpolate(t.success.openAppButton, { appName: capitalizedAppName });
+                    document.getElementById('download-ios').textContent = interpolate(t.success.downloadIos, { appName: capitalizedAppName });
+                    document.getElementById('download-android').textContent = interpolate(t.success.downloadAndroid, { appName: capitalizedAppName });
+                    
+                    // Update the deep link with the email parameter
+                    if (email) {
+                        const appLink = document.getElementById('app-link');
+                        appLink.href = getDeepLink(email);
+                    }
+                    
+                    // Auto-redirect to app after 3 seconds if verification was successful
+                    if (email) {
+                        const deepLink = getDeepLink(email);
+                        console.log('Development mode:', isDevelopment);
+                        console.log('Deep link URL:', deepLink);
+                        console.log('Current hostname:', window.location.hostname);
+                        console.log('Locale:', locale);
+                        console.log('App Name:', appName);
+                        
+                        // Show the deep link URL for debugging in development
+                        if (isDevelopment) {
+                            const debugInfo = document.createElement('div');
+                            debugInfo.style.cssText = 'background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace; font-size: 12px; word-break: break-all;';
+                            debugInfo.innerHTML = `
+                                <strong>${interpolate(t.debug.title, { appName: capitalizedAppName })}</strong><br>
+                                ${interpolate(t.debug.hostname, { hostname: window.location.hostname })}<br>
+                                ${interpolate(t.debug.deepLink, { deepLink: deepLink })}<br>
+                                <small>${interpolate(t.debug.note, { appName: capitalizedAppName })}</small>
+                            `;
+                            document.querySelector('.container').appendChild(debugInfo);
+                        }
+                        
+                        setTimeout(() => {
+                            window.location.href = deepLink;
+                        }, 3000);
+                    }
+                } else {
+                    document.getElementById('error-content').style.display = 'block';
+                    
+                    // Update translations with appName interpolation
+                    document.getElementById('error-title').textContent = interpolate(t.error.title, { appName: capitalizedAppName });
+                    document.getElementById('contact-support').textContent = interpolate(t.error.contactSupport, { appName: capitalizedAppName });
+                    
+                    if (message) {
+                        document.getElementById('error-message').textContent = message;
+                    } else {
+                        document.getElementById('error-message').textContent = interpolate(t.error.defaultMessage, { appName: capitalizedAppName });
+                    }
+                }
+            } catch (error) {
+                console.error('Error in initializePage:', error);
+                // Show error state
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('success-content').style.display = 'none';
+                document.getElementById('error-content').style.display = 'block';
+                document.getElementById('error-message').textContent = 'Failed to load page content: ' + error.message;
             }
-            
-            setTimeout(() => {
-                window.location.href = deepLink;
-            }, 3000);
         }
+
+        // Start initialization
+        console.log('Script starting...');
+        initializePage().catch(error => {
+            console.error('Failed to initialize page:', error);
+            document.getElementById('loading').textContent = 'Error loading page';
+        });
     </script>
 </body>
 </html> 

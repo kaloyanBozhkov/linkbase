@@ -3,6 +3,7 @@ export * from "./create";
 export * from "./getByUuid";
 export * from "./getByEmail";
 export * from "./setEmailAndMerge";
+export * from "./getLocaleByUserId";
 export * from "../../sso/sendVerificationEmail";
 export * from "../../sso/createSsoVerification";
 export * from "../../sso/getSsoVerificationByToken";

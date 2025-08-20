@@ -5,6 +5,7 @@ import { env } from "@/env";
 import { EmailStyles } from "../stylings";
 import { createSsoVerificationQuery } from "@/queries/linkbase/users";
 import { capitalize } from "deverything";
+import { getTranslations, interpolate, getTranslation } from "./translations";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
@@ -78,7 +79,8 @@ export class EmailService {
   static async sendVerificationEmail(
     email: string,
     userId: string,
-    appName: "linkbase"
+    appName: "linkbase",
+    locale: string = "EN_US"
   ): Promise<void> {
     // Create SSO verification record with secret salt
     const { id: verificationId, secretSalt } = await createSsoVerificationQuery(
@@ -96,7 +98,11 @@ export class EmailService {
     const token = this.createVerificationToken(payload, secretSalt);
     const verificationUrl = `${
       getApiBaseUrl(env.NODE_ENV === "development") || "http://localhost:3000"
-    }/verify-email?token=${encodeURIComponent(token)}`;
+    }/verify-email?token=${encodeURIComponent(token)}&locale=${encodeURIComponent(locale)}&appName=${encodeURIComponent(appName)}`;
+
+    // Get translations for the user's locale
+    const t = getTranslations(locale);
+    const capitalizedAppName = capitalize(appName);
 
     const htmlContent = `
       <!DOCTYPE html>
@@ -104,41 +110,39 @@ export class EmailService {
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Verify Your Email - ${capitalize(appName)}</title>
+          <title>${interpolate(getTranslation(t, 'emailVerification.subject'), { appName: capitalizedAppName })}</title>
 ${EmailStyles.verifyEmail[appName]}
         </head>
         <body>
           <div class="container">
             <div class="header">
-              <div class="logo">${capitalize(appName)}</div>
+              <div class="logo">${capitalizedAppName}</div>
             </div>
             
             <div class="content">
-              <h2>Verify Your Email Address</h2>
-              <p>Hi there! You're setting up email verification for your ${capitalize(
-                appName
-              )} account. This will enable:</p>
+              <h2>${getTranslation(t, 'emailVerification.title')}</h2>
+              <p>${interpolate(getTranslation(t, 'emailVerification.greeting'), { appName: capitalizedAppName })}</p>
               
               <ul>
-                <li><strong>Cross-device sync:</strong> Access your connections on any device</li>
-                <li><strong>Secure backup:</strong> Your data is safely stored in the cloud</li>
-                <li><strong>Account recovery:</strong> Easily restore your data if you change phones</li>
+                <li><strong>${getTranslation(t, 'emailVerification.benefits.crossDeviceSync')}</strong></li>
+                <li><strong>${getTranslation(t, 'emailVerification.benefits.secureBackup')}</strong></li>
+                <li><strong>${getTranslation(t, 'emailVerification.benefits.accountRecovery')}</strong></li>
               </ul>
               
-              <p>Click the button below to verify your email address:</p>
+              <p>${getTranslation(t, 'emailVerification.actionText')}</p>
               
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${verificationUrl}" class="button">Verify Email Address</a>
+                <a href="${verificationUrl}" class="button">${getTranslation(t, 'emailVerification.verifyButton')}</a>
               </div>
               
               <div class="warning">
-                <strong>Security Note:</strong> This link will expire in 24 hours. If you didn't request this verification, you can safely ignore this email.
+                <strong>${getTranslation(t, 'emailVerification.securityNote')}</strong>
               </div>
             </div>
             
             <div class="footer">
-              <p>This email was sent to ${email}</p>
-              <p>If you have any questions, contact us at kaloyan@bozhkov.com</p>
+              <p>${interpolate(getTranslation(t, 'emailVerification.footer.sentTo'), { email })}</p>
+              <p>${getTranslation(t, 'emailVerification.footer.contact')}</p>
             </div>
           </div>
         </body>
@@ -149,7 +153,7 @@ ${EmailStyles.verifyEmail[appName]}
       await resend.emails.send({
         from: `${appName} <noreply@eventrave.com>`, // TODO set proper domain based on app
         to: [email],
-        subject: `Verify Your Email - ${appName}`,
+        subject: interpolate(getTranslation(t, 'emailVerification.subject'), { appName: capitalizedAppName }),
         html: htmlContent,
       });
     } catch (error) {

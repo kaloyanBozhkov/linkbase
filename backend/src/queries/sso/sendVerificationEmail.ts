@@ -1,4 +1,5 @@
 import { EmailService } from "@/services/email/email";
+import { getLocaleByUserIdQuery } from "@/queries/linkbase/users";
 
 /**
  * Sends a verification email to the specified email address for the given user.
@@ -9,5 +10,8 @@ export const sendVerificationEmailQuery = async (
   email: string,
   appName: "linkbase"
 ): Promise<void> => {
-  await EmailService.sendVerificationEmail(email, userId, appName);
+  // Get the user's locale
+  const locale = await getLocaleByUserIdQuery(userId);
+  
+  await EmailService.sendVerificationEmail(email, userId, appName, locale);
 }; 
