@@ -23,6 +23,7 @@ import { trpc, updateInfiniteQueryDataOnEdit } from "@/utils/trpc";
 import { colors as baseColors, typography, borderRadius } from "@/theme/colors";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { useKeyboardScroll } from "@/hooks/useKeyboardScroll";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type EditConnectionScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -40,6 +41,7 @@ interface Props {
 }
 
 const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
+  const { t } = useTranslation();
   const { connectionId } = route.params;
   const { data: connection, isLoading: isLoadingConnection } =
     trpc.linkbase.connections.getById.useQuery({
@@ -64,11 +66,11 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = t("connections.nameRequired");
     }
 
     if (!formData.metAt.trim()) {
-      newErrors.metAt = "Meeting place is required";
+      newErrors.metAt = t("connections.meetingPlaceRequired");
     }
 
     // Facts are now optional - no validation needed
@@ -78,7 +80,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
       (sm) => !sm.handle.trim()
     );
     if (invalidSocialMedias.length > 0) {
-      newErrors.socialMedias = "All social media entries must have valid input";
+      newErrors.socialMedias = t("connections.allSocialMediaInvalid");
     }
 
     setErrors(newErrors);
@@ -125,7 +127,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
             updatedConnection
           );
 
-          Alert.alert("Success", "Connection updated successfully!", [
+          Alert.alert(t("common.success"), t("connections.updatedSuccessfully"), [
             { text: "OK", onPress: () => navigation.goBack() },
           ]);
         },
@@ -193,7 +195,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
     <LinearGradient colors={colors.gradients.background} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <View style={[styles.header, { borderBottomColor: colors.border.light }]}>
-          <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Edit Connection</Text>
+                      <Text style={[styles.headerTitle, { color: colors.text.primary }]}>{t("connections.editConnection")}</Text>
           <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}>
             Update {connection?.name}&apos;s info
           </Text>
@@ -236,14 +238,14 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
               />
 
               <Input
-                label="Where did you meet? *"
+                label={t("connections.whereDidYouMeet")}
                 value={formData.metAt}
                 onChangeText={(text) =>
                   setFormData((prev) => ({ ...prev, metAt: text }))
                 }
                 onFocus={() => scrollToFocusedInput()}
                 error={errors.metAt}
-                placeholder="Coffee shop, conference, party, etc."
+                placeholder={t("connections.meetingPlaceholder")}
               />
 
               <SocialMediaSection
@@ -255,7 +257,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
 
               <View style={styles.factsSection}>
                 <LinearGradient colors={colors.gradients.section} style={[styles.factsSectionContent, { borderColor: colors.border.default }]}>
-                  <Text style={[styles.factsTitle, { color: colors.text.accent }]}>💡 Notes (Optional)</Text>
+                  <Text style={[styles.factsTitle, { color: colors.text.accent }]}>{t("connections.notesOptional")}</Text>
                   {errors.facts && (
                     <Text style={[styles.errorText, { color: colors.text.error }]}>{errors.facts}</Text>
                   )}
@@ -266,7 +268,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
                         value={fact}
                         onChangeText={(text) => updateFact(index, text)}
                         onFocus={() => scrollToFocusedInput()}
-                        placeholder={`Interesting fact #${index + 1}`}
+                        placeholder={`${t("connections.interestingFact")}${index + 1}`}
                         containerStyle={styles.factInput}
                       />
                       {/* Always show remove button since facts are optional */}
@@ -282,7 +284,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
                   ))}
 
                   <Button
-                    title="+ Add Fact"
+                    title={t("connections.addFact")}
                     onPress={addFactField}
                     variant="ghost"
                     style={styles.addFactButton}
@@ -294,14 +296,14 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
           </ScrollView>
           <View style={[styles.bottomActions, { borderTopColor: colors.border.light }]}>
             <Button
-              title="Cancel"
+              title={t("common.cancel")}
               onPress={() => navigation.goBack()}
               variant="secondary"
               style={styles.cancelButton}
             />
             <Button
               title={
-                isUpdatingConnection ? "Updating..." : "Update Connection"
+                isUpdatingConnection ? t("connections.updating") : t("connections.updateConnection")
               }
               onPress={handleSubmit}
               disabled={isUpdatingConnection}

@@ -3,6 +3,7 @@ import { View, Text, SafeAreaView, StyleSheet, ScrollView, Switch, Platform, Tou
 import { LinearGradient } from "expo-linear-gradient";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { useNotificationSettingsStore } from "@/hooks/useNotificationSettings";
+import { useTranslation } from "@/hooks/useTranslation";
 import * as Notifications from "expo-notifications";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -13,7 +14,7 @@ const requestPermissions = async () => {
   }
 };
 
-const scheduleNotification = async (time: string) => {
+const scheduleNotification = async (time: string, t: any) => {
   const [hours, minutes] = time.split(":").map((n) => parseInt(n, 10));
 
   // Cancel existing notifications
@@ -36,8 +37,8 @@ const scheduleNotification = async (time: string) => {
     // One-time notification within 2 hours
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: "Log your connections",
-        body: "Don't forget to add today's connections!",
+        title: t("notifications.logConnections"),
+        body: t("notifications.dontForgetConnections"),
       },
       trigger: {
         date: targetTime,
@@ -48,8 +49,8 @@ const scheduleNotification = async (time: string) => {
     // Daily repeating notification
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: "Log your connections",
-        body: "Don't forget to add today's connections!",
+        title: t("notifications.logConnections"),
+        body: t("notifications.dontForgetConnections"),
       },
       trigger: {
         hour: hours,
@@ -63,6 +64,7 @@ const scheduleNotification = async (time: string) => {
 
 const NotificationsScreen: React.FC = () => {
   const { colors } = useThemeStore();
+  const { t } = useTranslation();
   const { enabled, time, isInitializing, setEnabled, setTime, loadSettings } = useNotificationSettingsStore();
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [tempTime, setTempTime] = useState<Date>(new Date());
@@ -82,14 +84,14 @@ const NotificationsScreen: React.FC = () => {
     if (hoursDifference <= 2) {
       const minutesDiff = Math.round(hoursDifference * 60);
       if (minutesDiff < 1) {
-        return "in less than a minute";
+        return t("notifications.inLessThanMinute");
       } else if (minutesDiff === 1) {
-        return "in 1 minute";
+        return t("notifications.inOneMinute");
       } else {
-        return `in ${minutesDiff} minutes`;
+        return t("notifications.inMinutes", { minutes: minutesDiff });
       }
     } else {
-      return "daily at this time";
+      return t("notifications.dailyAtThisTime");
     }
   };
 
@@ -104,7 +106,7 @@ const NotificationsScreen: React.FC = () => {
     if (!isInitializing) {
       (async () => {
         if (enabled) {
-          await scheduleNotification(time);
+          await scheduleNotification(time, t);
         } else {
           await Notifications.cancelAllScheduledNotificationsAsync();
         }
@@ -171,7 +173,7 @@ const NotificationsScreen: React.FC = () => {
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.primary }}>
         <LinearGradient colors={colors.gradients.background} style={styles.gradient}>
           <View style={styles.container}>
-            <Text style={[styles.title, { color: colors.text.primary }]}>Loading...</Text>
+            <Text style={[styles.title, { color: colors.text.primary }]}>{t("common.loading")}</Text>
           </View>
         </LinearGradient>
       </SafeAreaView>
@@ -182,7 +184,7 @@ const NotificationsScreen: React.FC = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.primary }}>
       <LinearGradient colors={colors.gradients.background} style={styles.gradient}>
         <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-          <Text style={[styles.title, { color: colors.text.primary }]}>Notifications</Text>
+          <Text style={[styles.title, { color: colors.text.primary }]}>{t("notifications.title")}</Text>
           <View style={[styles.card, { backgroundColor: colors.background.surface, borderColor: colors.border.light }]}>
             <View style={styles.row}>
               <Text style={[styles.label, { color: colors.text.secondary }]}>Enable Notifications</Text>
@@ -227,11 +229,11 @@ const NotificationsScreen: React.FC = () => {
                          <View style={[styles.modalContent, { backgroundColor: colors.background.primary }]}>
                              <View style={[styles.modalHeader, { borderBottomColor: colors.border.light }]}>
                 <TouchableOpacity onPress={handleTimeCancel}>
-                  <Text style={[styles.modalButton, { color: colors.text.secondary }]}>Cancel</Text>
+                  <Text style={[styles.modalButton, { color: colors.text.secondary }]}>{t("common.cancel")}</Text>
                 </TouchableOpacity>
-                <Text style={[styles.modalTitle, { color: colors.text.primary }]}>Set Time</Text>
+                <Text style={[styles.modalTitle, { color: colors.text.primary }]}>{t("notifications.setTime")}</Text>
                 <TouchableOpacity onPress={handleTimeConfirm}>
-                  <Text style={[styles.modalButton, { color: colors.text.accent }]}>Done</Text>
+                  <Text style={[styles.modalButton, { color: colors.text.accent }]}>{t("common.done")}</Text>
                 </TouchableOpacity>
               </View>
               <DateTimePicker

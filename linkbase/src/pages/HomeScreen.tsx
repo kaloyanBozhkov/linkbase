@@ -22,6 +22,7 @@ import { getInfiniteQueryItems } from "@/hooks/getInfiniteQueryItems";
 import { getErrorMessage } from "@/helpers/utils";
 import { colors as baseColors, typography } from "@/theme/colors";
 import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -32,6 +33,7 @@ interface Props {
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const trpcUtils = trpc.useUtils();
   const { colors } = useThemeStore();
+  const { t } = useTranslation();
   
   const getAllQuery = trpc.linkbase.connections.getAll.useInfiniteQuery(
     {},
@@ -122,12 +124,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleDeleteConnection = (id: string, name: string) => {
     Alert.alert(
-      "Delete Connection",
-      `Are you sure you want to delete ${name}?`,
+      t("home.deleteConnection"),
+      t("connections.deleteConnectionConfirm", { name }),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Delete",
+          text: t("common.delete"),
           style: "destructive",
           onPress: () =>
             deleteConnection(
@@ -149,10 +151,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                   }
                 },
                 onError: (error) => {
-                  Alert.alert(
-                    "Error",
-                    error.message || "Failed to delete connection"
-                  );
+                          Alert.alert(
+          t("common.error"),
+          error.message || t("home.failedToDelete")
+        );
                 },
               }
             ),
@@ -183,16 +185,16 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Text style={[styles.emptyStateTitle, { color: colors.text.primary }]}>
-        {hasSearched ? "🔍 No Results" : "🌟 Start Building"}
+        {hasSearched ? t("home.noResults") : t("home.startBuilding")}
       </Text>
       <Text style={[styles.emptyStateText, { color: colors.text.muted }]}>
         {hasSearched
-          ? "No connections found matching your search. Try different keywords."
-          : "Your connection network is empty. Add your first connection and start building meaningful relationships!"}
+          ? t("home.noResultsFound")
+          : t("home.emptyNetwork")}
       </Text>
       {!hasSearched && (
         <Button
-          title="Add First Connection"
+          title={t("home.addFirstConnection")}
           onPress={() => navigation.navigate("AddConnection")}
           style={styles.emptyStateButton}
         />
@@ -205,12 +207,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       <LinearGradient colors={colors.gradients.background} style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.errorContainer}>
-            <Text style={[styles.errorTitle, { color: colors.text.primary }]}>⚠️ Connection Error</Text>
+            <Text style={[styles.errorTitle, { color: colors.text.primary }]}>{t("home.connectionError")}</Text>
             <Text style={[styles.errorText, { color: colors.text.error }]}>
               {getErrorMessage(errorConnections)}
             </Text>
             <Button
-              title="Try Again"
+              title={t("home.tryAgain")}
               onPress={() => {
                 if (hasSearched && searchQuery.trim()) {
                   searchItemsQuery.refetch();

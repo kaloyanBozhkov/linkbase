@@ -11,6 +11,7 @@ import {
 import { colors as baseColors, typography } from "@/theme/colors";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { ActivityIndicator } from "react-native-paper";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface SearchBarProps {
   searchQuery: string;
@@ -41,6 +42,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   hasSearched = false,
   onClearSearch,
 }) => {
+  const { t } = useTranslation();
   const lastSubmittedQueryRef = useRef<string>("");
   const { colors } = useThemeStore();
 
@@ -84,7 +86,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     }
     return (
       <Text style={[styles.searchButtonText, buttonTextStyle]}>
-        {shouldShowClear ? "Clear" : "Search"}
+        {shouldShowClear ? t("common.clear") : t("search.search")}
       </Text>
     );
   };

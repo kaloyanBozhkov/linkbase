@@ -21,6 +21,7 @@ import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { colors as baseColors, typography } from "@/theme/colors";
 import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTranslation } from "@/hooks/useTranslation";
 import Button from "@/components/atoms/Button";
 import SearchBar from "./SearchBar";
 
@@ -108,6 +109,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
   const [mode, setMode] = useState<Mode>("default");
   const [showActionsModal, setShowActionsModal] = useState(false);
   const { colors } = useThemeStore();
+  const { t } = useTranslation();
   const [dragState, setDragState] = useState<
     "none" | "search" | "add" | "voiceAdd" | "dragging" | "settings"
   >("none");
@@ -376,26 +378,26 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
     {
       id: 'search' as const,
       icon: <MaterialIcons name="search" size={24} color={colors.text.onAccent} />,
-      title: 'Search',
-      description: 'Search connections by facts or questions'
+      title: t("actionsHeader.search"),
+      description: t("actionsHeader.searchDescription")
     },
     {
       id: 'add' as const,
       icon: <MaterialIcons name="add" size={24} color={colors.text.onAccent} />,
-      title: 'Add Connection',
-      description: 'Add a new connection manually'
+      title: t("actionsHeader.addConnection"),
+      description: t("actionsHeader.addConnectionDescription")
     },
     {
       id: 'voiceAdd' as const,
       icon: <Ionicons name="mic" size={24} color={colors.text.onAccent} />,
-      title: 'Voice Add',
-      description: 'Add connections using voice input'
+      title: t("actionsHeader.voiceAdd"),
+      description: t("actionsHeader.voiceAddDescription")
     },
     {
       id: 'settings' as const,
       icon: <Ionicons name="settings" size={24} color={colors.text.onAccent} />,
-      title: 'Settings',
-      description: 'Open app settings and preferences'
+      title: t("actionsHeader.settings"),
+      description: t("actionsHeader.settingsDescription")
     }
   ];
 
@@ -691,11 +693,11 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
     return (
       <View style={styles.instructionsContainer}>
         <Text style={[styles.instructionsText, { color: colors.text.muted, backgroundColor: colors.background.surface }]}>
-          {dragState === "search" && "Search connections"}
-          {dragState === "add" && "Add a connection"}
-          {dragState === "voiceAdd" && "Add connections by voice"}
-          {dragState === "settings" && "Open settings"}
-          {dragState === "none" && "Drag to search or add a connection"}
+          {dragState === "search" && t("actionsHeader.searchConnections")}
+          {dragState === "add" && t("actionsHeader.addConnection")}
+          {dragState === "voiceAdd" && t("actionsHeader.addConnectionsByVoice")}
+          {dragState === "settings" && t("actionsHeader.openSettings")}
+          {dragState === "none" && t("actionsHeader.dragToSearchOrAdd")}
         </Text>
       </View>
     );
@@ -716,9 +718,9 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
         >
           <View style={styles.modalContent}>
             <View style={[styles.modalCard, { backgroundColor: colors.background.surface }]}>
-              <Text style={[styles.modalTitle, { color: colors.text.primary }]}>
-                Choose an Action
-              </Text>
+                      <Text style={[styles.modalTitle, { color: colors.text.primary }]}>
+          {t("actionsHeader.chooseAction")}
+        </Text>
               <View style={styles.actionsGrid}>
                 {actionsData.map((action) => (
                   <TouchableOpacity
@@ -745,7 +747,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
               <View style={[styles.tipContainer, { backgroundColor: colors.background.tertiary }]}>
                 <MaterialIcons name="lightbulb-outline" size={16} color={colors.text.muted} />
                 <Text style={[styles.tipText, { color: colors.text.muted }]}>
-                  You can also drag the main action circle to quickly select an action
+                  {t("actionsHeader.dragTip")}
                 </Text>
               </View>
               <TouchableOpacity
@@ -754,7 +756,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
                 activeOpacity={0.8}
               >
                 <Text style={[styles.closeModalText, { color: colors.text.onAccent }]}>
-                  Cancel
+                  {t("common.cancel")}
                 </Text>
               </TouchableOpacity>
             </View>

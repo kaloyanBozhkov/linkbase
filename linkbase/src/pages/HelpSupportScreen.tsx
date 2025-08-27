@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, Linking } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const QUESTIONS: { q: string; a: string }[] = [
   { q: "What is Linkbase?", a: "A place to store and recall connections with facts and socials." },
@@ -28,11 +29,12 @@ const QUESTIONS: { q: string; a: string }[] = [
 
 const HelpSupportScreen: React.FC = () => {
   const { colors } = useThemeStore();
+  const { t } = useTranslation();
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.primary }}>
       <LinearGradient colors={colors.gradients.background} style={styles.gradient}>
         <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-          <Text style={[styles.title, { color: colors.text.primary }]}>Help & Support</Text>
+          <Text style={[styles.title, { color: colors.text.primary }]}>{t("helpSupport.title")}</Text>
           <View style={[styles.card, { backgroundColor: colors.background.surface, borderColor: colors.border.light }] }>
             {QUESTIONS.map((item, idx) => (
               <View key={idx} style={styles.qaItem}>
@@ -42,7 +44,7 @@ const HelpSupportScreen: React.FC = () => {
             ))}
           </View>
           <View style={[styles.card, { backgroundColor: colors.background.surface, borderColor: colors.border.light }] }>
-            <Text style={[styles.subtitle, { color: colors.text.primary }]}>Contact Support</Text>
+            <Text style={[styles.subtitle, { color: colors.text.primary }]}>{t("helpSupport.contactSupport")}</Text>
             <Text
               onPress={() => Linking.openURL("mailto:kaloyan@bozhkov.com")}
               style={[styles.link, { color: colors.text.accent }]}

@@ -14,6 +14,7 @@ import { socialMediaDisplayNames } from "@/helpers/constants";
 import { formatDate } from "@linkbase/shared/src/date";
 import { colors as baseColors, shadows, typography, borderRadius } from "@/theme/colors";
 import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ConnectionCardProps {
   connection: NonNullable<RouterOutput["linkbase"]["connections"]["getById"]>;
@@ -28,6 +29,8 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { t } = useTranslation();
+  
   const handleSocialMediaPress = (url: string) => {
     if (url) {
       Linking.openURL(url);
@@ -101,7 +104,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
           </View>
 
           <View style={[styles.factsContainer, { backgroundColor: colors.background.surface, borderColor: colors.border.light }]}>
-            <Text style={[styles.factsLabel, { color: colors.text.accent }]}>💡 Notes</Text>
+            <Text style={[styles.factsLabel, { color: colors.text.accent }]}>{t("connections.notesLabel")}</Text>
             <View style={styles.factsList}>
               {connection.facts && connection.facts.length > 0 ? (
                 <>
@@ -114,7 +117,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
                 </>
               ) : (
                 <Text style={[styles.noFacts, { color: colors.text.muted }]}>
-                  No notes added, click edit and some!
+                  {t("connections.noNotes")}
                 </Text>
               )}
             </View>
@@ -123,7 +126,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
 
         <View style={styles.cardFooter}>
           <Button
-            title="Edit"
+            title={t("connections.edit")}
             onPress={onEdit}
             variant="ghost"
             size="small"

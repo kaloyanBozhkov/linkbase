@@ -26,6 +26,7 @@ import { colors as baseColors, typography, borderRadius } from "@/theme/colors";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { useKeyboardScroll } from "@/hooks/useKeyboardScroll";
 import { ActivityIndicator } from "react-native-paper";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type AddConnectionScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -37,6 +38,7 @@ interface Props {
 }
 
 const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
+  const { t } = useTranslation();
   const { mutateAsync: createConnection, isPending: loading } =
     trpc.linkbase.connections.create.useMutation();
   const { scrollViewRef, scrollToFocusedInput } = useKeyboardScroll();
@@ -66,8 +68,8 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
   useEffect(() => {
     if (filloutError) {
       Alert.alert(
-        "Error",
-        "Couldn't use your voice recording to fill out the form. Please try again later."
+        t("common.error"),
+        t("connections.voiceRecordingError")
       );
     }
   }, [filloutError]);
@@ -92,11 +94,11 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = t("connections.nameRequired");
     }
 
     if (!formData.metAt.trim()) {
-      newErrors.metAt = "Meeting place is required";
+      newErrors.metAt = t("connections.meetingPlaceRequired");
     }
 
     // Facts are now optional - no validation needed
@@ -106,7 +108,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
       (sm) => !sm.handle.trim()
     );
     if (invalidSocialMedias.length > 0) {
-      newErrors.socialMedias = "All social media entries must have valid input";
+      newErrors.socialMedias = t("connections.allSocialMediaInvalid");
     }
 
     setErrors(newErrors);
@@ -123,7 +125,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
 
     const userId = useSessionUserStore.getState().userId;
     if (!userId) {
-      Alert.alert("Error", "User not found");
+              Alert.alert(t("common.error"), t("auth.userNotFound"));
       return;
     }
 
@@ -144,15 +146,15 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
             { prepend: true }
           );
 
-          Alert.alert("Success", "Connection added successfully!", [
-            { text: "OK", onPress: () => navigation.goBack() },
-          ]);
+                  Alert.alert(t("common.success"), t("connections.addedSuccessfully"), [
+          { text: t("common.ok"), onPress: () => navigation.goBack() },
+        ]);
 
           enableRateApp();
         },
         onError: (error) => {
           const errorMessage = getErrorMessage(error);
-          Alert.alert("Error", errorMessage);
+          Alert.alert(t("common.error"), errorMessage);
         },
       }
     );
@@ -194,8 +196,8 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
       <SafeAreaView style={styles.safeArea}>
         <View style={[styles.header, { borderBottomColor: colors.border.light }]}>
           <View>
-            <Text style={[styles.headerTitle, { color: colors.text.primary }]}>New Connection</Text>
-            <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}>Build your network</Text>
+            <Text style={[styles.headerTitle, { color: colors.text.primary }]}>{t("connections.newConnection")}</Text>
+            <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}>{t("connections.buildNetwork")}</Text>
           </View>
           <View style={styles.voiceRec}>
             {isFetchingFillout ? (
@@ -241,18 +243,18 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
                 }}
                 onFocus={() => scrollToFocusedInput()}
                 error={errors.name}
-                placeholder="Enter their name"
+                placeholder={t("connections.namePlaceholder")}
               />
 
               <Input
-                label="Where did you meet? *"
+                label={t("connections.whereDidYouMeet")}
                 value={formData.metAt}
                 onChangeText={(text) =>
                   setFormData((prev) => ({ ...prev, metAt: text }))
                 }
                 onFocus={() => scrollToFocusedInput()}
                 error={errors.metAt}
-                placeholder="Coffee shop, conference, party, etc."
+                placeholder={t("connections.meetingPlaceholder")}
               />
 
               <SocialMediaSection
@@ -264,7 +266,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
 
               <View style={styles.factsSection}>
                 <LinearGradient colors={colors.gradients.section} style={[styles.factsSectionContent, { borderColor: colors.border.default }]}>
-                  <Text style={[styles.factsTitle, { color: colors.text.accent }]}>💡 Notes (Optional)</Text>
+                  <Text style={[styles.factsTitle, { color: colors.text.accent }]}>{t("connections.notesOptional")}</Text>
                   {errors.facts && (
                     <Text style={[styles.errorText, { color: colors.text.error }]}>{errors.facts}</Text>
                   )}
@@ -275,7 +277,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
                         value={fact}
                         onChangeText={(text) => updateFact(index, text)}
                         onFocus={() => scrollToFocusedInput()}
-                        placeholder={`Interesting fact #${index + 1}`}
+                        placeholder={`${t("connections.interestingFact")}${index + 1}`}
                         containerStyle={styles.factInput}
                       />
                       {/* Always show remove button since facts are optional */}
@@ -293,7 +295,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
                   ))}
 
                   <Button
-                    title="+ Add Fact"
+                    title={t("connections.addFact")}
                     onPress={addFactField}
                     variant="ghost"
                     style={styles.addFactButton}
@@ -305,13 +307,13 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
           </ScrollView>
           <View style={[styles.bottomActions, { borderTopColor: colors.border.light }]}>
             <Button
-              title="Cancel"
-              onPress={() => navigation.goBack()}
-              variant="secondary"
+                          title={t("common.cancel")}
+            onPress={() => navigation.goBack()}
+            variant="secondary"
               style={styles.cancelButton}
             />
             <Button
-              title={loading ? "Adding..." : "Add Connection"}
+              title={loading ? t("connections.adding") : t("connections.addConnection")}
               onPress={handleSubmit}
               disabled={loading}
               style={styles.submitButton}

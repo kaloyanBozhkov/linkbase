@@ -2,11 +2,13 @@ import React, { useEffect } from "react";
 import { View, Text, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useThemeStore, ThemeName } from "@/hooks/useThemeStore";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const THEMES: ThemeName[] = ["Exo Theme", "Warm Pastel", "Light Mode"];
 
 const AppearanceScreen: React.FC = () => {
   const { colors, themeName, setThemeName, initializeTheme, isInitializing } = useThemeStore();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isInitializing) return;
@@ -17,8 +19,8 @@ const AppearanceScreen: React.FC = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.primary }}>
       <LinearGradient colors={colors.gradients.background} style={styles.gradient}>
         <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-          <Text style={[styles.title, { color: colors.text.primary }]}>Appearance</Text>
-          <Text style={[styles.subtitle, { color: colors.text.muted }]}>Choose a theme</Text>
+          <Text style={[styles.title, { color: colors.text.primary }]}>{t("appearance.title")}</Text>
+          <Text style={[styles.subtitle, { color: colors.text.muted }]}>{t("appearance.chooseTheme")}</Text>
           <View style={styles.list}>
             {THEMES.map((name) => {
               const selected = themeName === name;
@@ -33,7 +35,7 @@ const AppearanceScreen: React.FC = () => {
                 >
                   <Text style={[styles.itemTitle, { color: colors.text.primary }]}>{name}</Text>
                   <Text style={[styles.itemSubtitle, { color: selected ? colors.text.accent : colors.text.muted }]}>
-                    {selected ? "Selected" : "Tap to apply"}
+                    {selected ? t("appearance.selected") : t("appearance.tapToApply")}
                   </Text>
                 </TouchableOpacity>
               );

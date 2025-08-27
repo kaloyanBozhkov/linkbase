@@ -20,6 +20,7 @@ import { socialMediaDisplayNames } from "@/helpers/constants";
 import { getErrorMessage } from "@/helpers/utils";
 import { colors as baseColors, shadows, typography, borderRadius } from "@/theme/colors";
 import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type ConnectionDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -37,6 +38,7 @@ interface Props {
 }
 
 const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
+  const { t } = useTranslation();
   const { connectionId } = route.params;
   const {
     data: connection,
@@ -62,12 +64,12 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const handleDelete = () => {
     Alert.alert(
-      "Delete Connection",
-      `Are you sure you want to delete ${connection?.name}?`,
+      t("connections.deleteConnection"),
+      t("connections.deleteConnectionConfirm", { name: connection?.name }),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Delete",
+          text: t("common.delete"),
           style: "destructive",
           onPress: () => {
             deleteConnection(
@@ -81,13 +83,13 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                     ["linkbase", "connections", "getAll"],
                     connectionId
                   );
-                  Alert.alert("Success", "Connection deleted successfully!", [
-                    { text: "OK", onPress: () => navigation.goBack() },
+                  Alert.alert(t("common.success"), t("connections.deletedSuccessfully"), [
+                    { text: t("common.ok"), onPress: () => navigation.goBack() },
                   ]);
                 },
                 onError: (err: any) => {
                   const errorMessage = getErrorMessage(err);
-                  Alert.alert("Error", errorMessage);
+                  Alert.alert(t("common.error"), errorMessage);
                 },
               }
             );
@@ -119,7 +121,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
       >
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.centerContainer}>
-            <Text style={[styles.loadingText, { color: colors.text.accent }]}>⚡ Loading...</Text>
+            <Text style={[styles.loadingText, { color: colors.text.accent }]}>⚡ {t("common.loading")}</Text>
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -134,11 +136,11 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
       >
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.centerContainer}>
-            <Text style={[styles.errorTitle, { color: colors.text.primary }]}>⚠️ Error</Text>
+            <Text style={[styles.errorTitle, { color: colors.text.primary }]}>⚠️ {t("common.error")}</Text>
             <Text style={[styles.errorText, { color: colors.text.error }]}>
-              {error?.message ?? "Connection not found"}
+              {error?.message ?? t("connections.connectionNotFound")}
             </Text>
-            <Button title="Try Again" onPress={fetchConnection} />
+            <Button title={t("common.tryAgain")} onPress={fetchConnection} />
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -166,7 +168,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             {/* Social Media Section */}
             {socialMediasToShow.length > 0 && (
               <LinearGradient colors={colors.gradients.section} style={styles.section}>
-                <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>🔗 Social Media</Text>
+                <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>{t("connections.socialMedia")}</Text>
                 <View style={styles.socialMediaContainer}>
                   {socialMediasToShow.map((socialMedia, index) => (
                     <TouchableOpacity
@@ -190,7 +192,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                           @{socialMedia.handle}
                         </Text>
                       </LinearGradient>
-                      <Text style={[styles.socialMediaSubtext, { color: colors.text.muted }]}>Tap to open</Text>
+                      <Text style={[styles.socialMediaSubtext, { color: colors.text.muted }]}>{t("connections.tapToOpen")}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -199,14 +201,14 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
             {/* Meeting Details */}
             <LinearGradient colors={colors.gradients.section} style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>🤝 Meeting Details</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>{t("connections.meetingDetails")}</Text>
               <View style={[styles.detailContainer, { backgroundColor: colors.background.surface, borderColor: colors.border.light }]}>
                 <View style={styles.detailRow}>
-                  <Text style={[styles.detailLabel, { color: colors.text.muted }]}>📍 Where:</Text>
+                  <Text style={[styles.detailLabel, { color: colors.text.muted }]}>{t("connections.where")}</Text>
                   <Text style={[styles.detailValue, { color: colors.text.primary }]}>{connection.met_at}</Text>
                 </View>
                 <View style={styles.detailRow}>
-                  <Text style={[styles.detailLabel, { color: colors.text.muted }]}>📅 When:</Text>
+                  <Text style={[styles.detailLabel, { color: colors.text.muted }]}>{t("connections.when")}</Text>
                   <Text style={[styles.detailValue, { color: colors.text.secondary }]}>
                     {formatShortDate(connection.created_at)}
                   </Text>
@@ -216,7 +218,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
             {/* Facts Section */}
             <LinearGradient colors={colors.gradients.section} style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>💡 Facts & Insights</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>{t("connections.factsInsights")}</Text>
               <View style={[styles.factsContainer, { backgroundColor: colors.background.surface, borderColor: colors.border.light }]}>
                 {connection.facts.map((fact, index) => (
                   <View key={index} style={styles.factItem}>
@@ -229,16 +231,16 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
             {/* Timestamps */}
             <LinearGradient colors={colors.gradients.dark} style={styles.timestampSection}>
-              <Text style={[styles.timestampTitle, { color: colors.text.muted }]}>📊 Record Info</Text>
+              <Text style={[styles.timestampTitle, { color: colors.text.muted }]}>{t("connections.recordInfo")}</Text>
               <View style={styles.timestampContainer}>
                 <View style={styles.timestampRow}>
-                  <Text style={[styles.timestampLabel, { color: colors.text.muted }]}>Added:</Text>
+                  <Text style={[styles.timestampLabel, { color: colors.text.muted }]}>{t("connections.added")}</Text>
                   <Text style={[styles.timestampValue, { color: colors.text.secondary }]}>
                     {formatShortDate(connection.created_at)}
                   </Text>
                 </View>
                 <View style={styles.timestampRow}>
-                  <Text style={[styles.timestampLabel, { color: colors.text.muted }]}>Updated:</Text>
+                  <Text style={[styles.timestampLabel, { color: colors.text.muted }]}>{t("connections.updated")}</Text>
                   <Text style={[styles.timestampValue, { color: colors.text.secondary }]}>
                     {formatShortDate(connection.updated_at)}
                   </Text>
@@ -249,7 +251,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             {/* Action Buttons */}
             <View style={styles.actionButtons}>
               <Button
-                title="Edit"
+                title={t("connections.edit")}
                 onPress={handleEdit}
                 variant="ghost"
                 style={styles.actionButton}

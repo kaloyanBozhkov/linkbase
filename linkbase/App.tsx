@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Provider as PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import "./src/i18n"; // Initialize i18n
 import HomeScreen from "./src/pages/HomeScreen";
 import AddConnectionScreen from "./src/pages/AddConnectionScreen";
 import AddVoiceConnectionsScreen from "./src/pages/AddVoiceConnectionsScreen";
@@ -20,6 +21,7 @@ import { TRPCProvider } from "./src/providers/TRPCProvider";
 import { trpc } from "./src/utils/trpc";
 import { Alert } from "react-native";
 import { useThemeStore } from "./src/hooks/useThemeStore";
+import { useTranslation } from "./src/hooks/useTranslation";
 
 export type RootStackParamList = {
   Home: undefined;
@@ -42,6 +44,7 @@ const App: React.FC = () => {
     useSessionUserStore();
   const { mutateAsync: createUser } = trpc.linkbase.users.create.useMutation();
   const { initializeTheme } = useThemeStore();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (userId || isInitializing === true) return;
@@ -51,7 +54,7 @@ const App: React.FC = () => {
         return id;
       } catch (error) {
         console.error("Error creating user:", error);
-        Alert.alert("Error creating user", "Please try again later");
+        Alert.alert(t("sync.errorCreatingUser"), t("sync.pleaseTryAgainLater"));
         return "";
       }
     });

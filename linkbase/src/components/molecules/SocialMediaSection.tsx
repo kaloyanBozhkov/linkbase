@@ -16,6 +16,7 @@ import { social_media_type } from "@linkbase/prisma/client/enums";
 import { socialMediaDisplayNames } from "@/helpers/constants";
 import { shadows, typography, borderRadius } from "@/theme/colors";
 import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // Validation functions
 const validateEmail = (email: string): boolean => {
@@ -29,26 +30,26 @@ const validatePhone = (phone: string): boolean => {
   return phoneRegex.test(phone);
 };
 
-const getInputConfig = (type: social_media_type) => {
+const getInputConfig = (type: social_media_type, t: any) => {
   switch (type) {
     case social_media_type.EMAIL:
       return {
-        label: "Email Address",
-        placeholder: "user@example.com",
+        label: t("socialMedia.email.label"),
+        placeholder: t("socialMedia.email.placeholder"),
         keyboardType: "email-address" as const,
         autoCapitalize: "none" as const,
       };
     case social_media_type.PHONE:
       return {
-        label: "Phone Number",
-        placeholder: "+1 (555) 123-4567",
+        label: t("socialMedia.phone.label"),
+        placeholder: t("socialMedia.phone.placeholder"),
         keyboardType: "phone-pad" as const,
         autoCapitalize: "none" as const,
       };
     default:
       return {
-        label: "Handle/Username",
-        placeholder: "@username or handle",
+        label: t("socialMedia.handle.label"),
+        placeholder: t("socialMedia.handle.placeholder"),
         keyboardType: "default" as const,
         autoCapitalize: "none" as const,
       };
@@ -69,6 +70,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
   onInputFocus,
 }) => {
   const { colors } = useThemeStore();
+  const { t } = useTranslation();
   const [activePickerIndex, setActivePickerIndex] = useState<number | null>(
     null
   );
@@ -126,17 +128,17 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
     type: social_media_type,
     handle: string
   ): string | null => {
-    if (!handle.trim()) return "This field is required";
+    if (!handle.trim()) return t("socialMedia.validation.required");
 
     switch (type) {
       case social_media_type.EMAIL:
         return validateEmail(handle)
           ? null
-          : "Please enter a valid email address";
+          : t("socialMedia.email.validation");
       case social_media_type.PHONE:
         return validatePhone(handle)
           ? null
-          : "Please enter a valid phone number";
+          : t("socialMedia.phone.validation");
       default:
         return null;
     }
@@ -211,7 +213,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
                 colors={colors.gradients.dark}
                 style={styles.pickerModal}
               >
-                <Text style={[styles.pickerModalTitle, { color: colors.text.accent }]}>Select Contact Type</Text>
+                <Text style={[styles.pickerModalTitle, { color: colors.text.accent }]}>{t("socialMedia.selectContactType")}</Text>
                 <FlatList
                   data={sortedTypes}
                   keyExtractor={(item) => item}
@@ -250,22 +252,22 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
         colors={colors.gradients.section}
         style={[styles.sectionContent, { borderColor: colors.border.default }]}
       >
-        <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>🔗 Contact & Social (Optional)</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>{t("socialMedia.title")}</Text>
         {error && <Text style={[styles.errorText, { color: colors.text.error }]}>{error}</Text>}
 
         {socialMedias.length === 0 && (
           <Text style={[styles.emptyText, { color: colors.text.muted }]}>
-            No contact or social media added yet
+            {t("socialMedia.empty")}
           </Text>
         )}
 
         {socialMedias.map((socialMedia, index) => {
-          const inputConfig = getInputConfig(socialMedia.type);
+          const inputConfig = getInputConfig(socialMedia.type, t);
           return (
             <View key={index} style={[styles.socialMediaRow, { backgroundColor: colors.background.surface, borderColor: colors.border.light }]}>
               <View style={styles.socialMediaContent}>
                 <View style={styles.pickerContainer}>
-                  <Text style={[styles.pickerLabel, { color: colors.text.primary }]}>Contact Type</Text>
+                  <Text style={[styles.pickerLabel, { color: colors.text.primary }]}>{t("socialMedia.contactType")}</Text>
                   <CustomPicker
                     selectedValue={socialMedia.type}
                     onValueChange={(value: social_media_type) =>
@@ -306,7 +308,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
         })}
 
         <Button
-          title="+ Add Contact or Social"
+          title={t("socialMedia.addButton")}
           onPress={addSocialMedia}
           variant="ghost"
           style={styles.addButton}

@@ -13,6 +13,7 @@ import { S3Service } from "@/utils/s3";
 import { S3_FEATURE_FOLDERS } from "@linkbase/shared/src";
 import { uriToFile } from "@/helpers/utils";
 import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type RecordingState = "idle" | "recording" | "recorded";
 
@@ -29,6 +30,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   featureFolder,
   size = 'medium',
 }) => {
+  const { t } = useTranslation();
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
   const { colors } = useThemeStore();
@@ -48,7 +50,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
     (async () => {
       const status = await AudioModule.requestRecordingPermissionsAsync();
       if (!status.granted) {
-        Alert.alert("Permission Required", "Please grant microphone permission to record audio.");
+        Alert.alert(t("voice.permissionRequired"), t("voice.permissionMessage"));
       }
 
       await setAudioModeAsync({
@@ -98,7 +100,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       console.log("Recording started at:", startTime);
     } catch (error) {
       console.error("Failed to start recording:", error);
-      Alert.alert("Error", "Failed to start recording");
+      Alert.alert(t("common.error"), t("voice.failedToStartRecording"));
     }
   };
 
@@ -116,7 +118,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       setRecordingState("recorded"); // This will trigger useEffect cleanup
     } catch (error) {
       console.error("Failed to stop recording:", error);
-      Alert.alert("Error", "Failed to stop recording");
+      Alert.alert(t("common.error"), t("voice.failedToStopRecording"));
     }
   };
 
@@ -151,7 +153,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       onRecordingUploaded(destinationUrl);
     } catch (error) {
       console.error("Failed to upload recording:", error);
-      Alert.alert("Error", "Failed to upload recording");
+              Alert.alert(t("common.error"), t("voice.failedToUploadRecording"));
     } finally {
       setIsUploading(false);
     }
@@ -294,9 +296,9 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       </View>
       <View style={styles.recordedTextContainer}>
         <Text style={[styles.recordedText, { fontSize: config.fontSize, color: colors.text.muted }]}>
-          Recording: {formatDuration(recordingDuration)}
+          {t("voice.recording")}: {formatDuration(recordingDuration)}
         </Text>
-        <Text style={[styles.recordedText, { fontSize: config.fontSize, color: colors.text.muted }]}>All good?</Text>
+        <Text style={[styles.recordedText, { fontSize: config.fontSize, color: colors.text.muted }]}>{t("voice.allGood")}</Text>
       </View>
     </View>
   );

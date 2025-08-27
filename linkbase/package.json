@@ -15,7 +15,11 @@
     "test": "jest",
     "type-check": "tsc --noEmit",
     "update-ip": "node ../packages/shared/src/scripts/update-dev-ip.mjs",
-    "dev": "pnpm run update-ip && npx expo start"
+    "dev": "pnpm run update-ip && npx expo start",
+    "translate": "node ../packages/shared/src/scripts/translate-with-gpt.js",
+    "translate:force": "node ../packages/shared/src/scripts/translate-with-gpt.js --force",
+    "generate-translations": "node ../packages/shared/src/scripts/generate-translations.js",
+    "clean-translations": "node ../packages/shared/src/scripts/clean-translations.js"
   },
   "dependencies": {
     "@babel/runtime": "^7.27.6",
@@ -57,9 +61,12 @@
     "expo-symbols": "~0.4.5",
     "expo-system-ui": "~5.0.10",
     "expo-web-browser": "~14.2.0",
+    "i18next": "^25.4.2",
+    "i18next-browser-languagedetector": "^8.2.0",
     "nativewind": "^4.1.23",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "react-i18next": "^15.7.2",
     "react-native": "0.79.5",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-paper": "^5.14.5",
@@ -83,6 +90,7 @@
     "eslint-config-expo": "~9.2.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "metro-react-native-babel-preset": "^0.77.0",
+    "openai": "^4.28.0",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.8.3"
   },

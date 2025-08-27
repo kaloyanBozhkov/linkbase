@@ -10,6 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import { camelCaseWords } from "@/helpers/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 import { colors, typography, borderRadius, shadows } from "@/theme/colors";
 import type { VoiceConnectionData } from "@/pages/AddVoiceConnectionsScreen";
 
@@ -26,6 +27,7 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
   onRemove,
   onInputFocus,
 }) => {
+  const { t } = useTranslation();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isNameAutoCapitalized, setIsNameAutoCapitalized] = useState(true);
 
@@ -33,11 +35,11 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!connection.name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = t("voiceConnections.nameRequired");
     }
 
     if (!connection.metWhere.trim()) {
-      newErrors.metWhere = "Meeting place is required";
+      newErrors.metWhere = t("voiceConnections.meetingPlaceRequired");
     }
 
     setErrors(newErrors);
@@ -90,12 +92,12 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
 
   const handleRemove = () => {
     Alert.alert(
-      "Remove Connection",
-      "Are you sure you want to remove this connection?",
+      t("voiceConnections.removeConnection"),
+      t("voiceConnections.removeConnectionConfirm"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Remove",
+          text: t("common.remove"),
           style: "destructive",
           onPress: onRemove,
         },
@@ -117,7 +119,7 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
         style={styles.card}
       >
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>Review Connection</Text>
+          <Text style={styles.cardTitle}>{t("voiceConnections.reviewConnection")}</Text>
           <Button
             icon={<Ionicons name="trash" size={18} color="#ffffff" />}
             onPress={handleRemove}
@@ -129,20 +131,20 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
 
         <View style={styles.form}>
           <Input
-            label="Name *"
+            label={t("connections.name") + " *"}
             value={connection.name}
             onChangeText={handleNameChange}
             error={errors.name}
-            placeholder="Enter their name"
+            placeholder={t("connections.namePlaceholder")}
             onFocus={() => onInputFocus && onInputFocus()}
           />
 
           <Input
-            label="Where did you meet? *"
+                            label={t("connections.whereDidYouMeet")}
             value={connection.metWhere}
             onChangeText={handleMetWhereChange}
             error={errors.metWhere}
-            placeholder="Coffee shop, conference, party, etc."
+                            placeholder={t("connections.meetingPlaceholder")}
             onFocus={() => onInputFocus && onInputFocus()}
           />
 
@@ -151,14 +153,14 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
               colors={colors.gradients.section}
               style={styles.factsSectionContent}
             >
-              <Text style={styles.factsTitle}>💡 Notes (Optional)</Text>
+              <Text style={styles.factsTitle}>{t("connections.notesOptional")}</Text>
 
               {connection.facts.map((fact, index) => (
                 <View key={index} style={styles.factRow}>
                   <Input
                     value={fact}
                     onChangeText={(text) => updateFact(index, text)}
-                    placeholder={`Interesting fact #${index + 1}`}
+                    placeholder={`${t("connections.interestingFact")}${index + 1}`}
                     containerStyle={styles.factInput}
                     onFocus={() => onInputFocus && onInputFocus()}
                   />
@@ -174,7 +176,7 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
               ))}
 
               <Button
-                title="+ Add Fact"
+                title={t("connections.addFact")}
                 onPress={addFactField}
                 variant="ghost"
                 style={styles.addFactButton}

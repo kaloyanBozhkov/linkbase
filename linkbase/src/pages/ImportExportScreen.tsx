@@ -13,12 +13,14 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTranslation } from "@/hooks/useTranslation";
 import { trpc } from "@/utils/trpc";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 
 const ImportExportScreen: React.FC = () => {
   const { colors } = useThemeStore();
+  const { t } = useTranslation();
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
 
@@ -37,7 +39,7 @@ const ImportExportScreen: React.FC = () => {
       const connections = await exportAllConnections.refetch().then(res => res.data);
 
       if (!connections || connections.length === 0) {
-        Alert.alert("No Data", "You don't have any connections to export.");
+        Alert.alert(t("importExport.noData"), t("importExport.noConnectionsToExport"));
         return;
       }
 
@@ -80,10 +82,10 @@ const ImportExportScreen: React.FC = () => {
         });
       }
 
-      Alert.alert("Success", "Your connections have been exported successfully!");
+      Alert.alert(t("common.success"), t("importExport.exportSuccess"));
     } catch (error) {
       console.error("Export error:", error);
-      Alert.alert("Export Failed", "An error occurred while exporting your connections.");
+      Alert.alert(t("importExport.exportFailed"), t("importExport.exportError"));
     } finally {
       setIsExporting(false);
     }
@@ -168,20 +170,20 @@ const ImportExportScreen: React.FC = () => {
   const features = [
     {
       icon: "download",
-      title: "Export Connections",
-      description: "Download all your connections as a JSON file",
+      title: t("importExport.exportConnections"),
+      description: t("importExport.exportDescription"),
       action: handleExport,
       loading: isExporting,
-      buttonText: isExporting ? "Exporting..." : "Export",
+      buttonText: isExporting ? t("importExport.exporting") : t("importExport.export"),
       iconFamily: "MaterialIcons" as const,
     },
     {
       icon: "cloud-upload",
-      title: "Import Connections",
-      description: "Import connections from a JSON file",
+      title: t("importExport.importConnections"),
+      description: t("importExport.importDescription"),
       action: handleImport,
       loading: isImporting,
-      buttonText: isImporting ? "Importing..." : "Import",
+      buttonText: isImporting ? t("importExport.importing") : t("importExport.import"),
       iconFamily: "MaterialIcons" as const,
     },
   ];

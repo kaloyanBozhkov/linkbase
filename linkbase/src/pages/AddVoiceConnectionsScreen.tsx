@@ -18,6 +18,7 @@ import VoiceRecorder from "../components/organisms/VoiceRecorder";
 import VoiceConnectionCard from "../components/molecules/VoiceConnectionCard";
 import { useSessionUserStore } from "../hooks/useGetSessionUser";
 import { getErrorMessage } from "../helpers/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 import { trpc, updateInfiniteQueryDataOnAdd } from "@/utils/trpc";
 import { colors as baseColors, typography } from "@/theme/colors";
 import { useThemeStore } from "@/hooks/useThemeStore";
@@ -41,6 +42,7 @@ export interface VoiceConnectionData {
 
 const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
   const trpcUtils = trpc.useUtils();
+  const { t } = useTranslation();
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [connections, setConnections] = useState<VoiceConnectionData[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -66,8 +68,8 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
   useEffect(() => {
     if (filloutError) {
       Alert.alert(
-        "Error",
-        "Couldn't parse your voice recording. Please try again later."
+        t("common.error"),
+        t("voice.couldntParseRecording")
       );
     }
   }, [filloutError]);
@@ -121,7 +123,7 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleCreateAll = async () => {
     if (connections.length === 0) {
-      Alert.alert("No Connections", "Please record some connections first.");
+      Alert.alert(t("voiceConnections.noConnections"), t("voiceConnections.pleaseRecordFirst"));
       return;
     }
 
@@ -132,8 +134,8 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
 
     if (invalidConnections.length > 0) {
       Alert.alert(
-        "Incomplete Connections",
-        "Please fill in the name and meeting place for all connections."
+        t("voiceConnections.incompleteConnections"),
+        t("voiceConnections.fillNameAndMeetingPlace")
       );
       return;
     }
@@ -164,15 +166,13 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
       });
 
       Alert.alert(
-        "Success",
-        `${createdConnections.length} connection${
-          createdConnections.length > 1 ? "s" : ""
-        } added successfully!`,
-        [{ text: "OK", onPress: () => navigation.goBack() }]
+        t("common.success"),
+        t("voiceConnections.connectionsAddedSuccessfully", { count: createdConnections.length }),
+        [{ text: t("common.ok"), onPress: () => navigation.goBack() }]
       );
     } catch (error: any) {
       const errorMessage = getErrorMessage(error);
-      Alert.alert("Error", errorMessage);
+      Alert.alert(t("common.error"), errorMessage);
     } finally {
       setIsCreating(false);
     }
@@ -190,9 +190,9 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <View>
-            <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Voice Connections</Text>
+            <Text style={[styles.headerTitle, { color: colors.text.primary }]}>{t("voiceConnections.title")}</Text>
             <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}> 
-              Tell me about who you&apos;ve met
+              {t("voiceConnections.subtitle")}
             </Text>
           </View>
         </View>
@@ -205,14 +205,14 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
               </Text>
               <View style={styles.navigationButtons}>
                 <Button
-                  title="Previous"
+                  title={t("common.previous")}
                   onPress={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
                   disabled={currentIndex === 0}
                   variant="secondary"
                   size="small"
                 />
                 <Button
-                  title="Next"
+                  title={t("common.next")}
                   onPress={() =>
                     setCurrentIndex(
                       Math.min(connections.length - 1, currentIndex + 1)
@@ -254,7 +254,7 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
 
             <View style={styles.bottomActions}>
               <Button
-                title="Try Again"
+                title={t("common.tryAgain")}
                 onPress={handleRetry}
                 variant="secondary"
                 style={styles.actionButton}
@@ -263,10 +263,8 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
               <Button
                 title={
                   isCreating
-                    ? "Creating..."
-                    : `Create ${connections.length} Connection${
-                        connections.length > 1 ? "s" : ""
-                      }`
+                    ? t("voiceConnections.creating")
+                    : t("voiceConnections.createConnections", { count: connections.length })
                 }
                 onPress={handleCreateAll}
                 disabled={isCreating}
@@ -280,20 +278,18 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
         {isFetchingFillout && (
           <View style={styles.processingState}>
             <ActivityIndicator size="large" color={baseColors.loading} />
-            <Text style={[styles.processingTitle, { color: colors.text.primary }]}>🤖 Processing Your Recording</Text>
+            <Text style={[styles.processingTitle, { color: colors.text.primary }]}>{t("voiceConnections.processingRecording")}</Text>
             <Text style={[styles.processingText, { backgroundColor: colors.background.surface, borderColor: colors.border.light, color: colors.text.muted }]}>
-              We&apos;re analyzing what you just said and filling out your mentioned 
-              connections. This usually takes a few seconds... please wait!
+              {t("voiceConnections.processingDescription")}
             </Text>
           </View>
         )}
 
         {connections.length === 0 && !isFetchingFillout && (
           <View style={styles.emptyState}>
-            <Text style={[styles.emptyStateTitle, { color: colors.text.primary }]}>🎤 Ready to Record</Text>
+            <Text style={[styles.emptyStateTitle, { color: colors.text.primary }]}>{t("voiceConnections.readyToRecord")}</Text>
             <Text style={[styles.emptyStateText, { color: colors.text.muted }]}>
-              Tap the microphone below and tell me about the people you&apos;ve met.
-              You can mention multiple people in one recording!
+              {t("voiceConnections.readyToRecordDescription")}
             </Text>
             <View style={styles.voiceRecorderContainer}>
               <VoiceRecorder
@@ -304,9 +300,7 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
               />
             </View>
             <Text style={[styles.emptyStateExample, { backgroundColor: colors.background.surface, borderColor: colors.border.light, color: colors.text.secondary }]}>
-              For example: &quot;I met John at the coffee shop, he&apos;s a
-              software engineer from San Francisco. I also met Sarah at the
-              conference, she works in marketing and loves hiking.&quot;
+              {t("voiceConnections.exampleText")}
             </Text>
           </View>
         )}

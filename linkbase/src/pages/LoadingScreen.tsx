@@ -3,9 +3,11 @@ import { StyleSheet, View } from "react-native";
 import { ActivityIndicator, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function LoadingScreen() {
   const { colors } = useThemeStore();
+  const { t } = useTranslation();
   return (
     <LinearGradient colors={colors.gradients.background} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -14,7 +16,7 @@ export default function LoadingScreen() {
         >
           <ActivityIndicator color={colors.text.accent} />
           <Text variant="bodyMedium" style={[styles.loadingText, { color: colors.text.primary }]}>
-            Doing magic..
+            {t("loading.doingMagic")}
           </Text>
         </View>
       </SafeAreaView>

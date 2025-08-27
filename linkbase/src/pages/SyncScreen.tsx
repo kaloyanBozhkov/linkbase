@@ -68,8 +68,8 @@ const SyncScreen: React.FC = () => {
           await AsyncStorage.removeItem(PENDING_EMAIL_KEY);
           
           Alert.alert(
-            "Email Verified!", 
-            "Your email has been successfully verified. Your account is now synced across devices."
+            t("sync.emailVerified"), 
+            t("sync.emailVerifiedMessage")
           );
         }
       }
@@ -95,7 +95,7 @@ const SyncScreen: React.FC = () => {
   const handleVerify = async () => {
     try {
       if (!email.includes("@")) {
-        Alert.alert("Invalid email", "Please enter a valid email address");
+        Alert.alert(t("sync.invalidEmail"), t("sync.pleaseEnterValidEmail"));
         return;
       }
       
@@ -109,7 +109,7 @@ const SyncScreen: React.FC = () => {
       await AsyncStorage.setItem(EMAIL_SENT_KEY, "1");
       await AsyncStorage.setItem(PENDING_EMAIL_KEY, email);
     } catch (e: any) {
-      Alert.alert("Error", e?.message || "Failed to send verification email");
+              Alert.alert(t("common.error"), e?.message || t("sync.failedToSendVerification"));
     } finally {
       setIsLoading(false);
     }

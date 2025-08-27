@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Linking,
+  Modal,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
@@ -16,37 +17,47 @@ import type { StackNavigationProp } from "@react-navigation/stack";
 import type { RootStackParamList } from "../../App";
 import { API_CONFIG } from "@/config/api.config";
 import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const SettingsScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { colors } = useThemeStore();
+  const { t, currentLanguage, changeLanguage, languages } = useTranslation();
+  const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
 
   const settingsItems = [
     {
       icon: "notifications",
-      title: "Notifications",
-      subtitle: "Manage your notification preferences",
+      title: t("settings.notifications.title"),
+      subtitle: t("settings.notifications.subtitle"),
       iconFamily: "MaterialIcons" as const,
       onPress: () => navigation.navigate("Notifications"),
     },
     {
       icon: "import-export",
-      title: "Import & Export",
-      subtitle: "Backup and restore your connections",
+      title: t("settings.importExport.title"),
+      subtitle: t("settings.importExport.subtitle"),
       iconFamily: "MaterialIcons" as const,
       onPress: () => navigation.navigate("ImportExport"),
     },
     {
       icon: "palette",
-      title: "Appearance",
-      subtitle: "Customize the app's look and feel",
+      title: t("settings.appearance.title"),
+      subtitle: t("settings.appearance.subtitle"),
       iconFamily: "MaterialIcons" as const,
       onPress: () => navigation.navigate("Appearance"),
     },
     {
+      icon: "language",
+      title: t("settings.language.title"),
+      subtitle: t("settings.language.subtitle"),
+      iconFamily: "MaterialIcons" as const,
+      onPress: () => {}, // Will be handled by LanguageSelector
+    },
+    {
       icon: "shield-checkmark",
-      title: "Privacy",
-      subtitle: "Privacy and security settings",
+      title: t("settings.privacy.title"),
+      subtitle: t("settings.privacy.subtitle"),
       iconFamily: "Ionicons" as const,
       onPress: () => {
         const base = API_CONFIG.BASE_URL.replace(/\/?api$/, "");
@@ -56,15 +67,15 @@ const SettingsScreen: React.FC = () => {
     },
     {
       icon: "help-circle",
-      title: "Help & Support",
-      subtitle: "Get help and contact support",
+      title: t("settings.helpSupport.title"),
+      subtitle: t("settings.helpSupport.subtitle"),
       iconFamily: "Ionicons" as const,
       onPress: () => navigation.navigate("HelpSupport"),
     },
     {
       icon: "cloud-sync",
-      title: "Sync",
-      subtitle: "Backup and sync your connections",
+      title: t("settings.sync.title"),
+      subtitle: t("settings.sync.subtitle"),
       iconFamily: "MaterialIcons" as const,
       onPress: () => navigation.navigate("Sync"),
     },
@@ -76,6 +87,50 @@ const SettingsScreen: React.FC = () => {
   ) => {
     const IconComponent =
       item.iconFamily === "MaterialIcons" ? MaterialIcons : Ionicons;
+
+    // Special handling for language item
+    if (item.icon === "language") {
+      return (
+        <TouchableOpacity
+          key={index}
+          style={styles.settingsItem}
+          onPress={() => setIsLanguageModalVisible(true)}
+        >
+          <View
+            style={[
+              styles.settingsItemIcon,
+              { backgroundColor: colors.background.secondary },
+            ]}
+          >
+            <IconComponent
+              name={item.icon as any}
+              size={24}
+              color={colors.text.accent}
+            />
+          </View>
+          <View style={styles.settingsItemContent}>
+            <Text
+              style={[styles.settingsItemTitle, { color: colors.text.primary }]}
+            >
+              {item.title}
+            </Text>
+            <Text
+              style={[
+                styles.settingsItemSubtitle,
+                { color: colors.text.muted },
+              ]}
+            >
+              {item.subtitle}
+            </Text>
+          </View>
+          <MaterialIcons
+            name="chevron-right"
+            size={20}
+            color={colors.text.muted}
+          />
+        </TouchableOpacity>
+      );
+    }
 
     return (
       <TouchableOpacity
@@ -131,10 +186,10 @@ const SettingsScreen: React.FC = () => {
           {/* Header */}
           <View style={styles.header}>
             <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
-              Settings
+              {t("settings.title")}
             </Text>
             <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}>
-              Customize your Linkbase experience
+              {t("settings.subtitle")}
             </Text>
           </View>
 
@@ -164,7 +219,7 @@ const SettingsScreen: React.FC = () => {
               <Text
                 style={[styles.appInfoLabel, { color: colors.text.secondary }]}
               >
-                Version
+                {t("settings.appInfo.version")}
               </Text>
               <Text
                 style={[styles.appInfoValue, { color: colors.text.primary }]}
@@ -181,7 +236,7 @@ const SettingsScreen: React.FC = () => {
               <Text
                 style={[styles.appInfoLabel, { color: colors.text.secondary }]}
               >
-                Build
+                {t("settings.appInfo.build")}
               </Text>
               <Text
                 style={[styles.appInfoValue, { color: colors.text.primary }]}
@@ -206,20 +261,126 @@ const SettingsScreen: React.FC = () => {
               </LinearGradient>
             </View>
             <Text style={[styles.footerText, { color: colors.text.secondary }]}>
-              Created by{" "}
+              {t("settings.footer.createdBy")}{" "}
               <Text
                 style={[styles.footerHighlight, { color: colors.text.accent }]}
               >
                 K-BITS
               </Text>{" "}
-              with <Text style={styles.heartIcon}>❤️</Text>
+              {t("settings.footer.withLove")}{" "}
+              <Text style={styles.heartIcon}>❤️</Text>
             </Text>
             <Text style={[styles.footerSubtext, { color: colors.text.muted }]}>
-              Building connections, one link at a time
+              {t("settings.footer.tagline")}
             </Text>
           </View>
         </ScrollView>
       </LinearGradient>
+
+      {/* Language Selection Modal */}
+      <Modal
+        visible={isLanguageModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsLanguageModalVisible(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setIsLanguageModalVisible(false)}
+        >
+          <View style={styles.modalContent}>
+            <LinearGradient
+              colors={colors.gradients.dark}
+              style={styles.modalGradient}
+            >
+              <View style={styles.modalHeader}>
+                <Text
+                  style={[styles.modalTitle, { color: colors.text.accent }]}
+                >
+                  {t('settings.language.selectLanguage')}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setIsLanguageModalVisible(false)}
+                  style={styles.closeButton}
+                >
+                  <Ionicons
+                    name="close"
+                    size={24}
+                    color={colors.text.muted}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <ScrollView
+                style={styles.languageList}
+                showsVerticalScrollIndicator={false}
+              >
+                {Object.entries(languages)
+                  .sort((a, b) => {
+                    // Put current language first
+                    if (a[0] === currentLanguage) return -1;
+                    if (b[0] === currentLanguage) return 1;
+                    // Then sort alphabetically by native name
+                    return a[1].nativeName.localeCompare(b[1].nativeName);
+                  })
+                  .map(([code, language]) => {
+                    const isSelected = code === currentLanguage;
+                    return (
+                      <TouchableOpacity
+                        key={code}
+                        style={[
+                          styles.languageItem,
+                          { backgroundColor: colors.background.surface },
+                          isSelected && [styles.languageItemSelected, { backgroundColor: colors.background.tertiary }],
+                        ]}
+                        onPress={async () => {
+                          await changeLanguage(code as any);
+                          setIsLanguageModalVisible(false);
+                        }}
+                      >
+                        <View style={styles.languageInfo}>
+                          <Text
+                            style={[
+                              styles.languageName,
+                              { color: colors.text.primary },
+                              isSelected && { color: colors.text.accent },
+                            ]}
+                          >
+                            {language.nativeName}
+                          </Text>
+                          <Text
+                            style={[
+                              styles.languageEnglishName,
+                              { color: colors.text.muted },
+                            ]}
+                          >
+                            {language.name}
+                          </Text>
+                          <Text
+                            style={[
+                              styles.languageRegions,
+                              { color: colors.text.muted },
+                            ]}
+                          >
+                            {language.regions.join(', ')}
+                          </Text>
+                        </View>
+                        {isSelected && (
+                          <Ionicons
+                            name="checkmark-circle"
+                            size={24}
+                            color={colors.text.accent}
+                          />
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })}
+              </ScrollView>
+            </LinearGradient>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -350,6 +511,66 @@ const styles = StyleSheet.create({
     color: baseColors.text.muted,
     textAlign: "center",
     fontStyle: "italic",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '90%',
+    maxHeight: '80%',
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  modalGradient: {
+    padding: 20,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: typography.size['2xl'],
+    fontWeight: typography.weight.bold,
+    flex: 1,
+  },
+  closeButton: {
+    padding: 4,
+  },
+  languageList: {
+    maxHeight: 400,
+  },
+  languageItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+  languageItemSelected: {
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  languageInfo: {
+    flex: 1,
+  },
+  languageName: {
+    fontSize: typography.size.lg,
+    fontWeight: typography.weight.semibold,
+    marginBottom: 2,
+  },
+  languageEnglishName: {
+    fontSize: typography.size.base,
+    marginBottom: 2,
+  },
+  languageRegions: {
+    fontSize: typography.size.sm,
+    fontStyle: 'italic',
   },
 });
 

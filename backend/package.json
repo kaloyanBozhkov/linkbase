@@ -10,7 +10,9 @@
     "build": "pnpm clean && webpack --mode production",
     "dev": "webpack --mode development --watch",
     "db:generate": "cd ../packages/prisma && pnpm run db:generate",
-    "db:push": "cd ../packages/prisma && pnpm run db:push"
+    "db:push": "cd ../packages/prisma && pnpm run db:push",
+    "translate": "tsx src/scripts/translate-with-gpt.ts",
+    "translate:missing": "tsx src/scripts/translate-with-gpt.ts --partial"
   },
   "keywords": [
     "linkbase",
