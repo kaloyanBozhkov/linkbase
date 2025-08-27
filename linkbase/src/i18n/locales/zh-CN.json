@@ -255,7 +255,8 @@
     "allSocialMediaInvalid": "所有社交媒体条目都必须有有效输入",
     "connectionNotFound": "未找到连接",
     "updating": "更新中...",
-    "updateConnection": "更新连接"
+    "updateConnection": "更新连接",
+    "deleteConnectionConfirm": "您确定要删除 {{name}} 吗？"
   },
   "voice": {
     "recording": "正在录音...",

@@ -197,7 +197,8 @@
     "allSocialMediaInvalid": "모든 소셜 미디어 항목은 유효한 입력이어야 합니다",
     "connectionNotFound": "연결을 찾을 수 없음",
     "updating": "업데이트 중...",
-    "updateConnection": "연결 업데이트"
+    "updateConnection": "연결 업데이트",
+    "deleteConnectionConfirm": "{{name}}을(를) 삭제하시겠습니까?"
   },
   "search": {
     "placeholder": "연결 검색...",

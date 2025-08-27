@@ -197,7 +197,8 @@
     "allSocialMediaInvalid": "सभी सोशल मीडिया प्रविष्टियों में मान्य इनपुट होना आवश्यक है",
     "connectionNotFound": "कनेक्शन नहीं मिला",
     "updating": "अपडेट किया जा रहा है...",
-    "updateConnection": "कनेक्शन अपडेट करें"
+    "updateConnection": "कनेक्शन अपडेट करें",
+    "deleteConnectionConfirm": "क्या आप वास्तव में {{name}} को हटाना चाहते हैं?"
   },
   "search": {
     "placeholder": "कनेक्शन्स खोजें...",

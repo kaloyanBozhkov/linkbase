@@ -197,7 +197,8 @@
     "allSocialMediaInvalid": "すべてのソーシャルメディアエントリは有効な入力が必要です",
     "connectionNotFound": "接続が見つかりません",
     "updating": "更新中...",
-    "updateConnection": "接続を更新"
+    "updateConnection": "接続を更新",
+    "deleteConnectionConfirm": "{{name}}を削除してもよろしいですか？"
   },
   "search": {
     "placeholder": "接続を検索...",

@@ -197,7 +197,8 @@
     "allSocialMediaInvalid": "Όλες οι καταχωρίσεις στα κοινωνικά δίκτυα πρέπει να είναι έγκυρες",
     "connectionNotFound": "Η σύνδεση δεν βρέθηκε",
     "updating": "Ενημέρωση...",
-    "updateConnection": "Ενημέρωση Σύνδεσης"
+    "updateConnection": "Ενημέρωση Σύνδεσης",
+    "deleteConnectionConfirm": "Είστε σίγουροι ότι θέλετε να διαγράψετε το {{name}};"
   },
   "search": {
     "placeholder": "Αναζήτηση συνδέσεων...",

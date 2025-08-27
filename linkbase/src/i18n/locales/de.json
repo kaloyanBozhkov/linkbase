@@ -197,7 +197,8 @@
     "allSocialMediaInvalid": "Alle Social-Media-Einträge müssen gültige Eingaben enthalten",
     "connectionNotFound": "Verbindung nicht gefunden",
     "updating": "Aktualisieren...",
-    "updateConnection": "Verbindung aktualisieren"
+    "updateConnection": "Verbindung aktualisieren",
+    "deleteConnectionConfirm": "Möchten Sie {{name}} wirklich löschen?"
   },
   "search": {
     "placeholder": "Verbindungen suchen...",

@@ -197,7 +197,8 @@
     "allSocialMediaInvalid": "所有社交媒體條目必須有有效的輸入",
     "connectionNotFound": "未找到連結",
     "updating": "正在更新...",
-    "updateConnection": "更新連接"
+    "updateConnection": "更新連接",
+    "deleteConnectionConfirm": "您確定要刪除 {{name}} 嗎？"
   },
   "search": {
     "placeholder": "搜尋連線...",

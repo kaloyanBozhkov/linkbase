@@ -197,7 +197,8 @@
     "allSocialMediaInvalid": "Все записи социальных сетей должны иметь допустимые данные",
     "connectionNotFound": "Соединение не найдено",
     "updating": "Обновление...",
-    "updateConnection": "Обновить подключение"
+    "updateConnection": "Обновить подключение",
+    "deleteConnectionConfirm": "Вы уверены, что хотите удалить {{name}}?"
   },
   "search": {
     "placeholder": "Поиск связей...",

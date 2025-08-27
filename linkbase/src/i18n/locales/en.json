@@ -153,6 +153,7 @@
     "connectionError": "⚠️ Connection Error"
   },
   "connections": {
+    "deleteConnectionConfirm": "Are you sure you want to delete {{name}}?",
     "addConnection": "Add Connection",
     "editConnection": "Edit Connection",
     "connectionDetails": "Connection Details",

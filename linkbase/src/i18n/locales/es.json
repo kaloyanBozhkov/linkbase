@@ -198,7 +198,8 @@
     "allSocialMediaInvalid": "Todas las entradas de redes sociales deben ser válidas",
     "connectionNotFound": "Conexión no encontrada",
     "updating": "Actualizando...",
-    "updateConnection": "Actualizar conexión"
+    "updateConnection": "Actualizar conexión",
+    "deleteConnectionConfirm": "¿Estás seguro de que deseas eliminar a {{name}}?"
   },
   "qrCode": {
     "title": "Código QR",

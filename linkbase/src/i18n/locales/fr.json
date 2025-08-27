@@ -197,7 +197,8 @@
     "allSocialMediaInvalid": "Toutes les entrées des réseaux sociaux doivent être valides",
     "connectionNotFound": "Connexion non trouvée",
     "updating": "Mise à jour...",
-    "updateConnection": "Mettre à jour la connexion"
+    "updateConnection": "Mettre à jour la connexion",
+    "deleteConnectionConfirm": "Êtes-vous sûr de vouloir supprimer {{name}} ?"
   },
   "search": {
     "placeholder": "Rechercher des connexions...",

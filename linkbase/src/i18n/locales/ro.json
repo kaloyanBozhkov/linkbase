@@ -197,7 +197,8 @@
     "allSocialMediaInvalid": "Toate intrările social media trebuie să fie valide",
     "connectionNotFound": "Conexiune negăsită",
     "updating": "Actualizare...",
-    "updateConnection": "Actualizează conexiunea"
+    "updateConnection": "Actualizează conexiunea",
+    "deleteConnectionConfirm": "Ești sigur că vrei să ștergi {{name}}?"
   },
   "search": {
     "placeholder": "Caută conexiuni...",

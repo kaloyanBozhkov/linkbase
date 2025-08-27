@@ -197,7 +197,8 @@
     "allSocialMediaInvalid": "Alle sociale media-invoer moet geldig zijn",
     "connectionNotFound": "Connectie niet gevonden",
     "updating": "Bijwerken...",
-    "updateConnection": "Verbinding bijwerken"
+    "updateConnection": "Verbinding bijwerken",
+    "deleteConnectionConfirm": "Weet je zeker dat je {{name}} wilt verwijderen?"
   },
   "search": {
     "placeholder": "Zoek connecties...",

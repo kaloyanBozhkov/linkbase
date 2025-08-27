@@ -197,7 +197,8 @@
     "allSocialMediaInvalid": "يجب أن تحتوي جميع مدخلات الوسائط الاجتماعية على بيانات صحيحة",
     "connectionNotFound": "لم يتم العثور على الاتصال",
     "updating": "جارٍ التحديث...",
-    "updateConnection": "تحديث الاتصال"
+    "updateConnection": "تحديث الاتصال",
+    "deleteConnectionConfirm": "هل أنت متأكد أنك تريد حذف {{name}}؟"
   },
   "search": {
     "placeholder": "بحث عن الاتصالات...",
