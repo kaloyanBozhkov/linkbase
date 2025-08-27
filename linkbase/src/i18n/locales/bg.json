@@ -153,6 +153,7 @@
     "connectionError": "⚠️ Грешка при връзката"
   },
   "connections": {
+    "deleteConnectionConfirm": "Сигурни ли сте, че искате да изтриете тази връзка?",
     "addConnection": "Добави връзка",
     "editConnection": "Редактирай връзка",
     "connectionDetails": "Детайли за връзката",

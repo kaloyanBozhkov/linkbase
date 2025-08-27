@@ -65,7 +65,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   const handleDelete = () => {
     Alert.alert(
       t("connections.deleteConnection"),
-      t("connections.deleteConnectionConfirm", { name: connection?.name }),
+      t("home.deleteConnectionConfirm", { name: connection?.name }),
       [
         { text: t("common.cancel"), style: "cancel" },
         {

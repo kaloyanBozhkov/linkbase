@@ -124,7 +124,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleDeleteConnection = (id: string, name: string) => {
     Alert.alert(
-      t("home.deleteConnection"),
+      t("connections.deleteConnection"),
       t("connections.deleteConnectionConfirm", { name }),
       [
         { text: t("common.cancel"), style: "cancel" },
@@ -151,10 +151,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                   }
                 },
                 onError: (error) => {
-                          Alert.alert(
-          t("common.error"),
-          error.message || t("home.failedToDelete")
-        );
+                  Alert.alert(
+                    t("common.error"),
+                    error.message || t("home.failedToDelete")
+                  );
                 },
               }
             ),
