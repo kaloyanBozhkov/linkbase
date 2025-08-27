@@ -8,10 +8,11 @@ import {
   setAudioModeAsync,
   useAudioRecorderState,
 } from "expo-audio";
-import { colors as baseColors, typography, borderRadius } from "@/theme/colors";
+import { typography, borderRadius } from "@/theme/colors";
 import { S3Service } from "@/utils/s3";
 import { S3_FEATURE_FOLDERS } from "@linkbase/shared/src";
 import { uriToFile } from "@/helpers/utils";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 type RecordingState = "idle" | "recording" | "recorded";
 
@@ -30,6 +31,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
 }) => {
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
+  const { colors } = useThemeStore();
   
   const [recordingState, setRecordingState] = useState<RecordingState>("idle");
   const [recordingUri, setRecordingUri] = useState<string | null>(null);
@@ -215,11 +217,12 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
           width: config.buttonSize,
           height: config.buttonSize,
           borderRadius: config.buttonSize / 2,
+          backgroundColor: colors.background.accent,
         }
       ]}
       onPress={startRecording}
     >
-      <Ionicons name="mic" size={config.iconSize} color="#ffffff" />
+      <Ionicons name="mic" size={config.iconSize} color={colors.text.onAccent} />
     </Pressable>
   );
 
@@ -233,15 +236,16 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
             width: config.stopButtonSize,
             height: config.stopButtonSize,
             borderRadius: config.stopButtonSize / 2,
+            backgroundColor: colors.text.error,
           }
         ]}
         onPress={stopRecording}
       >
-        <Ionicons name="stop" size={config.iconSize * 0.7} color="#ffffff" />
+        <Ionicons name="stop" size={config.iconSize * 0.7} color={colors.text.onAccent} />
       </Pressable>
-      <View style={styles.recordingInfo}>
-        <View style={styles.recordingIndicator} />
-        <Text style={[styles.durationText, { fontSize: config.fontSize }]}>
+      <View style={[styles.recordingInfo, { backgroundColor: colors.background.secondary, borderColor: colors.border.default }]}>
+        <View style={[styles.recordingIndicator, { backgroundColor: colors.text.error }]} />
+        <Text style={[styles.durationText, { fontSize: config.fontSize, color: colors.text.primary }]}>
           {formatDuration(recordingDuration)}
         </Text>
       </View>
@@ -259,12 +263,13 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
               width: config.actionButtonSize,
               height: config.actionButtonSize,
               borderRadius: config.actionButtonSize / 2,
+              backgroundColor: colors.text.error,
             }
           ]}
           onPress={discardRecording}
           disabled={isUploading}
         >
-          <Ionicons name="close" size={config.iconSize * 0.6} color="#ffffff" />
+          <Ionicons name="close" size={config.iconSize * 0.6} color={colors.text.onAccent} />
         </Pressable>
         <Pressable
           style={[
@@ -274,23 +279,24 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
               width: config.actionButtonSize,
               height: config.actionButtonSize,
               borderRadius: config.actionButtonSize / 2,
+              backgroundColor: colors.background.accent,
             }
           ]}
           onPress={acceptRecording}
           disabled={isUploading}
         >
           {isUploading ? (
-            <Text style={[styles.uploadingText, { fontSize: config.fontSize }]}>...</Text>
+            <Text style={[styles.uploadingText, { fontSize: config.fontSize, color: colors.text.onAccent }]}>...</Text>
           ) : (
-            <Ionicons name="checkmark" size={config.iconSize * 0.6} color="#ffffff" />
+            <Ionicons name="checkmark" size={config.iconSize * 0.6} color={colors.text.onAccent} />
           )}
         </Pressable>
       </View>
       <View style={styles.recordedTextContainer}>
-        <Text style={[styles.recordedText, { fontSize: config.fontSize }]}>
+        <Text style={[styles.recordedText, { fontSize: config.fontSize, color: colors.text.muted }]}>
           Recording: {formatDuration(recordingDuration)}
         </Text>
-        <Text style={[styles.recordedText, { fontSize: config.fontSize }]}>All good?</Text>
+        <Text style={[styles.recordedText, { fontSize: config.fontSize, color: colors.text.muted }]}>All good?</Text>
       </View>
     </View>
   );
@@ -321,21 +327,17 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
    recordButton: {
-    backgroundColor: baseColors.primary[600],
   },
   stopButton: {
     width: 30,
     height: 30,
-    backgroundColor: baseColors.red[600],
   },
   acceptButton: {
-    backgroundColor: baseColors.success,
     width: 26,
     height: 26,
     borderRadius: 13,
   },
   discardButton: {
-    backgroundColor: baseColors.red[600],
     width: 26,
     height: 26,
     borderRadius: 13,
@@ -350,23 +352,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: baseColors.background.secondary,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: baseColors.border.default,
   },
   recordingIndicator: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: baseColors.red[600],
   },
   durationText: {
     fontSize: typography.size.xs,
     fontWeight: typography.weight.medium,
-    color: baseColors.text.primary,
     fontFamily: "monospace",
   },
   recordedContainer: {
@@ -380,7 +378,6 @@ const styles = StyleSheet.create({
   recordedText: {
     fontSize: typography.size.xs,
     fontWeight: typography.weight.medium,
-    color: baseColors.text.muted,
   },
   actionsContainer: {
     flexDirection: "row",
@@ -388,7 +385,6 @@ const styles = StyleSheet.create({
   },
   uploadingText: {
     fontSize: typography.size.sm,
-    color: "#ffffff",
     fontWeight: typography.weight.bold,
   },
 });

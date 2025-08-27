@@ -375,25 +375,25 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
   const actionsData = [
     {
       id: 'search' as const,
-      icon: <MaterialIcons name="search" size={24} color={colors.text.primary} />,
+      icon: <MaterialIcons name="search" size={24} color={colors.text.onAccent} />,
       title: 'Search',
       description: 'Search connections by facts or questions'
     },
     {
       id: 'add' as const,
-      icon: <MaterialIcons name="add" size={24} color={colors.text.primary} />,
+      icon: <MaterialIcons name="add" size={24} color={colors.text.onAccent} />,
       title: 'Add Connection',
       description: 'Add a new connection manually'
     },
     {
       id: 'voiceAdd' as const,
-      icon: <Ionicons name="mic" size={24} color={colors.text.primary} />,
+      icon: <Ionicons name="mic" size={24} color={colors.text.onAccent} />,
       title: 'Voice Add',
       description: 'Add connections using voice input'
     },
     {
       id: 'settings' as const,
-      icon: <Ionicons name="settings" size={24} color={colors.text.primary} />,
+      icon: <Ionicons name="settings" size={24} color={colors.text.onAccent} />,
       title: 'Settings',
       description: 'Open app settings and preferences'
     }
@@ -494,15 +494,15 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
   const getCircleIcon = () => {
     if (dragState === "search")
       return (
-        <MaterialIcons name="search" size={20} color={colors.text.primary} />
+        <MaterialIcons name="search" size={20} color={colors.text.onAccent} />
       );
     if (dragState === "add")
-      return <MaterialIcons name="add" size={20} color={colors.text.primary} />;
+      return <MaterialIcons name="add" size={20} color={colors.text.onAccent} />;
     if (dragState === "voiceAdd")
-      return <Ionicons name="mic" size={20} color={colors.text.primary} />;
+      return <Ionicons name="mic" size={20} color={colors.text.onAccent} />;
     if (dragState === "settings")
-      return <Ionicons name="settings" size={20} color={colors.text.primary} />;
-    return <Ionicons name="flash" size={20} color={colors.text.primary} />;
+      return <Ionicons name="settings" size={20} color={colors.text.onAccent} />;
+    return <Ionicons name="flash" size={20} color={colors.text.onAccent} />;
   };
 
   const closeButton = (
@@ -514,7 +514,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
         <MaterialIcons name="close" size={12} color={colors.text.secondary} />
       }
       iconOnly
-      style={styles.closeButton}
+      style={[styles.closeButton, { backgroundColor: colors.background.surface + "80" }] as any}
     />
   );
 
@@ -550,8 +550,8 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
                   ],
           backgroundColor:
             dragState !== "none" && dragState !== "dragging"
-              ? baseColors.secondary[500]
-              : baseColors.primary[600],
+              ? colors.text.accent
+              : colors.background.accent,
                 },
               ]}
               {...panResponder.panHandlers}
@@ -583,6 +583,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
                   {
                     transform: [{ scale: actionsScaleValues.search }],
                     opacity: actionsScaleValues.search,
+                    backgroundColor: colors.background.surface + "80",
                   },
                 ]}
               >
@@ -600,6 +601,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
                   {
                     transform: [{ scale: actionsScaleValues.add }],
                     opacity: actionsScaleValues.add,
+                    backgroundColor: colors.background.surface + "80",
                   },
                 ]}
               >
@@ -615,6 +617,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
                   {
                     transform: [{ scale: actionsScaleValues.voiceAdd }],
                     opacity: actionsScaleValues.voiceAdd,
+                    backgroundColor: colors.background.surface + "80",
                   },
                 ]}
               >
@@ -626,6 +629,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
                   {
                     transform: [{ scale: actionsScaleValues.settings }],
                     opacity: actionsScaleValues.settings,
+                    backgroundColor: colors.background.surface + "80",
                   },
                 ]}
               >
@@ -726,7 +730,7 @@ const ActionsHeader: React.FC<ActionsHeaderProps> = ({
                     onPress={() => handleActionPress(action.id)}
                     activeOpacity={0.7}
                   >
-                    <View style={styles.actionIconContainer}>
+                    <View style={[styles.actionIconContainer, { backgroundColor: colors.background.accent }]}>
                       {action.icon}
                     </View>
                     <Text style={[styles.actionTitle, { color: colors.text.primary }]}>
@@ -792,7 +796,6 @@ const styles = StyleSheet.create({
     height: 60,
     zIndex: 1000,
     borderRadius: 30,
-    backgroundColor: baseColors.primary[600],
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -817,7 +820,6 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: baseColors.slate[100] + "50",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -836,7 +838,6 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: baseColors.slate[100] + "50",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -847,7 +848,6 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: baseColors.slate[100] + "50",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -866,7 +866,6 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: baseColors.slate[100] + "50",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -883,7 +882,6 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     borderRadius: 30,
-    backgroundColor: baseColors.slate[100] + "50",
   },
   instructionsContainer: {
     position: "absolute",
@@ -962,7 +960,6 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: baseColors.primary[600],
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,

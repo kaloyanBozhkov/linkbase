@@ -89,18 +89,18 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({
               </View>
             )}
           </View>
-          <View style={styles.dateContainer}>
+          <View style={[styles.dateContainer, { backgroundColor: colors.border.default }]}>
             <Text style={[styles.date, { color: colors.text.secondary }]}>{formatDate(connection.created_at)}</Text>
           </View>
         </View>
 
         <View style={styles.cardBody}>
-          <View style={styles.locationContainer}>
+          <View style={[styles.locationContainer, { backgroundColor: colors.background.surface, borderColor: colors.border.light }]}>
             <Text style={styles.locationIcon}>📍</Text>
             <Text style={[styles.location, { color: colors.text.secondary }]}>{connection.met_at}</Text>
           </View>
 
-          <View style={styles.factsContainer}>
+          <View style={[styles.factsContainer, { backgroundColor: colors.background.surface, borderColor: colors.border.light }]}>
             <Text style={[styles.factsLabel, { color: colors.text.accent }]}>💡 Notes</Text>
             <View style={styles.factsList}>
               {connection.facts && connection.facts.length > 0 ? (
@@ -201,7 +201,6 @@ const styles = StyleSheet.create({
     fontWeight: typography.weight.semibold,
   },
   dateContainer: {
-    backgroundColor: baseColors.border.default,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: borderRadius.full,
@@ -218,12 +217,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
-    backgroundColor: baseColors.background.surface,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: baseColors.border.light,
   },
   locationIcon: {
     fontSize: typography.size.xl,
@@ -236,11 +233,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   factsContainer: {
-    backgroundColor: baseColors.background.surface,
     padding: 16,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: baseColors.border.light,
   },
   factsLabel: {
     fontSize: typography.size.xl,

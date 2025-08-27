@@ -14,7 +14,8 @@ import Input from "../atoms/Input";
 import type { social_media } from "@linkbase/prisma";
 import { social_media_type } from "@linkbase/prisma/client/enums";
 import { socialMediaDisplayNames } from "@/helpers/constants";
-import { colors, shadows, typography, borderRadius } from "@/theme/colors";
+import { shadows, typography, borderRadius } from "@/theme/colors";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 // Validation functions
 const validateEmail = (email: string): boolean => {
@@ -67,6 +68,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
   error,
   onInputFocus,
 }) => {
+  const { colors } = useThemeStore();
   const [activePickerIndex, setActivePickerIndex] = useState<number | null>(
     null
   );
@@ -184,13 +186,13 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
     return (
       <>
         <TouchableOpacity
-          style={styles.customPickerButton}
+          style={[styles.customPickerButton, { backgroundColor: colors.background.secondary, borderColor: colors.border.default }]}
           onPress={() => setActivePickerIndex(isOpen ? null : index)}
         >
-          <Text style={styles.customPickerText}>
+          <Text style={[styles.customPickerText, { color: colors.text.accent }]}>
             {socialMediaDisplayNames[selectedValue]}
           </Text>
-          <Text style={styles.customPickerArrow}>{isOpen ? "▲" : "▼"}</Text>
+          <Text style={[styles.customPickerArrow, { color: colors.text.accent }]}>{isOpen ? "▲" : "▼"}</Text>
         </TouchableOpacity>
 
         <Modal
@@ -209,7 +211,7 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
                 colors={colors.gradients.dark}
                 style={styles.pickerModal}
               >
-                <Text style={styles.pickerModalTitle}>Select Contact Type</Text>
+                <Text style={[styles.pickerModalTitle, { color: colors.text.accent }]}>Select Contact Type</Text>
                 <FlatList
                   data={sortedTypes}
                   keyExtractor={(item) => item}
@@ -217,15 +219,15 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
                     <TouchableOpacity
                       style={[
                         styles.pickerOption,
-                        selectedValue === item && styles.pickerOptionSelected,
+                        selectedValue === item && [styles.pickerOptionSelected, { backgroundColor: colors.background.tertiary }],
                       ]}
                       onPress={() => selectOption(item)}
                     >
                       <Text
                         style={[
                           styles.pickerOptionText,
-                          selectedValue === item &&
-                            styles.pickerOptionTextSelected,
+                          { color: colors.text.primary },
+                          selectedValue === item && [styles.pickerOptionTextSelected, { color: colors.text.accent }],
                         ]}
                       >
                         {socialMediaDisplayNames[item]}
@@ -246,13 +248,13 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
     <View style={styles.section}>
       <LinearGradient
         colors={colors.gradients.section}
-        style={styles.sectionContent}
+        style={[styles.sectionContent, { borderColor: colors.border.default }]}
       >
-        <Text style={styles.sectionTitle}>🔗 Contact & Social (Optional)</Text>
-        {error && <Text style={styles.errorText}>{error}</Text>}
+        <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>🔗 Contact & Social (Optional)</Text>
+        {error && <Text style={[styles.errorText, { color: colors.text.error }]}>{error}</Text>}
 
         {socialMedias.length === 0 && (
-          <Text style={styles.emptyText}>
+          <Text style={[styles.emptyText, { color: colors.text.muted }]}>
             No contact or social media added yet
           </Text>
         )}
@@ -260,10 +262,10 @@ const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
         {socialMedias.map((socialMedia, index) => {
           const inputConfig = getInputConfig(socialMedia.type);
           return (
-            <View key={index} style={styles.socialMediaRow}>
+            <View key={index} style={[styles.socialMediaRow, { backgroundColor: colors.background.surface, borderColor: colors.border.light }]}>
               <View style={styles.socialMediaContent}>
                 <View style={styles.pickerContainer}>
-                  <Text style={styles.pickerLabel}>Contact Type</Text>
+                  <Text style={[styles.pickerLabel, { color: colors.text.primary }]}>Contact Type</Text>
                   <CustomPicker
                     selectedValue={socialMedia.type}
                     onValueChange={(value: social_media_type) =>
@@ -322,23 +324,19 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: colors.border.default,
   },
   sectionTitle: {
     fontSize: typography.size['2xl'],
     fontWeight: typography.weight.bold,
     marginBottom: 16,
-    color: colors.text.accent,
     letterSpacing: typography.letterSpacing.wide,
   },
   errorText: {
-    color: colors.text.error,
     fontSize: typography.size.base,
     marginBottom: 12,
     fontWeight: typography.weight.medium,
   },
   emptyText: {
-    color: colors.text.muted,
     fontSize: typography.size.base,
     fontStyle: "italic",
     marginBottom: 16,
@@ -347,10 +345,8 @@ const styles = StyleSheet.create({
   socialMediaRow: {
     marginBottom: 16,
     padding: 16,
-    backgroundColor: colors.background.surface,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: colors.border.light,
   },
   socialMediaContent: {
     flex: 1,
@@ -363,13 +359,10 @@ const styles = StyleSheet.create({
     fontSize: typography.size.xl,
     fontWeight: typography.weight.semibold,
     marginBottom: 8,
-    color: colors.text.primary,
     letterSpacing: typography.letterSpacing.wide,
   },
   customPickerButton: {
-    backgroundColor: colors.background.secondary,
     borderWidth: 2,
-    borderColor: colors.border.default,
     borderRadius: borderRadius.md,
     padding: 16,
     flexDirection: "row",
@@ -377,13 +370,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   customPickerText: {
-    color: colors.text.accent,
     fontSize: typography.size.xl,
     fontWeight: typography.weight.medium,
     flex: 1,
   },
   customPickerArrow: {
-    color: colors.text.accent,
     fontSize: typography.size.base,
     fontWeight: typography.weight.semibold,
   },
@@ -406,7 +397,6 @@ const styles = StyleSheet.create({
   pickerModalTitle: {
     fontSize: typography.size['2xl'],
     fontWeight: typography.weight.bold,
-    color: colors.text.accent,
     textAlign: "center",
     marginBottom: 16,
     letterSpacing: typography.letterSpacing.wide,
@@ -417,15 +407,12 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   pickerOptionSelected: {
-    backgroundColor: colors.background.tertiary,
   },
   pickerOptionText: {
-    color: colors.text.primary,
     fontSize: typography.size.xl,
     fontWeight: typography.weight.medium,
   },
   pickerOptionTextSelected: {
-    color: colors.text.accent,
     fontWeight: typography.weight.semibold,
   },
   handleInput: {

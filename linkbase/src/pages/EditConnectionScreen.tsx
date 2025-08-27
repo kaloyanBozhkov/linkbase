@@ -192,7 +192,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
   return (
     <LinearGradient colors={colors.gradients.background} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.header}>
+        <View style={[styles.header, { borderBottomColor: colors.border.light }]}>
           <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Edit Connection</Text>
           <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}>
             Update {connection?.name}&apos;s info
@@ -254,7 +254,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
               />
 
               <View style={styles.factsSection}>
-                <LinearGradient colors={colors.gradients.section} style={styles.factsSectionContent}>
+                <LinearGradient colors={colors.gradients.section} style={[styles.factsSectionContent, { borderColor: colors.border.default }]}>
                   <Text style={[styles.factsTitle, { color: colors.text.accent }]}>💡 Notes (Optional)</Text>
                   {errors.facts && (
                     <Text style={[styles.errorText, { color: colors.text.error }]}>{errors.facts}</Text>
@@ -292,7 +292,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
 
             </View>
           </ScrollView>
-          <View style={styles.bottomActions}>
+          <View style={[styles.bottomActions, { borderTopColor: colors.border.light }]}>
             <Button
               title="Cancel"
               onPress={() => navigation.goBack()}
@@ -325,7 +325,6 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: baseColors.border.light,
   },
   headerTitle: {
     fontSize: typography.size['5xl'],
@@ -362,7 +361,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: baseColors.border.default,
   },
   factsTitle: {
     fontSize: typography.size['2xl'],
@@ -393,7 +391,6 @@ const styles = StyleSheet.create({
     gap: 16,
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: baseColors.border.light,
   },
   buttonContainer: {
     flexDirection: "row",

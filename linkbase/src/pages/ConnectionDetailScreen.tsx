@@ -174,7 +174,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                       onPress={() =>
                         handleSocialMediaPress(socialMedia.url || "")
                       }
-                      style={styles.socialMediaItem}
+                      style={[styles.socialMediaItem, { backgroundColor: colors.background.surface, borderColor: colors.border.light }]}
                     >
                       <LinearGradient
                         colors={colors.gradients.primary}
@@ -200,7 +200,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             {/* Meeting Details */}
             <LinearGradient colors={colors.gradients.section} style={styles.section}>
               <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>🤝 Meeting Details</Text>
-              <View style={styles.detailContainer}>
+              <View style={[styles.detailContainer, { backgroundColor: colors.background.surface, borderColor: colors.border.light }]}>
                 <View style={styles.detailRow}>
                   <Text style={[styles.detailLabel, { color: colors.text.muted }]}>📍 Where:</Text>
                   <Text style={[styles.detailValue, { color: colors.text.primary }]}>{connection.met_at}</Text>
@@ -217,7 +217,7 @@ const ConnectionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             {/* Facts Section */}
             <LinearGradient colors={colors.gradients.section} style={styles.section}>
               <Text style={[styles.sectionTitle, { color: colors.text.accent }]}>💡 Facts & Insights</Text>
-              <View style={styles.factsContainer}>
+              <View style={[styles.factsContainer, { backgroundColor: colors.background.surface, borderColor: colors.border.light }]}>
                 {connection.facts.map((fact, index) => (
                   <View key={index} style={styles.factItem}>
                     <View style={[styles.factDot, { backgroundColor: colors.text.accent }]} />
@@ -341,10 +341,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   socialMediaItem: {
-    backgroundColor: baseColors.background.surface,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: baseColors.border.light,
     overflow: "hidden",
   },
   socialMediaGradient: {
@@ -373,11 +371,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   detailContainer: {
-    backgroundColor: baseColors.background.surface,
     padding: 16,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: baseColors.border.light,
   },
   detailRow: {
     flexDirection: "row",
@@ -398,11 +394,9 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   factsContainer: {
-    backgroundColor: baseColors.background.surface,
     padding: 16,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: baseColors.border.light,
   },
   factItem: {
     flexDirection: "row",
