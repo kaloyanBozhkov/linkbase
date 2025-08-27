@@ -13,6 +13,7 @@ import HelpSupportScreen from "./src/pages/HelpSupportScreen";
 import AppearanceScreen from "./src/pages/AppearanceScreen";
 import NotificationsScreen from "./src/pages/NotificationsScreen";
 import SyncScreen from "./src/pages/SyncScreen";
+import ImportExportScreen from "./src/pages/ImportExportScreen";
 import { useSessionUserStore } from "./src/hooks/useGetSessionUser";
 import LoadingScreen from "./src/pages/LoadingScreen";
 import { TRPCProvider } from "./src/providers/TRPCProvider";
@@ -31,6 +32,7 @@ export type RootStackParamList = {
   Appearance: undefined;
   Notifications: undefined;
   Sync: undefined;
+  ImportExport: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -65,7 +67,7 @@ const App: React.FC = () => {
         <NavigationContainer>
           <Stack.Navigator
             initialRouteName="Home"
-            screenOptions={({}) => ({
+            screenOptions={() => ({
               headerStyle: {
                 backgroundColor: useThemeStore.getState().colors.background.surface,
               },
@@ -132,6 +134,11 @@ const App: React.FC = () => {
                   name="Sync"
                   component={SyncScreen}
                   options={{ title: "Sync" }}
+                />
+                <Stack.Screen
+                  name="ImportExport"
+                  component={ImportExportScreen}
+                  options={{ title: "Import & Export" }}
                 />
               </>
             )}

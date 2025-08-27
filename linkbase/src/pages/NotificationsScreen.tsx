@@ -13,22 +13,52 @@ const requestPermissions = async () => {
   }
 };
 
-const scheduleDailyReminder = async (time: string) => {
+const scheduleNotification = async (time: string) => {
   const [hours, minutes] = time.split(":").map((n) => parseInt(n, 10));
-  // Cancel existing
+
+  // Cancel existing notifications
   await Notifications.cancelAllScheduledNotificationsAsync();
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "Log your connections",
-      body: "Don't forget to add today's connections!",
-    },
-    trigger: {
-      hour: hours,
-      minute: minutes,
-      repeats: true,
-      channelId: Platform.OS === "android" ? "daily-reminders" : undefined,
-    } as any,
-  });
+
+  // Calculate if this is a one-time notification (within next 2 hours) or daily reminder
+  const now = new Date();
+  const targetTime = new Date();
+  targetTime.setHours(hours, minutes, 0, 0);
+
+  // If target time is in the past today, assume it's for tomorrow
+  if (targetTime <= now) {
+    targetTime.setDate(targetTime.getDate() + 1);
+  }
+
+  const timeDifference = targetTime.getTime() - now.getTime();
+  const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+  if (hoursDifference <= 2) {
+    // One-time notification within 2 hours
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Log your connections",
+        body: "Don't forget to add today's connections!",
+      },
+      trigger: {
+        date: targetTime,
+        channelId: Platform.OS === "android" ? "one-time-reminders" : undefined,
+      } as any,
+    });
+  } else {
+    // Daily repeating notification
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Log your connections",
+        body: "Don't forget to add today's connections!",
+      },
+      trigger: {
+        hour: hours,
+        minute: minutes,
+        repeats: true,
+        channelId: Platform.OS === "android" ? "daily-reminders" : undefined,
+      } as any,
+    });
+  }
 };
 
 const NotificationsScreen: React.FC = () => {
@@ -37,18 +67,44 @@ const NotificationsScreen: React.FC = () => {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [tempTime, setTempTime] = useState<Date>(new Date());
 
+  const getNotificationScheduleInfo = (timeString: string) => {
+    const [hours, minutes] = timeString.split(":").map((n) => parseInt(n, 10));
+    const now = new Date();
+    const targetTime = new Date();
+    targetTime.setHours(hours, minutes, 0, 0);
+
+    if (targetTime <= now) {
+      targetTime.setDate(targetTime.getDate() + 1);
+    }
+
+    const hoursDifference = (targetTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+    if (hoursDifference <= 2) {
+      const minutesDiff = Math.round(hoursDifference * 60);
+      if (minutesDiff < 1) {
+        return "in less than a minute";
+      } else if (minutesDiff === 1) {
+        return "in 1 minute";
+      } else {
+        return `in ${minutesDiff} minutes`;
+      }
+    } else {
+      return "daily at this time";
+    }
+  };
+
   useEffect(() => {
     (async () => {
       await requestPermissions();
       await loadSettings();
     })();
-  }, []);
+  }, [loadSettings]);
 
   useEffect(() => {
     if (!isInitializing) {
       (async () => {
         if (enabled) {
-          await scheduleDailyReminder(time);
+          await scheduleNotification(time);
         } else {
           await Notifications.cancelAllScheduledNotificationsAsync();
         }
@@ -129,7 +185,7 @@ const NotificationsScreen: React.FC = () => {
           <Text style={[styles.title, { color: colors.text.primary }]}>Notifications</Text>
           <View style={[styles.card, { backgroundColor: colors.background.surface, borderColor: colors.border.light }]}>
             <View style={styles.row}>
-              <Text style={[styles.label, { color: colors.text.secondary }]}>Daily Reminder</Text>
+              <Text style={[styles.label, { color: colors.text.secondary }]}>Enable Notifications</Text>
               <Switch value={enabled} onValueChange={setEnabled} />
             </View>
             <View style={styles.row}>
@@ -149,6 +205,13 @@ const NotificationsScreen: React.FC = () => {
                 </Text>
               </TouchableOpacity>
             </View>
+            {enabled && (
+              <View style={styles.notificationTypeRow}>
+                <Text style={[styles.notificationTypeText, { color: colors.text.secondary }]}>
+                  {getNotificationScheduleInfo(time)}
+                </Text>
+              </View>
+            )}
           </View>
         </ScrollView>
       </LinearGradient>
@@ -194,7 +257,9 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: "700" },
   card: { borderRadius: 12, padding: 16, borderWidth: 1 },
   row: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
+  notificationTypeRow: { flexDirection: "row", justifyContent: "flex-end", marginTop: 4 },
   label: { fontSize: 16 },
+  notificationTypeText: { fontSize: 12, fontStyle: "italic" },
   timeButton: {
     paddingHorizontal: 12,
     paddingVertical: 8,

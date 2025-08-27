@@ -30,11 +30,11 @@ const SettingsScreen: React.FC = () => {
       onPress: () => navigation.navigate("Notifications"),
     },
     {
-      icon: "cloud-sync",
-      title: "Sync",
-      subtitle: "Backup and sync your connections",
+      icon: "import-export",
+      title: "Import & Export",
+      subtitle: "Backup and restore your connections",
       iconFamily: "MaterialIcons" as const,
-      onPress: () => navigation.navigate("Sync"),
+      onPress: () => navigation.navigate("ImportExport"),
     },
     {
       icon: "palette",
@@ -61,62 +61,133 @@ const SettingsScreen: React.FC = () => {
       iconFamily: "Ionicons" as const,
       onPress: () => navigation.navigate("HelpSupport"),
     },
+    {
+      icon: "cloud-sync",
+      title: "Sync",
+      subtitle: "Backup and sync your connections",
+      iconFamily: "MaterialIcons" as const,
+      onPress: () => navigation.navigate("Sync"),
+    },
   ];
 
-  const renderSettingsItem = (item: typeof settingsItems[0], index: number) => {
-    const IconComponent = item.iconFamily === "MaterialIcons" ? MaterialIcons : Ionicons;
-    
+  const renderSettingsItem = (
+    item: (typeof settingsItems)[0],
+    index: number
+  ) => {
+    const IconComponent =
+      item.iconFamily === "MaterialIcons" ? MaterialIcons : Ionicons;
+
     return (
-      <TouchableOpacity key={index} style={styles.settingsItem} onPress={item.onPress}>
-        <View style={[styles.settingsItemIcon, { backgroundColor: colors.background.secondary }]}>
-          <IconComponent 
-            name={item.icon as any} 
-            size={24} 
-            color={colors.text.accent} 
+      <TouchableOpacity
+        key={index}
+        style={styles.settingsItem}
+        onPress={item.onPress}
+      >
+        <View
+          style={[
+            styles.settingsItemIcon,
+            { backgroundColor: colors.background.secondary },
+          ]}
+        >
+          <IconComponent
+            name={item.icon as any}
+            size={24}
+            color={colors.text.accent}
           />
         </View>
         <View style={styles.settingsItemContent}>
-          <Text style={[styles.settingsItemTitle, { color: colors.text.primary }]}>{item.title}</Text>
-          <Text style={[styles.settingsItemSubtitle, { color: colors.text.muted }]}>{item.subtitle}</Text>
+          <Text
+            style={[styles.settingsItemTitle, { color: colors.text.primary }]}
+          >
+            {item.title}
+          </Text>
+          <Text
+            style={[styles.settingsItemSubtitle, { color: colors.text.muted }]}
+          >
+            {item.subtitle}
+          </Text>
         </View>
-        <MaterialIcons 
-          name="chevron-right" 
-          size={20} 
-          color={colors.text.muted} 
+        <MaterialIcons
+          name="chevron-right"
+          size={20}
+          color={colors.text.muted}
         />
       </TouchableOpacity>
     );
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background.primary }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background.primary }]}
+    >
       <LinearGradient
         colors={colors.gradients.background}
         style={styles.gradient}
       >
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Header */}
           <View style={styles.header}>
-            <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Settings</Text>
+            <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+              Settings
+            </Text>
             <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}>
               Customize your Linkbase experience
             </Text>
           </View>
 
           {/* Settings Items */}
-          <View style={[styles.settingsSection, { backgroundColor: colors.background.surface }]}>
+          <View
+            style={[
+              styles.settingsSection,
+              { backgroundColor: colors.background.surface },
+            ]}
+          >
             {settingsItems.map(renderSettingsItem)}
           </View>
 
           {/* App Info Section */}
-          <View style={[styles.appInfoSection, { backgroundColor: colors.background.surface }]}>
-            <View style={[styles.appInfoItem, { borderBottomColor: colors.border.light }]}>
-              <Text style={[styles.appInfoLabel, { color: colors.text.secondary }]}>Version</Text>
-              <Text style={[styles.appInfoValue, { color: colors.text.primary }]}>1.0.0</Text>
+          <View
+            style={[
+              styles.appInfoSection,
+              { backgroundColor: colors.background.surface },
+            ]}
+          >
+            <View
+              style={[
+                styles.appInfoItem,
+                { borderBottomColor: colors.border.light },
+              ]}
+            >
+              <Text
+                style={[styles.appInfoLabel, { color: colors.text.secondary }]}
+              >
+                Version
+              </Text>
+              <Text
+                style={[styles.appInfoValue, { color: colors.text.primary }]}
+              >
+                1.0.0
+              </Text>
             </View>
-            <View style={[styles.appInfoItem, { borderBottomColor: colors.border.light }]}>
-              <Text style={[styles.appInfoLabel, { color: colors.text.secondary }]}>Build</Text>
-              <Text style={[styles.appInfoValue, { color: colors.text.primary }]}>2024.1</Text>
+            <View
+              style={[
+                styles.appInfoItem,
+                { borderBottomColor: colors.border.light },
+              ]}
+            >
+              <Text
+                style={[styles.appInfoLabel, { color: colors.text.secondary }]}
+              >
+                Build
+              </Text>
+              <Text
+                style={[styles.appInfoValue, { color: colors.text.primary }]}
+              >
+                2024.1
+              </Text>
             </View>
           </View>
 
@@ -127,14 +198,21 @@ const SettingsScreen: React.FC = () => {
                 colors={colors.gradients.primary}
                 style={styles.logoGradient}
               >
-                <Text style={[styles.logoText, { color: colors.text.onAccent }]}>K</Text>
+                <Text
+                  style={[styles.logoText, { color: colors.text.onAccent }]}
+                >
+                  K
+                </Text>
               </LinearGradient>
             </View>
             <Text style={[styles.footerText, { color: colors.text.secondary }]}>
               Created by{" "}
-              <Text style={[styles.footerHighlight, { color: colors.text.accent }]}>K-BITS</Text>
-              {" "}with{" "}
-              <Text style={styles.heartIcon}>❤️</Text>
+              <Text
+                style={[styles.footerHighlight, { color: colors.text.accent }]}
+              >
+                K-BITS
+              </Text>{" "}
+              with <Text style={styles.heartIcon}>❤️</Text>
             </Text>
             <Text style={[styles.footerSubtext, { color: colors.text.muted }]}>
               Building connections, one link at a time

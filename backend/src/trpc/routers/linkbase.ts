@@ -7,10 +7,11 @@ import {
 import {
   createConnectionQuery,
   getAllConnectionsQuery,
+  getAllConnectionsUnpaginatedQuery,
   getConnectionByIdQuery,
   updateConnectionQuery,
   deleteConnectionQuery,
-  searchConnectionsQuery,
+  importConnectionsQuery,
 } from "@/queries/linkbase/connections";
 import {
   createUserQuery,
@@ -142,6 +143,32 @@ export const linkbaseRouter = createTRPCRouter({
       )
       .query(({ input: { audioFileUrl } }) => {
         return getMultipleConnectionsFilloutQuery({ audioFileUrl });
+      }),
+    exportAll: protectedProcedure
+      .query(async ({ ctx: { userId } }) => {
+        return getAllConnectionsUnpaginatedQuery({ userId });
+      }),
+    import: protectedProcedure
+      .input(
+        z.object({
+          connections: z.array(
+            z.object({
+              name: z.string().min(1),
+              metAt: z.string().min(1),
+              metWhen: z.date().optional(),
+              facts: z.array(z.string()).optional().default([]),
+              socialMedias: z.array(
+                z.object({
+                  type: z.nativeEnum(social_media_type),
+                  handle: z.string().min(1),
+                })
+              ).optional().default([]),
+            })
+          ),
+        })
+      )
+      .mutation(async ({ ctx: { userId }, input: { connections } }) => {
+        return importConnectionsQuery({ userId, connections });
       }),
   }),
   users: createTRPCRouter({
