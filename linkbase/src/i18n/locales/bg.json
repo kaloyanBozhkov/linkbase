@@ -413,5 +413,29 @@
     "addConnectionsByVoice": "Добавяне на връзки чрез глас",
     "openSettings": "Отвори настройки",
     "dragToSearchOrAdd": "Плъзни за търсене или добавяне на връзка"
+  },
+  "onboarding": {
+    "welcome": "Добре дошли в Linkbase",
+    "chooseLanguage": "Изберете предпочитания от вас език",
+    "chooseTheme": "Изберете вашата тема",
+    "themeDescription": "Изберете тема, която отговаря на вашия стил",
+    "getStarted": "Нека започнем!",
+    "enjoy": "Насладете се ❤️",
+    "optionalImport": "По избор импортиране",
+    "importFromJson": "Импортиране на контакти",
+    "importContacts": "Импортиране на контакти",
+    "importDescription": "Импортирайте вашите контакти от JSON файл",
+    "startFresh": "Започнете на чисто",
+    "startFreshDescription": "Започнете с празен списък на контактите",
+    "skipForNow": "Пропуснете за сега",
+    "skipImport": "Пропуснете импортиране",
+    "canChangeLater": "Можете да промените това по-късно в Настройки",
+    "importAnytime": "Можете да импортирате данни по всяко време от менюто Настройки",
+    "exoTheme": "Exo Тема",
+    "exoDescription": "Тъмна тема с акценти в циан",
+    "warmPastel": "Топъл пастел",
+    "warmPastelDescription": "Тъмна тема с топли розови акценти",
+    "lightMode": "Светъл режим",
+    "lightModeDescription": "Чиста светла тема със сини акценти"
   }
 }

@@ -1,4 +1,4 @@
-const DEV_HOST_IP = "192.168.1.39"; // This will be auto-detected & replaced
+const DEV_HOST_IP = "192.168.1.14"; // This will be auto-detected & replaced
 
 export const getApiBaseUrl = (__DEV__: boolean) => {
   if (__DEV__) {

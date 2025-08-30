@@ -413,5 +413,29 @@
     "addConnectionsByVoice": "إضافة اتصالات صوتية",
     "openSettings": "فتح الإعدادات",
     "dragToSearchOrAdd": "اسحب للبحث أو إضافة اتصال"
+  },
+  "onboarding": {
+    "welcome": "مرحبا بك في لينكبيس",
+    "chooseLanguage": "اختر لغتك المفضلة",
+    "chooseTheme": "اختر النمط الخاص بك",
+    "themeDescription": "اختر نمطاً يناسب أسلوبك",
+    "getStarted": "لنبدأ بك!",
+    "enjoy": "استمتع ❤️",
+    "optionalImport": "استيراد اختياري",
+    "importFromJson": "استيراد جهات الاتصال",
+    "importContacts": "استيراد جهات الاتصال",
+    "importDescription": "استورد جهات الاتصال الخاصة بك من ملف JSON",
+    "startFresh": "ابدأ من جديد",
+    "startFreshDescription": "ابدأ بقائمة جهات اتصال فارغة",
+    "skipForNow": "تخطي الآن",
+    "skipImport": "تخطي الاستيراد",
+    "canChangeLater": "يمكنك تغيير ذلك لاحقاً في الإعدادات",
+    "importAnytime": "يمكنك استيراد البيانات في أي وقت من قائمة الإعدادات",
+    "exoTheme": "نمط إكسو",
+    "exoDescription": "نمط داكن مع لمسات سماوية",
+    "warmPastel": "الباستيل الدافئ",
+    "warmPastelDescription": "نمط داكن بلمسات وردية دافئة",
+    "lightMode": "الوضع الفاتح",
+    "lightModeDescription": "نمط فاتح ونظيف مع لمسات زرقاء"
   }
 }

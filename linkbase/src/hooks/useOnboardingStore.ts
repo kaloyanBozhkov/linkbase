@@ -2,7 +2,7 @@ import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Based on this can render only new features if already comlete with this old key
-const ONBOARDING_KEY = "linkbase_onboarding_27-07-2025.12";
+const ONBOARDING_KEY = "linkbase_onboarding_27-08-2025.01";
 
 export interface OnboardingState {
   isCompleted: boolean;
@@ -24,7 +24,7 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
   isCompleted: false,
   currentStep: 0,
   selectedLanguage: "en",
-  selectedTheme: "Exo Theme",
+  selectedTheme: "exoTheme",
   hasImportedData: false,
   isInitializing: true,
   
@@ -37,14 +37,22 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
           isCompleted: onboardingData.isCompleted || false,
           currentStep: onboardingData.currentStep || 0,
           selectedLanguage: onboardingData.selectedLanguage || "en",
-          selectedTheme: onboardingData.selectedTheme || "Exo Theme",
+          selectedTheme: onboardingData.selectedTheme || "exoTheme",
           hasImportedData: onboardingData.hasImportedData || false,
           isInitializing: false,
         });
       } else {
-        set({ isInitializing: false });
+        set({ 
+          isCompleted: false,
+          currentStep: 0,
+          selectedLanguage: "en",
+          selectedTheme: "exoTheme",
+          hasImportedData: false,
+          isInitializing: false 
+        });
       }
     } catch (e) {
+      console.error("Error initializing onboarding:", e);
       set({ isInitializing: false });
     }
   },

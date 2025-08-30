@@ -22,14 +22,22 @@ import * as FileSystem from "expo-file-system";
 const ImportExportScreen: React.FC = () => {
   const { colors } = useThemeStore();
   const { t } = useTranslation();
-  const { setHasImportedData, setCompleted } = useOnboardingStore();
+  const {
+    setHasImportedData,
+    setCompleted,
+    isCompleted: isOnboardingCompleted,
+  } = useOnboardingStore();
+
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
 
   // tRPC mutations
-  const exportAllConnections = trpc.linkbase.connections.exportAll.useQuery(undefined, {
-    enabled: false,
-  });
+  const exportAllConnections = trpc.linkbase.connections.exportAll.useQuery(
+    undefined,
+    {
+      enabled: false,
+    }
+  );
 
   const importConnections = trpc.linkbase.connections.import.useMutation();
 
@@ -38,10 +46,15 @@ const ImportExportScreen: React.FC = () => {
       setIsExporting(true);
 
       // Fetch all connections
-      const connections = await exportAllConnections.refetch().then(res => res.data);
+      const connections = await exportAllConnections
+        .refetch()
+        .then((res) => res.data);
 
       if (!connections || connections.length === 0) {
-        Alert.alert(t("importExport.noData"), t("importExport.noConnectionsToExport"));
+        Alert.alert(
+          t("importExport.noData"),
+          t("importExport.noConnectionsToExport")
+        );
         return;
       }
 
@@ -49,12 +62,12 @@ const ImportExportScreen: React.FC = () => {
       const exportData = {
         version: "1.0",
         exportDate: new Date().toISOString(),
-        connections: connections.map(conn => ({
+        connections: connections.map((conn) => ({
           name: conn.name,
           metAt: conn.met_at,
           metWhen: conn.met_when,
-          facts: conn.facts.map(fact => fact.text),
-          socialMedias: conn.social_medias.map(sm => ({
+          facts: conn.facts.map((fact) => fact.text),
+          socialMedias: conn.social_medias.map((sm) => ({
             type: sm.type,
             handle: sm.handle,
           })),
@@ -63,9 +76,11 @@ const ImportExportScreen: React.FC = () => {
 
       // Convert to JSON
       const jsonData = JSON.stringify(exportData, null, 2);
-      const filename = `linkbase-connections-${new Date().toISOString().split('T')[0]}.json`;
+      const filename = `linkbase-connections-${
+        new Date().toISOString().split("T")[0]
+      }.json`;
 
-      if (Platform.OS === 'web') {
+      if (Platform.OS === "web") {
         // For web, use Share API
         await Share.share({
           message: jsonData,
@@ -87,7 +102,10 @@ const ImportExportScreen: React.FC = () => {
       Alert.alert(t("common.success"), t("importExport.exportSuccess"));
     } catch (error) {
       console.error("Export error:", error);
-      Alert.alert(t("importExport.exportFailed"), t("importExport.exportError"));
+      Alert.alert(
+        t("importExport.exportFailed"),
+        t("importExport.exportError")
+      );
     } finally {
       setIsExporting(false);
     }
@@ -99,7 +117,7 @@ const ImportExportScreen: React.FC = () => {
 
       // Pick a JSON file
       const result = await DocumentPicker.getDocumentAsync({
-        type: 'application/json',
+        type: "application/json",
         copyToCacheDirectory: true,
       });
 
@@ -119,13 +137,19 @@ const ImportExportScreen: React.FC = () => {
       try {
         importData = JSON.parse(fileContent);
       } catch (_parseError) {
-        Alert.alert("Invalid File", "The selected file is not a valid JSON file.");
+        Alert.alert(
+          t("importExport.invalidFile"),
+          t("importExport.notValidJsonFile")
+        );
         return;
       }
 
       // Validate structure
       if (!importData.connections || !Array.isArray(importData.connections)) {
-        Alert.alert("Invalid Format", "The file doesn't contain valid connection data.");
+        Alert.alert(
+          t("importExport.invalidFormat"),
+          t("importExport.invalidConnectionData")
+        );
         return;
       }
 
@@ -141,32 +165,34 @@ const ImportExportScreen: React.FC = () => {
       // Import connections
       const resultImport = await importConnections.mutateAsync({ connections });
 
-      const message = `Import completed!\n\nImported: ${resultImport.imported}\nSkipped (duplicates): ${resultImport.skipped}`;
+      const message = t("importExport.importCompleteMessage", {
+        imported: resultImport.imported,
+        skipped: resultImport.skipped,
+      });
 
-      Alert.alert(
-        "Import Complete",
-        message,
-        [
-          {
-            text: "OK",
-            onPress: async () => {
-              if (resultImport.errors && resultImport.errors.length > 0) {
-                Alert.alert(
-                  "Import Errors",
-                  resultImport.errors.join('\n\n'),
-                  [{ text: "OK" }]
-                );
-              }
-              // Complete onboarding and navigate to home
-              await setHasImportedData(true);
-              await setCompleted(true);
-            },
+      Alert.alert(t("importExport.importComplete"), message, [
+        {
+          text: "OK",
+          onPress: async () => {
+            if (resultImport.errors && resultImport.errors.length > 0) {
+              Alert.alert(
+                t("importExport.importErrors"),
+                resultImport.errors.join("\n\n"),
+                [{ text: t("common.ok") }]
+              );
+            }
+            // Complete onboarding and navigate to home
+            await setHasImportedData(true);
+            await setCompleted(true);
           },
-        ]
-      );
+        },
+      ]);
     } catch (error) {
       console.error("Import error:", error);
-      Alert.alert("Import Failed", "An error occurred while importing your connections.");
+      Alert.alert(
+        t("importExport.importFailed"),
+        t("importExport.importError")
+      );
     } finally {
       setIsImporting(false);
     }
@@ -179,7 +205,9 @@ const ImportExportScreen: React.FC = () => {
       description: t("importExport.exportDescription"),
       action: handleExport,
       loading: isExporting,
-      buttonText: isExporting ? t("importExport.exporting") : t("importExport.export"),
+      buttonText: isExporting
+        ? t("importExport.exporting")
+        : t("importExport.export"),
       iconFamily: "MaterialIcons" as const,
     },
     {
@@ -188,13 +216,16 @@ const ImportExportScreen: React.FC = () => {
       description: t("importExport.importDescription"),
       action: handleImport,
       loading: isImporting,
-      buttonText: isImporting ? t("importExport.importing") : t("importExport.import"),
+      buttonText: isImporting
+        ? t("importExport.importing")
+        : t("importExport.import"),
       iconFamily: "MaterialIcons" as const,
     },
   ];
 
-  const renderFeature = (feature: typeof features[0], index: number) => {
-    const IconComponent = feature.iconFamily === "MaterialIcons" ? MaterialIcons : Ionicons;
+  const renderFeature = (feature: (typeof features)[0], index: number) => {
+    const IconComponent =
+      feature.iconFamily === "MaterialIcons" ? MaterialIcons : Ionicons;
 
     return (
       <View
@@ -221,13 +252,14 @@ const ImportExportScreen: React.FC = () => {
             />
           </View>
           <View style={styles.featureContent}>
-            <Text
-              style={[styles.featureTitle, { color: colors.text.primary }]}
-            >
+            <Text style={[styles.featureTitle, { color: colors.text.primary }]}>
               {feature.title}
             </Text>
             <Text
-              style={[styles.featureDescription, { color: colors.text.secondary }]}
+              style={[
+                styles.featureDescription,
+                { color: colors.text.secondary },
+              ]}
             >
               {feature.description}
             </Text>
@@ -241,7 +273,7 @@ const ImportExportScreen: React.FC = () => {
             styles.actionButton,
             {
               backgroundColor: feature.loading
-                ? colors.button.secondary.background + '80'
+                ? colors.button.secondary.background + "80"
                 : colors.button.secondary.background,
               borderColor: colors.button.secondary.border,
               opacity: feature.loading ? 0.7 : 1,
@@ -274,20 +306,15 @@ const ImportExportScreen: React.FC = () => {
           showsVerticalScrollIndicator={false}
         >
           <Text style={[styles.title, { color: colors.text.primary }]}>
-            Import & Export
+            {t("importExport.title")}
           </Text>
 
           <View style={styles.infoSection}>
-            <Text
-              style={[styles.infoTitle, { color: colors.text.primary }]}
-            >
-              Manage Your Data
+            <Text style={[styles.infoTitle, { color: colors.text.primary }]}>
+              {t("importExport.manageData")}
             </Text>
-            <Text
-              style={[styles.infoText, { color: colors.text.secondary }]}
-            >
-              Export your connections to backup your data or share it with another device.
-              Import connections from a JSON file to add them to your current collection.
+            <Text style={[styles.infoText, { color: colors.text.secondary }]}>
+              {t("importExport.manageDataDescription")}
             </Text>
           </View>
 
@@ -302,45 +329,47 @@ const ImportExportScreen: React.FC = () => {
               color={colors.text.accent}
               style={styles.warningIcon}
             />
-            <Text
-              style={[styles.warningTitle, { color: colors.text.primary }]}
-            >
-              Important Notes
+            <Text style={[styles.warningTitle, { color: colors.text.primary }]}>
+              {t("importExport.importantNotes")}
             </Text>
             <Text
               style={[styles.warningText, { color: colors.text.secondary }]}
             >
-              • Duplicate connections (same name and meeting place) will be skipped during import
+              {t("importExport.duplicateNote")}
             </Text>
             <Text
               style={[styles.warningText, { color: colors.text.secondary }]}
             >
-              • Facts are deduplicated per connection
+              {t("importExport.factsNote")}
             </Text>
             <Text
               style={[styles.warningText, { color: colors.text.secondary }]}
             >
-              • Import files must be valid JSON format
+              {t("importExport.jsonFormatNote")}
             </Text>
           </View>
 
-          <TouchableOpacity
-            style={[
-              styles.skipButton,
-              {
-                backgroundColor: colors.background.surface,
-                borderColor: colors.border.light,
-              },
-            ]}
-            onPress={async () => {
-              await setHasImportedData(false);
-              await setCompleted(true);
-            }}
-          >
-            <Text style={[styles.skipButtonText, { color: colors.text.muted }]}>
-              Skip Import
-            </Text>
-          </TouchableOpacity>
+          {!isOnboardingCompleted && (
+            <TouchableOpacity
+              style={[
+                styles.skipButton,
+                {
+                  backgroundColor: colors.background.surface,
+                  borderColor: colors.border.light,
+                },
+              ]}
+              onPress={async () => {
+                await setHasImportedData(false);
+                await setCompleted(true);
+              }}
+            >
+              <Text
+                style={[styles.skipButtonText, { color: colors.text.muted }]}
+              >
+                {t("onboarding.skipForNow")}
+              </Text>
+            </TouchableOpacity>
+          )}
         </ScrollView>
       </LinearGradient>
     </SafeAreaView>

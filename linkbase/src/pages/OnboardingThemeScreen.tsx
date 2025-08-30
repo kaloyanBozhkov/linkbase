@@ -10,10 +10,10 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../App";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { ThemeId, useThemeStore } from "@/hooks/useThemeStore";
 import { useOnboardingStore } from "@/hooks/useOnboardingStore";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Ionicons } from "@expo/vector-icons";
+import ThemeSelector from "@/components/molecules/ThemeSelector";
 
 type OnboardingThemeScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -25,124 +25,80 @@ interface Props {
 }
 
 const OnboardingThemeScreen: React.FC<Props> = ({ navigation }) => {
-  const { colors } = useThemeStore();
+  const { colors, setThemeId } = useThemeStore();
   const { t } = useTranslation();
-  const { selectedTheme, setSelectedTheme, setCurrentStep } = useOnboardingStore();
+  const { selectedTheme, setSelectedTheme, setCurrentStep } =
+    useOnboardingStore();
 
-  const themes = [
-    {
-      name: t("onboarding.exoTheme"),
-      description: t("onboarding.exoDescription"),
-      preview: ["#0a0d14", "#1e293b"],
-      icon: "moon",
-    },
-    {
-      name: t("onboarding.warmPastel"),
-      description: t("onboarding.warmPastelDescription"),
-      preview: ["#2b2a27", "#3a3834"],
-      icon: "heart",
-    },
-    {
-      name: t("onboarding.lightMode"),
-      description: t("onboarding.lightModeDescription"),
-      preview: ["#ffffff", "#f8fafc"],
-      icon: "sunny",
-    },
-  ];
 
-  const handleThemeSelect = async (themeName: string) => {
-    await setSelectedTheme(themeName);
-    // Apply the theme immediately
-    const { setThemeName } = useThemeStore.getState();
-    await setThemeName(themeName as "Exo Theme" | "Warm Pastel" | "Light Mode");
-    await setCurrentStep(2);
-    navigation.navigate("OnboardingImport");
+
+  const handleThemeSelect = async (themeId: string) => {
+    // Apply the theme immediately for instant visual feedback
+    await setThemeId(themeId as ThemeId);
+    await setSelectedTheme(themeId);
   };
 
-  const handleSkip = async () => {
+  const handleContinue = async () => {
     await setCurrentStep(2);
     navigation.navigate("OnboardingImport");
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.primary }}>
-      <LinearGradient colors={colors.gradients.background} style={styles.gradient}>
-        <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-          <View style={styles.header}>
-            <Text style={[styles.title, { color: colors.text.primary }]}>
-              {t("onboarding.chooseTheme")}
-            </Text>
-            <Text style={[styles.subtitle, { color: colors.text.muted }]}>
-              {t("onboarding.themeDescription")}
-            </Text>
-          </View>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background.primary }}
+    >
+      <LinearGradient
+        colors={colors.gradients.background}
+        style={styles.gradient}
+      >
+        <View style={styles.contentContainer}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.header}>
+              <Text style={[styles.title, { color: colors.text.primary }]}>
+                {t("onboarding.chooseTheme")}
+              </Text>
+              <Text style={[styles.subtitle, { color: colors.text.muted }]}>
+                {t("onboarding.themeDescription")}
+              </Text>
+            </View>
 
-          <View style={styles.themesContainer}>
-            {themes.map((theme) => (
-              <TouchableOpacity
-                key={theme.name}
-                style={[
-                  styles.themeCard,
-                  {
-                    backgroundColor: colors.background.surface,
-                    borderColor: selectedTheme === theme.name 
-                      ? colors.border.focus 
-                      : colors.border.light,
-                    borderWidth: selectedTheme === theme.name ? 2 : 1,
-                  },
-                ]}
-                onPress={() => handleThemeSelect(theme.name)}
-              >
-                <View style={styles.themePreview}>
-                  <LinearGradient
-                    colors={theme.preview as [string, string]}
-                    style={styles.previewGradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  >
-                    <Ionicons 
-                      name={theme.icon as any} 
-                      size={24} 
-                      color="#ffffff" 
-                    />
-                  </LinearGradient>
-                </View>
-                
-                <View style={styles.themeInfo}>
-                  <Text style={[styles.themeName, { color: colors.text.primary }]}>
-                    {theme.name}
-                  </Text>
-                  <Text style={[styles.themeDescription, { color: colors.text.muted }]}>
-                    {theme.description}
-                  </Text>
-                </View>
-
-                {selectedTheme === theme.name && (
-                  <Ionicons 
-                    name="checkmark-circle" 
-                    size={24} 
-                    color={colors.text.accent} 
-                  />
-                )}
-              </TouchableOpacity>
-            ))}
-          </View>
+            <ThemeSelector
+              selectedThemeId={selectedTheme as ThemeId}
+              onThemeSelect={handleThemeSelect}
+              colors={colors}
+              showDescriptions={true}
+            />
+          </ScrollView>
 
           <View style={styles.footer}>
             <TouchableOpacity
-              style={[styles.skipButton, { borderColor: colors.border.light }]}
-              onPress={handleSkip}
+              style={[
+                styles.continueButton,
+                {
+                  backgroundColor: colors.button.primary.background[0],
+                  borderColor: colors.button.primary.background[0],
+                },
+              ]}
+              onPress={handleContinue}
             >
-                          <Text style={[styles.skipButtonText, { color: colors.text.muted }]}>
-              {t("onboarding.skipForNow")}
+              <Text
+                style={[
+                  styles.continueButtonText,
+                  { color: colors.button.primary.text },
+                ]}
+              >
+                {t("onboarding.continue")}
+              </Text>
+            </TouchableOpacity>
+
+            <Text style={[styles.footerText, { color: colors.text.muted }]}>
+              {t("onboarding.canChangeLater")}
             </Text>
-          </TouchableOpacity>
-          
-          <Text style={[styles.footerText, { color: colors.text.muted }]}>
-            {t("onboarding.canChangeLater")}
-          </Text>
           </View>
-        </ScrollView>
+        </View>
       </LinearGradient>
     </SafeAreaView>
   );
@@ -151,6 +107,13 @@ const OnboardingThemeScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   gradient: {
     flex: 1,
+  },
+  contentContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 20,
+    paddingBottom: 0,
   },
   container: {
     padding: 20,
@@ -172,43 +135,32 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 24,
   },
-  themesContainer: {
-    gap: 16,
-    marginBottom: 40,
-  },
-  themeCard: {
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  themePreview: {
-    marginRight: 16,
-  },
-  previewGradient: {
-    width: 60,
-    height: 60,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  themeInfo: {
-    flex: 1,
-  },
-  themeName: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 4,
-  },
-  themeDescription: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
+
   footer: {
     alignItems: "center",
-    marginTop: "auto",
+    padding: 20,
     paddingTop: 20,
+  },
+  continueButton: {
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: 16,
+    minWidth: 200,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  continueButtonText: {
+    fontSize: 18,
+    fontWeight: "600",
   },
   skipButton: {
     paddingHorizontal: 24,
@@ -216,6 +168,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   skipButtonText: {
     fontSize: 16,

@@ -201,6 +201,21 @@ const languageDetector = {
   async: true,
   detect: async (callback: (lng: string) => void) => {
     try {
+      // First check onboarding store for language selection
+      const onboardingData = await AsyncStorage.getItem('linkbase_onboarding_27-07-2025.13');
+      if (onboardingData) {
+        try {
+          const parsed = JSON.parse(onboardingData);
+          if (parsed.selectedLanguage && LANGUAGES[parsed.selectedLanguage as LanguageCode]) {
+            callback(parsed.selectedLanguage);
+            return;
+          }
+        } catch (e) {
+          console.warn('Error parsing onboarding data:', e);
+        }
+      }
+      
+      // Fallback to user language storage
       const savedLanguage = await AsyncStorage.getItem('user-language');
       if (savedLanguage && LANGUAGES[savedLanguage as LanguageCode]) {
         callback(savedLanguage);
@@ -253,6 +268,18 @@ export const changeLanguage = async (languageCode: LanguageCode) => {
   try {
     await i18n.changeLanguage(languageCode);
     await AsyncStorage.setItem('user-language', languageCode);
+    
+    // Also update onboarding store if it exists
+    try {
+      const onboardingData = await AsyncStorage.getItem('linkbase_onboarding_27-07-2025.13');
+      if (onboardingData) {
+        const parsed = JSON.parse(onboardingData);
+        const newData = { ...parsed, selectedLanguage: languageCode };
+        await AsyncStorage.setItem('linkbase_onboarding_27-07-2025.13', JSON.stringify(newData));
+      }
+    } catch (e) {
+      console.warn('Error updating onboarding language:', e);
+    }
   } catch (error) {
     console.warn('Error changing language:', error);
   }

@@ -51,8 +51,17 @@ const App: React.FC = () => {
   const { initializeUserId, userId, isInitializing, isInitialLoading } =
     useSessionUserStore();
   const { mutateAsync: createUser } = trpc.linkbase.users.create.useMutation();
-  const { initializeTheme } = useThemeStore();
-  const { initializeOnboarding, isCompleted: isOnboardingCompleted, isInitializing: isOnboardingInitializing } = useOnboardingStore();
+  const {
+    initializeTheme,
+    colors,
+    isInitializing: isThemeInitializing,
+  } = useThemeStore();
+  const {
+    initializeOnboarding,
+    isCompleted: isOnboardingCompleted,
+    isInitializing: isOnboardingInitializing,
+    selectedTheme,
+  } = useOnboardingStore();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -70,9 +79,54 @@ const App: React.FC = () => {
   }, [initializeUserId, userId, isInitializing, createUser, t]);
 
   useEffect(() => {
-    initializeTheme();
     initializeOnboarding();
-  }, [initializeTheme, initializeOnboarding]);
+  }, [initializeOnboarding]);
+
+  useEffect(() => {
+    console.log("App: useEffect triggered", {
+      isOnboardingInitializing,
+      selectedTheme,
+      isOnboardingCompleted,
+    });
+
+    if (!isOnboardingInitializing) {
+      console.log("App: Initializing theme store");
+      // Always initialize theme store, with or without selected theme
+      initializeTheme(selectedTheme);
+    }
+  }, [
+    initializeTheme,
+    isOnboardingInitializing,
+    selectedTheme,
+    isOnboardingCompleted,
+  ]);
+
+  const shouldShowLoading =
+    isInitializing ||
+    isInitialLoading ||
+    isOnboardingInitializing ||
+    isThemeInitializing;
+
+  console.log("App: Render state:", {
+    isInitializing,
+    isInitialLoading,
+    isOnboardingInitializing,
+    isThemeInitializing,
+    isOnboardingCompleted,
+    shouldShowLoading,
+    selectedTheme,
+  });
+
+  // Show loading screen while initializing
+  if (shouldShowLoading) {
+    return (
+      <SafeAreaProvider>
+        <PaperProvider>
+          <LoadingScreen />
+        </PaperProvider>
+      </SafeAreaProvider>
+    );
+  }
 
   return (
     <SafeAreaProvider>
@@ -80,41 +134,44 @@ const App: React.FC = () => {
         <NavigationContainer>
           <Stack.Navigator
             initialRouteName={
-              isInitializing || isInitialLoading || isOnboardingInitializing 
-                ? "Loading" 
-                : !isOnboardingCompleted 
-                ? "OnboardingLanguage" 
+              !isOnboardingCompleted
+                ? "OnboardingLanguage"
                 : "Home"
             }
             screenOptions={() => ({
               headerStyle: {
-                backgroundColor: useThemeStore.getState().colors.background.surface,
+                backgroundColor: colors?.background?.surface || "#0f172a",
               },
-              headerTintColor: useThemeStore.getState().colors.text.primary,
+              headerTintColor: colors?.text?.primary || "#e2e8f0",
               headerTitleStyle: {
                 fontWeight: "bold",
               },
             })}
           >
-            <Stack.Screen
-              name="Loading"
-              component={LoadingScreen}
-              options={{ headerShown: false }}
-            />
+
             <Stack.Screen
               name="OnboardingLanguage"
               component={OnboardingLanguageScreen}
-              options={{ headerShown: false }}
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
             />
             <Stack.Screen
               name="OnboardingTheme"
               component={OnboardingThemeScreen}
-              options={{ headerShown: false }}
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
             />
             <Stack.Screen
               name="OnboardingImport"
               component={OnboardingImportScreen}
-              options={{ headerShown: false }}
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
             />
             <Stack.Screen
               name="Home"

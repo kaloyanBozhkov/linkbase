@@ -413,5 +413,29 @@
     "addConnectionsByVoice": "음성으로 연결 추가",
     "openSettings": "설정 열기",
     "dragToSearchOrAdd": "연결 검색 또는 추가를 위해 드래그"
+  },
+  "onboarding": {
+    "welcome": "Linkbase에 오신 것을 환영합니다",
+    "chooseLanguage": "선호하는 언어를 선택하세요",
+    "chooseTheme": "테마 선택",
+    "themeDescription": "스타일에 맞는 테마를 선택하세요",
+    "getStarted": "시작해볼까요!",
+    "enjoy": "즐기세요 ❤️",
+    "optionalImport": "선택적 가져오기",
+    "importFromJson": "연락처 가져오기",
+    "importContacts": "연락처 가져오기",
+    "importDescription": "JSON 파일에서 연결을 가져옵니다",
+    "startFresh": "새로 시작",
+    "startFreshDescription": "빈 연결 목록으로 시작합니다",
+    "skipForNow": "지금은 건너뛰기",
+    "skipImport": "가져오기 건너뛰기",
+    "canChangeLater": "설정에서 나중에 변경할 수 있습니다",
+    "importAnytime": "설정 메뉴에서 언제든지 데이터를 가져올 수 있습니다",
+    "exoTheme": "엑소 테마",
+    "exoDescription": "청록색 강조의 어두운 테마",
+    "warmPastel": "따뜻한 파스텔",
+    "warmPastelDescription": "따뜻한 분홍색 강조의 어두운 테마",
+    "lightMode": "라이트 모드",
+    "lightModeDescription": "파란색 강조의 깔끔한 라이트 테마"
   }
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -26,8 +26,27 @@ interface Props {
 
 const OnboardingLanguageScreen: React.FC<Props> = ({ navigation }) => {
   const { colors } = useThemeStore();
-  const { t } = useTranslation();
-  const { selectedLanguage, setSelectedLanguage, setCurrentStep } = useOnboardingStore();
+  const { t, changeLanguage } = useTranslation();
+  const {
+    selectedLanguage,
+    setSelectedLanguage,
+    setCurrentStep,
+    isInitializing,
+  } = useOnboardingStore();
+
+
+
+  // Initialize the language when component mounts
+  useEffect(
+    () => {
+      if (!isInitializing && selectedLanguage) {
+        // Apply the stored language immediately when component loads
+        changeLanguage(selectedLanguage as any);
+      }
+    },
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    []
+  );
 
   const languages = [
     { code: "en", name: "English", flag: "🇺🇸" },
@@ -50,15 +69,25 @@ const OnboardingLanguageScreen: React.FC<Props> = ({ navigation }) => {
   ];
 
   const handleLanguageSelect = async (languageCode: string) => {
+    // Apply the language change immediately first for instant visual feedback
+    await changeLanguage(languageCode as any);
     await setSelectedLanguage(languageCode);
     await setCurrentStep(1);
     navigation.navigate("OnboardingTheme");
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.primary }}>
-      <LinearGradient colors={colors.gradients.background} style={styles.gradient}>
-        <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background.primary }}
+    >
+      <LinearGradient
+        colors={colors.gradients.background}
+        style={styles.gradient}
+      >
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.header}>
             <Text style={[styles.title, { color: colors.text.primary }]}>
               {t("onboarding.welcome")}
@@ -76,9 +105,10 @@ const OnboardingLanguageScreen: React.FC<Props> = ({ navigation }) => {
                   styles.languageCard,
                   {
                     backgroundColor: colors.background.surface,
-                    borderColor: selectedLanguage === language.code 
-                      ? colors.border.focus 
-                      : colors.border.light,
+                    borderColor:
+                      selectedLanguage === language.code
+                        ? colors.border.focus
+                        : colors.border.light,
                     borderWidth: selectedLanguage === language.code ? 2 : 1,
                   },
                 ]}
@@ -87,15 +117,20 @@ const OnboardingLanguageScreen: React.FC<Props> = ({ navigation }) => {
                 <View style={styles.languageContent}>
                   <Text style={styles.flag}>{language.flag}</Text>
                   <View style={styles.languageInfo}>
-                    <Text style={[styles.languageName, { color: colors.text.primary }]}>
+                    <Text
+                      style={[
+                        styles.languageName,
+                        { color: colors.text.primary },
+                      ]}
+                    >
                       {language.name}
                     </Text>
                   </View>
                   {selectedLanguage === language.code && (
-                    <Ionicons 
-                      name="checkmark-circle" 
-                      size={24} 
-                      color={colors.text.accent} 
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={24}
+                      color={colors.text.accent}
                     />
                   )}
                 </View>

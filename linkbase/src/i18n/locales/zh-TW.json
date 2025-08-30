@@ -413,5 +413,29 @@
     "addConnectionsByVoice": "通過語音新增連結",
     "openSettings": "打開設定",
     "dragToSearchOrAdd": "拖動以搜尋或新增連結"
+  },
+  "onboarding": {
+    "welcome": "歡迎來到 Linkbase",
+    "chooseLanguage": "選擇您偏好的語言",
+    "chooseTheme": "選擇您的主題",
+    "themeDescription": "選擇符合您風格的主題",
+    "getStarted": "讓我們開始吧！",
+    "enjoy": "享受 ❤️",
+    "optionalImport": "可選匯入",
+    "importFromJson": "匯入聯繫人",
+    "importContacts": "匯入聯繫人",
+    "importDescription": "從 JSON 檔案中匯入您的聯繫人",
+    "startFresh": "重新開始",
+    "startFreshDescription": "從空的聯繫人清單開始",
+    "skipForNow": "暫時跳過",
+    "skipImport": "跳過匯入",
+    "canChangeLater": "您可以稍後在設定中更改",
+    "importAnytime": "您可隨時在設定選單中匯入資料",
+    "exoTheme": "Exo 主題",
+    "exoDescription": "深色主題，帶有青色點綴",
+    "warmPastel": "暖色粉彩",
+    "warmPastelDescription": "深色主題，帶有暖粉色點綴",
+    "lightMode": "亮色模式",
+    "lightModeDescription": "乾淨的亮色主題，帶有藍色點綴"
   }
 }

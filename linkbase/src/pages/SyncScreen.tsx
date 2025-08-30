@@ -15,6 +15,7 @@ import { trpc } from "@/utils/trpc";
 import { useSessionUserStore } from "@/hooks/useGetSessionUser";
 import * as Linking from "expo-linking";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from "react-i18next";
 
 const SyncScreen: React.FC = () => {
   const { colors } = useThemeStore();
@@ -26,19 +27,22 @@ const SyncScreen: React.FC = () => {
   // Storage keys for email sent state
   const EMAIL_SENT_KEY = "linkbase_email_sent_27-07-2025.6";
   const PENDING_EMAIL_KEY = "linkbase_pending_email_27-07-2025.6";
-  const { saveUserEmail, userEmail, loadUserEmail } =
-    useSessionUserStore();
-  const sendVerificationEmail = trpc.linkbase.users.sendVerificationEmail.useMutation();
+  const { saveUserEmail, userEmail, loadUserEmail } = useSessionUserStore();
+  const sendVerificationEmail =
+    trpc.linkbase.users.sendVerificationEmail.useMutation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const loadInitialState = async () => {
       try {
         await loadUserEmail();
-        
+
         // Load email sent state from storage
         const storedEmailSent = await AsyncStorage.getItem(EMAIL_SENT_KEY);
-        const storedPendingEmail = await AsyncStorage.getItem(PENDING_EMAIL_KEY);
-        
+        const storedPendingEmail = await AsyncStorage.getItem(
+          PENDING_EMAIL_KEY
+        );
+
         if (storedEmailSent === "1" && storedPendingEmail) {
           setIsEmailSent(true);
           setPendingEmail(storedPendingEmail);
@@ -47,7 +51,7 @@ const SyncScreen: React.FC = () => {
         console.error("Error loading initial state:", error);
       }
     };
-    
+
     loadInitialState();
   }, []);
 
@@ -55,22 +59,19 @@ const SyncScreen: React.FC = () => {
   useEffect(() => {
     const handleDeepLink = async (url: string) => {
       const parsed = Linking.parse(url);
-      if (parsed.path === 'sync' && parsed.queryParams?.verified === 'true') {
+      if (parsed.path === "sync" && parsed.queryParams?.verified === "true") {
         const verifiedEmail = parsed.queryParams.email as string;
         if (verifiedEmail) {
           saveUserEmail(verifiedEmail);
           loadUserEmail();
           setIsEmailSent(false);
           setPendingEmail(null);
-          
+
           // Clear email sent state from storage since verification is complete
           await AsyncStorage.removeItem(EMAIL_SENT_KEY);
           await AsyncStorage.removeItem(PENDING_EMAIL_KEY);
-          
-          Alert.alert(
-            t("sync.emailVerified"), 
-            t("sync.emailVerifiedMessage")
-          );
+
+          Alert.alert(t("sync.emailVerified"), t("sync.emailVerifiedMessage"));
         }
       }
     };
@@ -83,7 +84,7 @@ const SyncScreen: React.FC = () => {
     });
 
     // Listen for incoming links
-    const subscription = Linking.addEventListener('url', (event) => {
+    const subscription = Linking.addEventListener("url", (event) => {
       handleDeepLink(event.url);
     });
 
@@ -98,18 +99,21 @@ const SyncScreen: React.FC = () => {
         Alert.alert(t("sync.invalidEmail"), t("sync.pleaseEnterValidEmail"));
         return;
       }
-      
+
       setIsLoading(true);
       await sendVerificationEmail.mutateAsync({ email });
       setPendingEmail(email);
       setIsEmailSent(true);
       setEmail(""); // Clear the input
-      
+
       // Save email sent state to storage
       await AsyncStorage.setItem(EMAIL_SENT_KEY, "1");
       await AsyncStorage.setItem(PENDING_EMAIL_KEY, email);
     } catch (e: any) {
-              Alert.alert(t("common.error"), e?.message || t("sync.failedToSendVerification"));
+      Alert.alert(
+        t("common.error"),
+        e?.message || t("sync.failedToSendVerification")
+      );
     } finally {
       setIsLoading(false);
     }
@@ -120,7 +124,7 @@ const SyncScreen: React.FC = () => {
       setIsEmailSent(false);
       setPendingEmail(null);
       setEmail("");
-      
+
       // Clear email sent state from storage
       await AsyncStorage.removeItem(EMAIL_SENT_KEY);
       await AsyncStorage.removeItem(PENDING_EMAIL_KEY);
@@ -236,7 +240,8 @@ const SyncScreen: React.FC = () => {
                   <Text
                     style={[styles.infoText, { color: colors.text.secondary }]}
                   >
-                    We&apos;ve sent a verification link to your email address. Click the link to complete the setup.
+                    We&apos;ve sent a verification link to your email address.
+                    Click the link to complete the setup.
                   </Text>
                 </View>
               </View>
@@ -324,8 +329,8 @@ const SyncScreen: React.FC = () => {
                 style={[
                   styles.verifyButton,
                   {
-                    backgroundColor: isLoading 
-                      ? colors.button.secondary.background + '80' // Add transparency when loading
+                    backgroundColor: isLoading
+                      ? colors.button.secondary.background + "80" // Add transparency when loading
                       : colors.button.secondary.background,
                     borderColor: colors.button.secondary.border,
                     opacity: isLoading ? 0.7 : 1,

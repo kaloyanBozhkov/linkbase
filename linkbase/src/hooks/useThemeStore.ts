@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const THEME_KEY = "linkbase_theme_27-07-2025.6";
+const THEME_KEY = "linkbase_theme_27-08-2025.01";
 
-export type ThemeName = "Exo Theme" | "Warm Pastel" | "Light Mode";
+export type ThemeId = "exoTheme" | "warmPastel" | "lightMode";
 
 export interface ThemeColors {
   background: {
@@ -189,36 +189,53 @@ const lightModeTheme: ThemeColors = {
   },
 };
 
-const themeNameToColors: Record<ThemeName, ThemeColors> = {
-  "Exo Theme": exoTheme,
-  "Warm Pastel": warmPastelTheme,
-  "Light Mode": lightModeTheme,
+const themeIdToColors: Record<ThemeId, ThemeColors> = {
+  "exoTheme": exoTheme,
+  "warmPastel": warmPastelTheme,
+  "lightMode": lightModeTheme,
 };
 
 interface ThemeStoreState {
-  themeName: ThemeName;
+  themeId: ThemeId;
   colors: ThemeColors;
   isInitializing: boolean;
-  setThemeName: (name: ThemeName) => Promise<void>;
-  initializeTheme: () => Promise<void>;
+  setThemeId: (id: ThemeId) => Promise<void>;
+  initializeTheme: (onboardingSelectedTheme?: string) => Promise<void>;
 }
 
 export const useThemeStore = create<ThemeStoreState>((set) => ({
-  themeName: "Exo Theme",
-  colors: themeNameToColors["Exo Theme"],
+  themeId: "exoTheme",
+  colors: themeIdToColors["exoTheme"],
   isInitializing: true,
-  initializeTheme: async () => {
+  initializeTheme: async (onboardingSelectedTheme?: string) => {
     try {
-      const stored = await AsyncStorage.getItem(THEME_KEY);
-      const name = (stored as ThemeName | null) || "Exo Theme";
-      set({ themeName: name, colors: themeNameToColors[name], isInitializing: false });
+      // Check theme storage for theme preference
+      const storedTheme = await AsyncStorage.getItem(THEME_KEY);
+      
+      let themeId: ThemeId = "exoTheme";
+      
+      // First check onboarding store for theme selection (if provided)
+      if (onboardingSelectedTheme && themeIdToColors[onboardingSelectedTheme as ThemeId]) {
+        themeId = onboardingSelectedTheme as ThemeId;
+      }
+      
+      // Fallback to theme storage if no onboarding theme
+      if (themeId === "exoTheme" && storedTheme) {
+        const storedThemeId = storedTheme as ThemeId;
+        if (themeIdToColors[storedThemeId]) {
+          themeId = storedThemeId;
+        }
+      }
+      
+      set({ themeId, colors: themeIdToColors[themeId], isInitializing: false });
     } catch (e) {
+      console.error("Error initializing theme:", e);
       set({ isInitializing: false });
     }
   },
-  setThemeName: async (name: ThemeName) => {
-    await AsyncStorage.setItem(THEME_KEY, name);
-    set({ themeName: name, colors: themeNameToColors[name] });
+  setThemeId: async (id: ThemeId) => {
+    await AsyncStorage.setItem(THEME_KEY, id);
+    set({ themeId: id, colors: themeIdToColors[id] });
   },
 }));
 

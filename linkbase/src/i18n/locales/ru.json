@@ -413,5 +413,29 @@
     "addConnectionsByVoice": "Добавить связи голосом",
     "openSettings": "Открыть настройки",
     "dragToSearchOrAdd": "Перетащите для поиска или добавления связи"
+  },
+  "onboarding": {
+    "welcome": "Добро пожаловать в Linkbase",
+    "chooseLanguage": "Выберите предпочитаемый язык",
+    "chooseTheme": "Выберите вашу тему",
+    "themeDescription": "Выберите тему, которая соответствует вашему стилю",
+    "getStarted": "Начнем!",
+    "enjoy": "Наслаждайтесь ❤️",
+    "optionalImport": "Опциональный импорт",
+    "importFromJson": "Импортировать контакты",
+    "importContacts": "Импортировать контакты",
+    "importDescription": "Импортируйте ваши контакты из файла JSON",
+    "startFresh": "Начать заново",
+    "startFreshDescription": "Начните с пустого списка контактов",
+    "skipForNow": "Пропустить пока",
+    "skipImport": "Пропустить импорт",
+    "canChangeLater": "Вы можете изменить это позже в Настройках",
+    "importAnytime": "Вы можете импортировать данные в любое время из меню Настройки",
+    "exoTheme": "Тема Exo",
+    "exoDescription": "Темная тема с акцентами цвета циан",
+    "warmPastel": "Теплый пастель",
+    "warmPastelDescription": "Темная тема с теплыми розовыми акцентами",
+    "lightMode": "Светлый режим",
+    "lightModeDescription": "Чистая светлая тема с синими акцентами"
   }
 }

@@ -414,5 +414,29 @@
     "addConnectionsByVoice": "通过语音添加连接",
     "openSettings": "打开设置",
     "dragToSearchOrAdd": "拖动以搜索或添加连接"
+  },
+  "onboarding": {
+    "welcome": "欢迎使用 Linkbase",
+    "chooseLanguage": "选择您的首选语言",
+    "chooseTheme": "选择您的主题",
+    "themeDescription": "选择适合您风格的主题",
+    "getStarted": "让我们开始吧！",
+    "enjoy": "享受 ❤️",
+    "optionalImport": "可选导入",
+    "importFromJson": "导入联系人",
+    "importContacts": "导入联系人",
+    "importDescription": "从 JSON 文件导入您的联系人",
+    "startFresh": "全新开始",
+    "startFreshDescription": "从空的联系人列表开始",
+    "skipForNow": "暂时跳过",
+    "skipImport": "跳过导入",
+    "canChangeLater": "您可以稍后在设置中更改",
+    "importAnytime": "您可以随时从设置菜单导入数据",
+    "exoTheme": "Exo 主题",
+    "exoDescription": "带有青色点缀的黑暗主题",
+    "warmPastel": "暖色调",
+    "warmPastelDescription": "带有暖粉色点缀的黑暗主题",
+    "lightMode": "浅色模式",
+    "lightModeDescription": "带有蓝色点缀的简洁浅色主题"
   }
 }

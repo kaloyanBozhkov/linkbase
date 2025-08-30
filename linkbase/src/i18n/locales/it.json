@@ -413,5 +413,29 @@
     "addConnectionsByVoice": "Aggiungi connessioni tramite voce",
     "openSettings": "Apri impostazioni",
     "dragToSearchOrAdd": "Trascina per cercare o aggiungere una connessione"
+  },
+  "onboarding": {
+    "welcome": "Benvenuto su Linkbase",
+    "chooseLanguage": "Scegli la tua lingua preferita",
+    "chooseTheme": "Scegli il tuo tema",
+    "themeDescription": "Scegli un tema che rispecchia il tuo stile",
+    "getStarted": "Iniziamo!",
+    "enjoy": "Divertiti ❤️",
+    "optionalImport": "Importazione facoltativa",
+    "importFromJson": "Importa contatti",
+    "importContacts": "Importa contatti",
+    "importDescription": "Importa le tue connessioni da un file JSON",
+    "startFresh": "Inizia da zero",
+    "startFreshDescription": "Inizia con una lista di connessioni vuota",
+    "skipForNow": "Salta per ora",
+    "skipImport": "Salta importazione",
+    "canChangeLater": "Puoi cambiare questa opzione più tardi nelle Impostazioni",
+    "importAnytime": "Puoi importare dati in qualsiasi momento dal menu Impostazioni",
+    "exoTheme": "Tema Exo",
+    "exoDescription": "Tema scuro con accenti color ciano",
+    "warmPastel": "Pastello Caldo",
+    "warmPastelDescription": "Tema scuro con accenti rosa caldo",
+    "lightMode": "Modalità Chiara",
+    "lightModeDescription": "Tema chiaro e pulito con accenti blu"
   }
 }

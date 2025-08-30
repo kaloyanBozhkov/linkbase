@@ -413,5 +413,29 @@
     "addConnectionsByVoice": "Προσθέστε συνδέσεις με φωνή",
     "openSettings": "Άνοιγμα ρυθμίσεων",
     "dragToSearchOrAdd": "Σύρετε για αναζήτηση ή προσθήκη σύνδεσης"
+  },
+  "onboarding": {
+    "welcome": "Καλώς ήρθατε στο Linkbase",
+    "chooseLanguage": "Επιλέξτε την προτιμώμενη γλώσσα σας",
+    "chooseTheme": "Επιλέξτε το Θέμα σας",
+    "themeDescription": "Επιλέξτε ένα θέμα που ταιριάζει στο στυλ σας",
+    "getStarted": "Ας ξεκινήσουμε!",
+    "enjoy": "Απολαύστε ❤️",
+    "optionalImport": "Προαιρετική Εισαγωγή",
+    "importFromJson": "Εισαγωγή Επαφών",
+    "importContacts": "Εισαγωγή Επαφών",
+    "importDescription": "Εισάγετε τις επαφές σας από αρχείο JSON",
+    "startFresh": "Ξεκινήστε Νέα",
+    "startFreshDescription": "Ξεκινήστε με κενή λίστα επαφών",
+    "skipForNow": "Παράλειψη προς το παρόν",
+    "skipImport": "Παράλειψη Εισαγωγής",
+    "canChangeLater": "Μπορείτε να το αλλάξετε αργότερα στις Ρυθμίσεις",
+    "importAnytime": "Μπορείτε να εισάγετε δεδομένα οποιαδήποτε στιγμή από το μενού Ρυθμίσεων",
+    "exoTheme": "Exo Θέμα",
+    "exoDescription": "Σκοτεινό θέμα με γαλάζιες πινελιές",
+    "warmPastel": "Ζεστό Παστέλ",
+    "warmPastelDescription": "Σκοτεινό θέμα με ζεστές ροζ πινελιές",
+    "lightMode": "Ελαφρύ Θέμα",
+    "lightModeDescription": "Καθαρό ελαφρύ θέμα με μπλε πινελιές"
   }
 }

@@ -413,5 +413,29 @@
     "addConnectionsByVoice": "Adaugă conexiuni vocal",
     "openSettings": "Deschide setările",
     "dragToSearchOrAdd": "Trage pentru a căuta sau a adăuga o conexiune"
+  },
+  "onboarding": {
+    "welcome": "Bun venit la Linkbase",
+    "chooseLanguage": "Alegeți limba preferată",
+    "chooseTheme": "Alegeți tema dvs.",
+    "themeDescription": "Alegeți o temă care se potrivește stilului dvs.",
+    "getStarted": "Să începem!",
+    "enjoy": "Bucurați-vă ❤️",
+    "optionalImport": "Import opțional",
+    "importFromJson": "Importă contacte",
+    "importContacts": "Importă contacte",
+    "importDescription": "Importă conexiunile dintr-un fișier JSON",
+    "startFresh": "Începe de la zero",
+    "startFreshDescription": "Începe cu o listă de conexiuni goală",
+    "skipForNow": "Sari peste acum",
+    "skipImport": "Sari peste import",
+    "canChangeLater": "Puteți schimba asta mai târziu în Setări",
+    "importAnytime": "Puteți importa date oricând din meniul Setări",
+    "exoTheme": "Tema Exo",
+    "exoDescription": "Temă închisă cu accente cian",
+    "warmPastel": "Pastel cald",
+    "warmPastelDescription": "Temă închisă cu accente roz calde",
+    "lightMode": "Modul lumină",
+    "lightModeDescription": "Temă luminoasă curată cu accente albastre"
   }
 }

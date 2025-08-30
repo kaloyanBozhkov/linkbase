@@ -413,5 +413,29 @@
     "addConnectionsByVoice": "वॉइस द्वारा कनेक्शंस जोड़ें",
     "openSettings": "सेटिंग्स खोलें",
     "dragToSearchOrAdd": "खोजने या जोड़ने के लिए खींचें"
+  },
+  "onboarding": {
+    "welcome": "लिंकबेस में आपका स्वागत है",
+    "chooseLanguage": "अपनी पसंदीदा भाषा चुनें",
+    "chooseTheme": "अपनी थीम चुनें",
+    "themeDescription": "एक थीम चुनें जो आपके स्टाइल से मेल खाती हो",
+    "getStarted": "चलो आपको शुरू करते हैं!",
+    "enjoy": "आनंद लें ❤️",
+    "optionalImport": "वैकल्पिक आयात",
+    "importFromJson": "संपर्क आयात करें",
+    "importContacts": "संपर्क आयात करें",
+    "importDescription": "अपने कनेक्शंस को JSON फ़ाइल से आयात करें",
+    "startFresh": "नया शुरू करें",
+    "startFreshDescription": "खाली संपर्क सूची से शुरू करें",
+    "skipForNow": "अभी छोड़ें",
+    "skipImport": "आयात छोड़ें",
+    "canChangeLater": "आप इसे बाद में सेटिंग्स में बदल सकते हैं",
+    "importAnytime": "आप किसी भी समय सेटिंग्स मेन्यू से डेटा आयात कर सकते हैं",
+    "exoTheme": "एक्सो थीम",
+    "exoDescription": "सियान एक्सेंट के साथ गहरे रंग की थीम",
+    "warmPastel": "वॉर्म पेस्टल",
+    "warmPastelDescription": "गुलाबी एक्सेंट के साथ गहरी थीम",
+    "lightMode": "लाइट मोड",
+    "lightModeDescription": "नीले एक्सेंट के साथ साफ सफेद थीम"
   }
 }

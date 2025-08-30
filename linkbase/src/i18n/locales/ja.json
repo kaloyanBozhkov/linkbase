@@ -413,5 +413,29 @@
     "addConnectionsByVoice": "音声で接続を追加",
     "openSettings": "設定を開く",
     "dragToSearchOrAdd": "ドラッグして検索または接続を追加"
+  },
+  "onboarding": {
+    "welcome": "Linkbaseへようこそ",
+    "chooseLanguage": "お好みの言語を選択してください",
+    "chooseTheme": "テーマを選択してください",
+    "themeDescription": "スタイルに合ったテーマを選びましょう",
+    "getStarted": "さあ、始めましょう！",
+    "enjoy": "楽しんでください ❤️",
+    "optionalImport": "インポートはオプション",
+    "importFromJson": "連絡先をインポート",
+    "importContacts": "連絡先をインポート",
+    "importDescription": "JSONファイルからあなたのつながりをインポート",
+    "startFresh": "新たに始める",
+    "startFreshDescription": "空の連絡リストで始める",
+    "skipForNow": "今はスキップ",
+    "skipImport": "インポートをスキップ",
+    "canChangeLater": "これは後で設定から変更できます",
+    "importAnytime": "設定メニューからいつでもデータをインポートできます",
+    "exoTheme": "エクソテーマ",
+    "exoDescription": "シアンのアクセントがあるダークテーマ",
+    "warmPastel": "ウォームパステル",
+    "warmPastelDescription": "暖かいピンクのアクセントがあるダークテーマ",
+    "lightMode": "ライトモード",
+    "lightModeDescription": "青いアクセントがある清潔なライトテーマ"
   }
 }

@@ -413,5 +413,29 @@
     "addConnectionsByVoice": "Voeg verbindingen toe via stem",
     "openSettings": "Open instellingen",
     "dragToSearchOrAdd": "Sleep om te zoeken of een verbinding toe te voegen"
+  },
+  "onboarding": {
+    "welcome": "Welkom bij Linkbase",
+    "chooseLanguage": "Kies je voorkeurstaal",
+    "chooseTheme": "Kies je thema",
+    "themeDescription": "Kies een thema dat bij jouw stijl past",
+    "getStarted": "Laten we beginnen!",
+    "enjoy": "Geniet ❤️",
+    "optionalImport": "Optionele import",
+    "importFromJson": "Contacten importeren",
+    "importContacts": "Contacten importeren",
+    "importDescription": "Importeer je connecties vanuit een JSON-bestand",
+    "startFresh": "Begin opnieuw",
+    "startFreshDescription": "Start met een lege connectielijst",
+    "skipForNow": "Sla over voor nu",
+    "skipImport": "Importeren overslaan",
+    "canChangeLater": "Je kunt dit later veranderen in Instellingen",
+    "importAnytime": "Je kunt gegevens altijd importeren via het menu Instellingen",
+    "exoTheme": "Exo-thema",
+    "exoDescription": "Donker thema met cyaan accenten",
+    "warmPastel": "Warme pastel",
+    "warmPastelDescription": "Donker thema met warme roze accenten",
+    "lightMode": "Lichte modus",
+    "lightModeDescription": "Schone lichte modus met blauwe accenten"
   }
 }

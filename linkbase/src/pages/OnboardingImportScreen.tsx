@@ -29,6 +29,8 @@ const OnboardingImportScreen: React.FC<Props> = ({ navigation }) => {
   const { t } = useTranslation();
   const { setHasImportedData, setCompleted } = useOnboardingStore();
 
+
+
   const handleImportData = async () => {
     await setHasImportedData(true);
     navigation.navigate("ImportExport");
@@ -40,40 +42,35 @@ const OnboardingImportScreen: React.FC<Props> = ({ navigation }) => {
     navigation.navigate("Home");
   };
 
+
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.primary }}>
-      <LinearGradient colors={colors.gradients.background} style={styles.gradient}>
-        <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background.primary }}
+    >
+      <LinearGradient
+        colors={colors.gradients.background}
+        style={styles.gradient}
+      >
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.header}>
             <Text style={[styles.title, { color: colors.text.primary }]}>
               {t("onboarding.getStarted")}
             </Text>
+            <Text
+              style={[
+                styles.mainButtonDescription,
+                { color: colors.button.primary.text },
+              ]}
+            >
+              {t("onboarding.startFreshDescription")}
+            </Text>
             <Text style={[styles.subtitle, { color: colors.text.muted }]}>
               {t("onboarding.enjoy")}
             </Text>
-          </View>
-
-          <View style={styles.mainButtonContainer}>
-            <TouchableOpacity
-              style={[
-                styles.mainButton,
-                {
-                  backgroundColor: colors.button.primary.background[0],
-                  borderColor: colors.button.primary.background[0],
-                },
-              ]}
-              onPress={handleGetStarted}
-            >
-              <View style={styles.mainButtonIcon}>
-                <Ionicons name="rocket" size={32} color={colors.button.primary.text} />
-              </View>
-              <Text style={[styles.mainButtonTitle, { color: colors.button.primary.text }]}>
-                {t("onboarding.getStarted")}
-              </Text>
-              <Text style={[styles.mainButtonDescription, { color: colors.button.primary.text }]}>
-                {t("onboarding.startFreshDescription")}
-              </Text>
-            </TouchableOpacity>
           </View>
 
           <View style={styles.optionalSection}>
@@ -91,12 +88,20 @@ const OnboardingImportScreen: React.FC<Props> = ({ navigation }) => {
               onPress={handleImportData}
             >
               <View style={styles.optionIcon}>
-                <Ionicons name="cloud-upload" size={24} color={colors.text.accent} />
+                <Ionicons
+                  name="cloud-upload"
+                  size={24}
+                  color={colors.text.accent}
+                />
               </View>
-              <Text style={[styles.optionTitle, { color: colors.text.primary }]}>
+              <Text
+                style={[styles.optionTitle, { color: colors.text.primary }]}
+              >
                 {t("onboarding.importFromJson")}
               </Text>
-              <Text style={[styles.optionDescription, { color: colors.text.muted }]}>
+              <Text
+                style={[styles.optionDescription, { color: colors.text.muted }]}
+              >
                 {t("onboarding.importDescription")}
               </Text>
             </TouchableOpacity>
@@ -104,30 +109,40 @@ const OnboardingImportScreen: React.FC<Props> = ({ navigation }) => {
 
           <View style={styles.infoSection}>
             <View style={styles.infoCard}>
-              <Ionicons name="information-circle" size={20} color={colors.text.accent} />
+              <Ionicons
+                name="information-circle"
+                size={20}
+                color={colors.text.accent}
+              />
               <Text style={[styles.infoText, { color: colors.text.muted }]}>
                 {t("onboarding.importAnytime")}
               </Text>
             </View>
           </View>
-
-          <View style={styles.footer}>
-            <TouchableOpacity
-              style={[
-                styles.getStartedButton,
-                {
-                  backgroundColor: colors.button.primary.background[0],
-                  borderColor: colors.button.primary.background[0],
-                },
-              ]}
-              onPress={handleGetStarted}
-            >
-              <Text style={[styles.getStartedButtonText, { color: colors.button.primary.text }]}>
-                {t("onboarding.getStarted")}
-              </Text>
-            </TouchableOpacity>
-          </View>
         </ScrollView>
+
+        {/* Fixed Get Started button at bottom */}
+        <View style={styles.fixedFooter}>
+          <TouchableOpacity
+            style={[
+              styles.getStartedButton,
+              {
+                backgroundColor: colors.button.primary.background[0],
+                borderColor: colors.button.primary.background[0],
+              },
+            ]}
+            onPress={handleGetStarted}
+          >
+            <Text
+              style={[
+                styles.getStartedButtonText,
+                { color: colors.button.primary.text },
+              ]}
+            >
+              {t("onboarding.getStarted")}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </LinearGradient>
     </SafeAreaView>
   );
@@ -139,7 +154,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 20,
-    minHeight: "100%",
+    paddingBottom: 100, // Add padding to account for fixed footer
   },
   header: {
     alignItems: "center",
@@ -239,10 +254,15 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginLeft: 8,
   },
-  footer: {
+  fixedFooter: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    backgroundColor: "transparent",
     alignItems: "center",
-    marginTop: "auto",
-    paddingTop: 20,
   },
   getStartedButton: {
     paddingHorizontal: 32,
@@ -251,6 +271,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     minWidth: 200,
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   getStartedButtonText: {
     fontSize: 18,
