@@ -17,12 +17,14 @@ import type { StackNavigationProp } from "@react-navigation/stack";
 import type { RootStackParamList } from "../../App";
 import { API_CONFIG } from "@/config/api.config";
 import { useThemeStore } from "@/hooks/useThemeStore";
+import { useOnboardingStore } from "@/hooks/useOnboardingStore";
 import { useTranslation } from "@/hooks/useTranslation";
 
 const SettingsScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { colors } = useThemeStore();
   const { t, currentLanguage, changeLanguage, languages } = useTranslation();
+  const { resetOnboarding } = useOnboardingStore();
   const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
 
   const settingsItems = [
@@ -78,6 +80,13 @@ const SettingsScreen: React.FC = () => {
       subtitle: t("settings.sync.subtitle"),
       iconFamily: "MaterialIcons" as const,
       onPress: () => navigation.navigate("Sync"),
+    },
+    {
+      icon: "refresh",
+      title: "Reset Onboarding",
+      subtitle: "Restart the onboarding flow",
+      iconFamily: "MaterialIcons" as const,
+      onPress: () => resetOnboarding(),
     },
   ];
 

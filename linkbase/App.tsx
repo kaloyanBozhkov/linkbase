@@ -15,15 +15,20 @@ import AppearanceScreen from "./src/pages/AppearanceScreen";
 import NotificationsScreen from "./src/pages/NotificationsScreen";
 import SyncScreen from "./src/pages/SyncScreen";
 import ImportExportScreen from "./src/pages/ImportExportScreen";
+import OnboardingLanguageScreen from "./src/pages/OnboardingLanguageScreen";
+import OnboardingThemeScreen from "./src/pages/OnboardingThemeScreen";
+import OnboardingImportScreen from "./src/pages/OnboardingImportScreen";
 import { useSessionUserStore } from "./src/hooks/useGetSessionUser";
 import LoadingScreen from "./src/pages/LoadingScreen";
 import { TRPCProvider } from "./src/providers/TRPCProvider";
 import { trpc } from "./src/utils/trpc";
 import { Alert } from "react-native";
 import { useThemeStore } from "./src/hooks/useThemeStore";
+import { useOnboardingStore } from "./src/hooks/useOnboardingStore";
 import { useTranslation } from "./src/hooks/useTranslation";
 
 export type RootStackParamList = {
+  Loading: undefined;
   Home: undefined;
   AddConnection: undefined;
   AddVoiceConnections: undefined;
@@ -35,6 +40,9 @@ export type RootStackParamList = {
   Notifications: undefined;
   Sync: undefined;
   ImportExport: undefined;
+  OnboardingLanguage: undefined;
+  OnboardingTheme: undefined;
+  OnboardingImport: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -44,6 +52,7 @@ const App: React.FC = () => {
     useSessionUserStore();
   const { mutateAsync: createUser } = trpc.linkbase.users.create.useMutation();
   const { initializeTheme } = useThemeStore();
+  const { initializeOnboarding, isCompleted: isOnboardingCompleted, isInitializing: isOnboardingInitializing } = useOnboardingStore();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -58,18 +67,25 @@ const App: React.FC = () => {
         return "";
       }
     });
-  }, [initializeUserId, userId, isInitializing, createUser]);
+  }, [initializeUserId, userId, isInitializing, createUser, t]);
 
   useEffect(() => {
     initializeTheme();
-  }, [initializeTheme]);
+    initializeOnboarding();
+  }, [initializeTheme, initializeOnboarding]);
 
   return (
     <SafeAreaProvider>
       <PaperProvider>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Home"
+            initialRouteName={
+              isInitializing || isInitialLoading || isOnboardingInitializing 
+                ? "Loading" 
+                : !isOnboardingCompleted 
+                ? "OnboardingLanguage" 
+                : "Home"
+            }
             screenOptions={() => ({
               headerStyle: {
                 backgroundColor: useThemeStore.getState().colors.background.surface,
@@ -80,71 +96,81 @@ const App: React.FC = () => {
               },
             })}
           >
-            {isInitializing || isInitialLoading ? (
-              <Stack.Screen
-                name="Home"
-                component={LoadingScreen}
-                options={{ title: "Linkbase" }}
-              />
-            ) : (
-              <>
-                <Stack.Screen
-                  name="Home"
-                  component={HomeScreen}
-                  options={{ title: "Linkbase" }}
-                />
-                <Stack.Screen
-                  name="AddConnection"
-                  component={AddConnectionScreen}
-                  options={{ title: "Add Connection" }}
-                />
-                <Stack.Screen
-                  name="AddVoiceConnections"
-                  component={AddVoiceConnectionsScreen}
-                  options={{ title: "Voice Connections" }}
-                />
-                <Stack.Screen
-                  name="ConnectionDetail"
-                  component={ConnectionDetailScreen}
-                  options={{ title: "Connection Details" }}
-                />
-                <Stack.Screen
-                  name="EditConnection"
-                  component={EditConnectionScreen}
-                  options={{ title: "Edit Connection" }}
-                />
-                <Stack.Screen
-                  name="Settings"
-                  component={SettingsScreen}
-                  options={{ title: "Settings" }}
-                />
-                <Stack.Screen
-                  name="HelpSupport"
-                  component={HelpSupportScreen}
-                  options={{ title: "Help & Support" }}
-                />
-                <Stack.Screen
-                  name="Appearance"
-                  component={AppearanceScreen}
-                  options={{ title: "Appearance" }}
-                />
-                <Stack.Screen
-                  name="Notifications"
-                  component={NotificationsScreen}
-                  options={{ title: "Notifications" }}
-                />
-                <Stack.Screen
-                  name="Sync"
-                  component={SyncScreen}
-                  options={{ title: "Sync" }}
-                />
-                <Stack.Screen
-                  name="ImportExport"
-                  component={ImportExportScreen}
-                  options={{ title: "Import & Export" }}
-                />
-              </>
-            )}
+            <Stack.Screen
+              name="Loading"
+              component={LoadingScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="OnboardingLanguage"
+              component={OnboardingLanguageScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="OnboardingTheme"
+              component={OnboardingThemeScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="OnboardingImport"
+              component={OnboardingImportScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{ title: "Linkbase" }}
+            />
+            <Stack.Screen
+              name="AddConnection"
+              component={AddConnectionScreen}
+              options={{ title: "Add Connection" }}
+            />
+            <Stack.Screen
+              name="AddVoiceConnections"
+              component={AddVoiceConnectionsScreen}
+              options={{ title: "Voice Connections" }}
+            />
+            <Stack.Screen
+              name="ConnectionDetail"
+              component={ConnectionDetailScreen}
+              options={{ title: "Connection Details" }}
+            />
+            <Stack.Screen
+              name="EditConnection"
+              component={EditConnectionScreen}
+              options={{ title: "Edit Connection" }}
+            />
+            <Stack.Screen
+              name="Settings"
+              component={SettingsScreen}
+              options={{ title: "Settings" }}
+            />
+            <Stack.Screen
+              name="HelpSupport"
+              component={HelpSupportScreen}
+              options={{ title: "Help & Support" }}
+            />
+            <Stack.Screen
+              name="Appearance"
+              component={AppearanceScreen}
+              options={{ title: "Appearance" }}
+            />
+            <Stack.Screen
+              name="Notifications"
+              component={NotificationsScreen}
+              options={{ title: "Notifications" }}
+            />
+            <Stack.Screen
+              name="Sync"
+              component={SyncScreen}
+              options={{ title: "Sync" }}
+            />
+            <Stack.Screen
+              name="ImportExport"
+              component={ImportExportScreen}
+              options={{ title: "Import & Export" }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

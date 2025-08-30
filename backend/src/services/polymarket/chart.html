@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polymarket Chart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .loading {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Polymarket Price Chart</h1>
+            <div class="flex items-center justify-center space-x-4 mt-4">
+                <button id="prev-hour" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <p class="text-lg text-gray-600 font-medium" id="event-title">Loading...</p>
+                <button id="next-hour" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mt-4 flex items-center justify-center space-x-4">
+                <div>
+                    <label for="date-picker" class="block text-sm font-medium text-gray-700 mb-1">Date:</label>
+                    <input type="date" id="date-picker" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label for="time-picker" class="block text-sm font-medium text-gray-700 mb-1">Time:</label>
+                    <select id="time-picker" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Loading...</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button id="apply-time" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Container -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- UP Token Chart -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="mb-4">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-2">UP Token Price History</h2>
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span id="up-last-price">Last Price: --</span>
+                        <span id="up-price-change">Change: --</span>
+                        <span id="up-data-points">Data Points: --</span>
+                    </div>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="up-loading" class="flex items-center justify-center h-64">
+                    <div class="text-center">
+                        <div class="loading w-8 h-8 bg-green-500 rounded-full mx-auto mb-2"></div>
+                        <p class="text-gray-500">Loading UP token data...</p>
+                    </div>
+                </div>
+
+                <!-- Chart Canvas -->
+                <div id="up-chart-container" class="hidden">
+                    <canvas id="upPriceChart" width="400" height="200"></canvas>
+                </div>
+
+                <!-- Error State -->
+                <div id="up-error" class="hidden text-center py-8">
+                    <div class="text-red-500 text-6xl mb-4">⚠️</div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Failed to load UP data</h3>
+                    <p class="text-gray-600 mb-4" id="up-error-message">An error occurred while fetching the UP token data.</p>
+                    <button onclick="loadChartData()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+
+            <!-- DOWN Token Chart -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="mb-4">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-2">DOWN Token Price History</h2>
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span id="down-last-price">Last Price: --</span>
+                        <span id="down-price-change">Change: --</span>
+                        <span id="down-data-points">Data Points: --</span>
+                    </div>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="down-loading" class="flex items-center justify-center h-64">
+                    <div class="text-center">
+                        <div class="loading w-8 h-8 bg-red-500 rounded-full mx-auto mb-2"></div>
+                        <p class="text-gray-500">Loading DOWN token data...</p>
+                    </div>
+                </div>
+
+                <!-- Chart Canvas -->
+                <div id="down-chart-container" class="hidden">
+                    <canvas id="downPriceChart" width="400" height="200"></canvas>
+                </div>
+
+                <!-- Error State -->
+                <div id="down-error" class="hidden text-center py-8">
+                    <div class="text-red-500 text-6xl mb-4">⚠️</div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Failed to load DOWN data</h3>
+                    <p class="text-gray-600 mb-4" id="down-error-message">An error occurred while fetching the DOWN token data.</p>
+                    <button onclick="loadChartData()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let upChart = null;
+        let downChart = null;
+        let currentTargetTime = null;
+
+        // Initialize current target time (next round hour)
+        function initializeTargetTime() {
+            const now = new Date();
+            // Convert to Eastern Time
+            const etTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+            const nextHour = new Date(etTime);
+            nextHour.setHours(etTime.getHours() + 1, 0, 0, 0);
+            currentTargetTime = nextHour;
+        }
+
+        // Get current date and next hour for the slug
+        function getCurrentSlug() {
+            if (!currentTargetTime) {
+                initializeTargetTime();
+            }
+            
+            const month = currentTargetTime.toLocaleString('en-US', { month: 'long' }).toLowerCase();
+            const day = currentTargetTime.getDate();
+            const hour = currentTargetTime.getHours();
+            const ampm = hour >= 12 ? 'pm' : 'am';
+            const displayHour = hour % 12 || 12;
+            
+            return `bitcoin-up-or-down-${month}-${day}-${displayHour}${ampm}-et`;
+        }
+
+        // Format the display title
+        function formatDisplayTitle() {
+            if (!currentTargetTime) {
+                initializeTargetTime();
+            }
+            
+            const month = currentTargetTime.toLocaleString('en-US', { month: 'long' });
+            const day = currentTargetTime.getDate();
+            const hour = currentTargetTime.getHours();
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            
+            return `Bitcoin Up or Down - ${month} ${day}, ${displayHour}${ampm} ET`;
+        }
+
+        // Navigate to previous hour
+        function goToPreviousHour() {
+            if (!currentTargetTime) {
+                initializeTargetTime();
+            }
+            
+            currentTargetTime.setHours(currentTargetTime.getHours() - 1);
+            updateNavigationButtons();
+            updateDisplayTitle();
+            updateDateTimePickers();
+            loadChartData();
+        }
+
+        // Navigate to next hour
+        function goToNextHour() {
+            if (!currentTargetTime) {
+                initializeTargetTime();
+            }
+            
+            const now = new Date();
+            // Convert to Eastern Time for comparison
+            const etTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+            const nextRoundHour = new Date(etTime);
+            nextRoundHour.setHours(etTime.getHours() + 1, 0, 0, 0);
+            
+            // Don't allow going beyond the next round hour
+            if (currentTargetTime.getTime() >= nextRoundHour.getTime()) {
+                return;
+            }
+            
+            currentTargetTime.setHours(currentTargetTime.getHours() + 1);
+            updateNavigationButtons();
+            updateDisplayTitle();
+            updateDateTimePickers();
+            loadChartData();
+        }
+
+        // Update navigation buttons state
+        function updateNavigationButtons() {
+            const now = new Date();
+            // Convert to Eastern Time for comparison
+            const etTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+            const nextRoundHour = new Date(etTime);
+            nextRoundHour.setHours(etTime.getHours() + 1, 0, 0, 0);
+            
+            const nextButton = document.getElementById('next-hour');
+            const prevButton = document.getElementById('prev-hour');
+            
+            // Disable next button if we're at or beyond the next round hour
+            if (currentTargetTime.getTime() >= nextRoundHour.getTime()) {
+                nextButton.disabled = true;
+                nextButton.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                nextButton.disabled = false;
+                nextButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            
+            // Always enable prev button (can go back in time)
+            prevButton.disabled = false;
+            prevButton.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        // Update the display title
+        function updateDisplayTitle() {
+            document.getElementById('event-title').textContent = formatDisplayTitle();
+        }
+
+        // Generate time options for dropdown (24 hours)
+        function generateTimeOptions() {
+            const options = [];
+            
+            // Generate options for each hour (0-23)
+            for (let hour = 0; hour < 24; hour++) {
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const displayHour = hour % 12 || 12;
+                
+                const optionText = `${displayHour}${ampm}`;
+                const optionValue = hour.toString();
+                
+                options.push({
+                    text: optionText,
+                    value: optionValue,
+                    hour: hour
+                });
+            }
+            
+            return options;
+        }
+
+        // Populate the date and time pickers
+        function populateDateTimePickers() {
+            const datePicker = document.getElementById('date-picker');
+            const timePicker = document.getElementById('time-picker');
+            
+            // Set date picker range (last 7 days to next 7 days)
+            const now = new Date();
+            const etTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+            
+            const minDate = new Date(etTime);
+            minDate.setDate(etTime.getDate() - 7);
+            
+            const maxDate = new Date(etTime);
+            maxDate.setDate(etTime.getDate() + 7);
+            
+            datePicker.min = minDate.toISOString().split('T')[0];
+            datePicker.max = maxDate.toISOString().split('T')[0];
+            
+            // Populate time picker
+            const timeOptions = generateTimeOptions();
+            timePicker.innerHTML = '';
+            
+            timeOptions.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option.value;
+                optionElement.textContent = option.text;
+                timePicker.appendChild(optionElement);
+            });
+            
+            // Set current values
+            updateDateTimePickers();
+        }
+
+        // Update date and time pickers to match current selection
+        function updateDateTimePickers() {
+            if (!currentTargetTime) return;
+            
+            const datePicker = document.getElementById('date-picker');
+            const timePicker = document.getElementById('time-picker');
+            
+            // Set date
+            const dateStr = currentTargetTime.toISOString().split('T')[0];
+            datePicker.value = dateStr;
+            
+            // Set time
+            const hour = currentTargetTime.getHours();
+            timePicker.value = hour.toString();
+        }
+
+        // Handle apply button click
+        function handleApplyTime() {
+            const datePicker = document.getElementById('date-picker');
+            const timePicker = document.getElementById('time-picker');
+            
+            if (!datePicker.value || !timePicker.value) {
+                alert('Please select both date and time');
+                return;
+            }
+            
+            // Create new date from selected date and time
+            const selectedDate = new Date(datePicker.value);
+            const selectedHour = parseInt(timePicker.value);
+            
+            // Set the time in Eastern Time
+            selectedDate.setHours(selectedHour, 0, 0, 0);
+            
+            // Check if the selected time is within allowed range
+            const now = new Date();
+            const etTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+            const nextRoundHour = new Date(etTime);
+            nextRoundHour.setHours(etTime.getHours() + 1, 0, 0, 0);
+            
+            if (selectedDate.getTime() > nextRoundHour.getTime()) {
+                alert('Cannot select a time beyond the next round hour');
+                return;
+            }
+            
+            currentTargetTime = selectedDate;
+            updateNavigationButtons();
+            updateDisplayTitle();
+            loadChartData();
+        }
+
+        // Format timestamp to readable date
+        function formatTimestamp(timestamp) {
+            return new Date(timestamp * 1000).toLocaleString();
+        }
+
+        // Format price as dollars
+        function formatPrice(price) {
+            if (price >= 1) {
+                return '$' + price.toFixed(2);
+            } else {
+                return (price * 100).toFixed(1) + '¢';
+            }
+        }
+
+        // Calculate price change
+        function calculatePriceChange(history) {
+            if (history.length < 2) return { change: 0, percentage: 0 };
+            
+            const firstPrice = history[0].p;
+            const lastPrice = history[history.length - 1].p;
+            const change = lastPrice - firstPrice;
+            const percentage = (change / firstPrice) * 100;
+            
+            return { change, percentage };
+        }
+
+        // Create or update chart for a specific token
+        function createTokenChart(canvasId, data, color, tokenName) {
+            console.log(`Creating chart for ${tokenName} token:`, { canvasId, data, color });
+            
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) {
+                console.error(`Canvas element not found: ${canvasId}`);
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (tokenName === 'UP' && upChart) {
+                upChart.destroy();
+            } else if (tokenName === 'DOWN' && downChart) {
+                downChart.destroy();
+            }
+
+            const labels = data.history.map(item => formatTimestamp(item.t));
+            const prices = data.history.map(item => item.p); // Price is already in dollars
+            
+            console.log(`Chart data for ${tokenName}:`, { labels: labels.length, prices: prices.length, samplePrices: prices.slice(0, 5) });
+
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `${tokenName} Token Price ($)`,
+                        data: prices,
+                        borderColor: color,
+                        backgroundColor: color.replace('rgb', 'rgba').replace(')', ', 0.1)'),
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 3,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: color,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                title: function(context) {
+                                    return formatTimestamp(data.history[context[0].dataIndex].t);
+                                },
+                                label: function(context) {
+                                    return `${tokenName} Price: ${formatPrice(context.parsed.y)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Time'
+                            },
+                            ticks: {
+                                maxTicksLimit: 8,
+                                maxRotation: 45
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Price ($)'
+                            },
+                            min: Math.min(...prices) - 0.05,
+                            max: Math.max(...prices) + 0.05,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatPrice(value);
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+
+            // Store chart reference
+            if (tokenName === 'UP') {
+                upChart = chart;
+            } else if (tokenName === 'DOWN') {
+                downChart = chart;
+            }
+
+            return chart;
+        }
+
+        // Update UI with data for a specific token
+        function updateTokenUI(tokenName, data) {
+            const history = data.history || [];
+            
+            if (history.length === 0) {
+                throw new Error(`No price history data available for ${tokenName} token`);
+            }
+
+            const prefix = tokenName.toLowerCase();
+            const color = tokenName === 'UP' ? 'rgb(34, 197, 94)' : 'rgb(239, 68, 68)';
+
+            // Update stats
+            const lastPrice = history[history.length - 1].p;
+            const priceChange = calculatePriceChange(history);
+            
+            document.getElementById(`${prefix}-last-price`).textContent = `Last Price: ${formatPrice(lastPrice)}`;
+            document.getElementById(`${prefix}-price-change`).textContent = `Change: ${priceChange.change > 0 ? '+' : ''}${formatPrice(priceChange.change)} (${priceChange.percentage > 0 ? '+' : ''}${priceChange.percentage.toFixed(2)}%)`;
+            document.getElementById(`${prefix}-data-points`).textContent = `Data Points: ${history.length}`;
+
+            // Create chart
+            createTokenChart(`${prefix}PriceChart`, data, color, tokenName);
+        }
+
+        // Update UI with data
+        function updateUI(data) {
+            console.log('Full API response:', data);
+            
+            // Don't update the title here since we're managing it with navigation
+            // The title is updated by updateDisplayTitle() function
+
+            let pricesHistory = data.pricesHistory;
+            
+            // Fallback to sample data if no pricesHistory is available
+            if (!pricesHistory) {
+                console.warn('No pricesHistory found in API response, using sample data');
+                pricesHistory = {
+                    UP: {
+                        history: [
+                            {"t":1756471443,"p":0.495},{"t":1756471510,"p":0.495},{"t":1756471565,"p":0.495},{"t":1756471622,"p":0.495},{"t":1756471683,"p":0.495},{"t":1756471743,"p":0.495},{"t":1756471817,"p":0.495},{"t":1756471864,"p":0.495},{"t":1756471923,"p":0.495},{"t":1756471984,"p":0.495},{"t":1756472042,"p":0.495},{"t":1756472115,"p":0.495},{"t":1756472162,"p":0.495},{"t":1756472224,"p":0.495},{"t":1756472283,"p":0.495},{"t":1756472344,"p":0.495},{"t":1756472416,"p":0.495},{"t":1756472462,"p":0.495},{"t":1756472523,"p":0.495},{"t":1756472584,"p":0.495},{"t":1756472644,"p":0.495},{"t":1756472707,"p":0.495},{"t":1756472763,"p":0.495},{"t":1756472824,"p":0.495},{"t":1756472883,"p":0.495},{"t":1756472944,"p":0.495},{"t":1756473011,"p":0.495},{"t":1756473064,"p":0.495},{"t":1756473122,"p":0.495},{"t":1756473183,"p":0.495},{"t":1756473242,"p":0.495},{"t":1756473311,"p":0.495},{"t":1756473362,"p":0.495},{"t":1756473422,"p":0.495},{"t":1756473483,"p":0.495},{"t":1756473543,"p":0.495},{"t":1756473617,"p":0.495},{"t":1756473662,"p":0.495},{"t":1756473722,"p":0.495},{"t":1756473783,"p":0.495},{"t":1756473844,"p":0.495},{"t":1756473905,"p":0.495},{"t":1756473962,"p":0.495},{"t":1756474024,"p":0.495},{"t":1756474082,"p":0.495},{"t":1756474142,"p":0.495},{"t":1756474221,"p":0.495},{"t":1756474264,"p":0.495},{"t":1756474324,"p":0.495},{"t":1756474383,"p":0.495},{"t":1756474443,"p":0.495},{"t":1756474504,"p":0.495},{"t":1756474564,"p":0.495},{"t":1756474623,"p":0.495},{"t":1756474682,"p":0.495},{"t":1756474743,"p":0.495},{"t":1756474819,"p":0.495},{"t":1756474863,"p":0.495},{"t":1756474924,"p":0.495},{"t":1756474983,"p":0.495},{"t":1756474983,"p":0.495}
+                        ]
+                    },
+                    DOWN: {
+                        history: [
+                            {"t":1756471443,"p":0.505},{"t":1756471510,"p":0.505},{"t":1756471565,"p":0.505},{"t":1756471622,"p":0.505},{"t":1756471683,"p":0.505},{"t":1756471743,"p":0.505},{"t":1756471817,"p":0.505},{"t":1756471864,"p":0.505},{"t":1756471923,"p":0.505},{"t":1756471984,"p":0.505},{"t":1756472042,"p":0.505},{"t":1756472115,"p":0.505},{"t":1756472162,"p":0.505},{"t":1756472224,"p":0.505},{"t":1756472283,"p":0.505},{"t":1756472344,"p":0.505},{"t":1756472416,"p":0.505},{"t":1756472462,"p":0.505},{"t":1756472523,"p":0.505},{"t":1756472584,"p":0.505},{"t":1756472644,"p":0.505},{"t":1756472707,"p":0.505},{"t":1756472763,"p":0.505},{"t":1756472824,"p":0.505},{"t":1756472883,"p":0.505},{"t":1756472944,"p":0.505},{"t":1756473011,"p":0.505},{"t":1756473064,"p":0.505},{"t":1756473122,"p":0.505},{"t":1756473183,"p":0.505},{"t":1756473242,"p":0.505},{"t":1756473311,"p":0.505},{"t":1756473362,"p":0.505},{"t":1756473422,"p":0.505},{"t":1756473483,"p":0.505},{"t":1756473543,"p":0.505},{"t":1756473617,"p":0.505},{"t":1756473662,"p":0.505},{"t":1756473722,"p":0.505},{"t":1756473783,"p":0.505},{"t":1756473844,"p":0.505},{"t":1756473905,"p":0.505},{"t":1756473962,"p":0.505},{"t":1756474024,"p":0.505},{"t":1756474082,"p":0.505},{"t":1756474142,"p":0.505},{"t":1756474221,"p":0.505},{"t":1756474264,"p":0.505},{"t":1756474324,"p":0.505},{"t":1756474383,"p":0.505},{"t":1756474443,"p":0.505},{"t":1756474504,"p":0.505},{"t":1756474564,"p":0.505},{"t":1756474623,"p":0.505},{"t":1756474682,"p":0.505},{"t":1756474743,"p":0.505},{"t":1756474819,"p":0.505},{"t":1756474863,"p":0.505},{"t":1756474924,"p":0.505},{"t":1756474983,"p":0.505},{"t":1756474983,"p":0.505}
+                        ]
+                    }
+                };
+            }
+
+            console.log('PricesHistory structure:', pricesHistory);
+            console.log('Available keys:', Object.keys(pricesHistory));
+
+            // Process UP token data
+            if (pricesHistory.UP) {
+                console.log('Processing UP token data:', pricesHistory.UP);
+                updateTokenUI('UP', pricesHistory.UP);
+            } else if (pricesHistory.Up) {
+                console.log('Processing Up token data:', pricesHistory.Up);
+                updateTokenUI('UP', pricesHistory.Up);
+            } else if (pricesHistory.YES) {
+                console.log('Processing YES token data:', pricesHistory.YES);
+                updateTokenUI('UP', pricesHistory.YES);
+            } else {
+                console.warn('No UP, Up, or YES token data found');
+            }
+
+            // Process DOWN token data
+            if (pricesHistory.DOWN) {
+                console.log('Processing DOWN token data:', pricesHistory.DOWN);
+                updateTokenUI('DOWN', pricesHistory.DOWN);
+            } else if (pricesHistory.Down) {
+                console.log('Processing Down token data:', pricesHistory.Down);
+                updateTokenUI('DOWN', pricesHistory.Down);
+            } else if (pricesHistory.NO) {
+                console.log('Processing NO token data:', pricesHistory.NO);
+                updateTokenUI('DOWN', pricesHistory.NO);
+            } else {
+                console.warn('No DOWN, Down, or NO token data found');
+            }
+        }
+
+        // Load chart data from API
+        async function loadChartData() {
+            const upLoading = document.getElementById('up-loading');
+            const upChartContainer = document.getElementById('up-chart-container');
+            const upError = document.getElementById('up-error');
+            const downLoading = document.getElementById('down-loading');
+            const downChartContainer = document.getElementById('down-chart-container');
+            const downError = document.getElementById('down-error');
+
+            try {
+                console.log('Starting to load chart data...');
+                
+                // Show loading for both charts
+                upLoading.classList.remove('hidden');
+                upChartContainer.classList.add('hidden');
+                upError.classList.add('hidden');
+                downLoading.classList.remove('hidden');
+                downChartContainer.classList.add('hidden');
+                downError.classList.add('hidden');
+
+                const slug = getCurrentSlug();
+                console.log('Generated slug:', slug);
+                
+                const url = `/poly/get-event-by-slug?slug=${encodeURIComponent(slug)}`;
+                console.log('Fetching from URL:', url);
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('API response received:', data);
+                
+                if (!data) {
+                    throw new Error('No data received from API');
+                }
+
+                // Hide loading and show charts
+                upLoading.classList.add('hidden');
+                downLoading.classList.add('hidden');
+                upChartContainer.classList.remove('hidden');
+                downChartContainer.classList.remove('hidden');
+                
+                console.log('Chart containers should now be visible');
+                console.log('UP chart container:', upChartContainer.classList.toString());
+                console.log('DOWN chart container:', downChartContainer.classList.toString());
+                
+                updateUI(data);
+
+            } catch (err) {
+                console.error('Error loading chart data:', err);
+                
+                // Hide loading and show error for both charts
+                upLoading.classList.add('hidden');
+                downLoading.classList.add('hidden');
+                upChartContainer.classList.add('hidden');
+                downChartContainer.classList.add('hidden');
+                upError.classList.remove('hidden');
+                downError.classList.remove('hidden');
+                
+                document.getElementById('up-error-message').textContent = err.message || 'Failed to load UP token data';
+                document.getElementById('down-error-message').textContent = err.message || 'Failed to load DOWN token data';
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize target time and display
+            initializeTargetTime();
+            updateDisplayTitle();
+            updateNavigationButtons();
+            
+            // Populate date and time pickers
+            populateDateTimePickers();
+            
+            // Add event listeners for navigation
+            document.getElementById('prev-hour').addEventListener('click', goToPreviousHour);
+            document.getElementById('next-hour').addEventListener('click', goToNextHour);
+            document.getElementById('apply-time').addEventListener('click', handleApplyTime);
+            
+            // Load initial data
+            loadChartData();
+        });
+
+        // Auto-refresh every 30 seconds (only for current time)
+        setInterval(function() {
+            // Only auto-refresh if we're viewing the current time
+            const now = new Date();
+            // Convert to Eastern Time for comparison
+            const etTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+            const nextRoundHour = new Date(etTime);
+            nextRoundHour.setHours(etTime.getHours() + 1, 0, 0, 0);
+            
+            if (currentTargetTime && Math.abs(currentTargetTime.getTime() - nextRoundHour.getTime()) < 60000) {
+                loadChartData();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

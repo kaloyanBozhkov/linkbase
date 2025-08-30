@@ -144,6 +144,7 @@ router.get("/email-verification-translations", (req, res) => {
   }
 });
 
+
 // Apply error handling middleware
 router.use(handleZodError);
 router.use(handlePrismaError);

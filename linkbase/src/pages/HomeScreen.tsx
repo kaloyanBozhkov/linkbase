@@ -22,6 +22,7 @@ import { getInfiniteQueryItems } from "@/hooks/getInfiniteQueryItems";
 import { getErrorMessage } from "@/helpers/utils";
 import { colors as baseColors, typography } from "@/theme/colors";
 import { useThemeStore } from "@/hooks/useThemeStore";
+import { useOnboardingStore } from "@/hooks/useOnboardingStore";
 import { useTranslation } from "@/hooks/useTranslation";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
@@ -34,6 +35,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const trpcUtils = trpc.useUtils();
   const { colors } = useThemeStore();
   const { t } = useTranslation();
+  const { isCompleted: isOnboardingCompleted } = useOnboardingStore();
   
   const getAllQuery = trpc.linkbase.connections.getAll.useInfiniteQuery(
     {},

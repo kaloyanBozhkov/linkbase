@@ -220,3 +220,15 @@ model ai_embedding_search_diagnostic {
 
     @@index([similarity_type])
 }
+
+model JSON_DUMPS {
+    id         String   @id @default(cuid())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now()) @updatedAt
+
+    json_data Json
+    case      String
+
+    @@index(case)
+    @@index(created_at)
+}

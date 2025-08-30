@@ -14,6 +14,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useOnboardingStore } from "@/hooks/useOnboardingStore";
 import { trpc } from "@/utils/trpc";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
@@ -21,6 +22,7 @@ import * as FileSystem from "expo-file-system";
 const ImportExportScreen: React.FC = () => {
   const { colors } = useThemeStore();
   const { t } = useTranslation();
+  const { setHasImportedData, setCompleted } = useOnboardingStore();
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
 
@@ -147,7 +149,7 @@ const ImportExportScreen: React.FC = () => {
         [
           {
             text: "OK",
-            onPress: () => {
+            onPress: async () => {
               if (resultImport.errors && resultImport.errors.length > 0) {
                 Alert.alert(
                   "Import Errors",
@@ -155,6 +157,9 @@ const ImportExportScreen: React.FC = () => {
                   [{ text: "OK" }]
                 );
               }
+              // Complete onboarding and navigate to home
+              await setHasImportedData(true);
+              await setCompleted(true);
             },
           },
         ]
@@ -318,6 +323,24 @@ const ImportExportScreen: React.FC = () => {
               • Import files must be valid JSON format
             </Text>
           </View>
+
+          <TouchableOpacity
+            style={[
+              styles.skipButton,
+              {
+                backgroundColor: colors.background.surface,
+                borderColor: colors.border.light,
+              },
+            ]}
+            onPress={async () => {
+              await setHasImportedData(false);
+              await setCompleted(true);
+            }}
+          >
+            <Text style={[styles.skipButtonText, { color: colors.text.muted }]}>
+              Skip Import
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       </LinearGradient>
     </SafeAreaView>
@@ -363,6 +386,17 @@ const styles = StyleSheet.create({
   warningIcon: { marginBottom: 8 },
   warningTitle: { fontSize: 16, fontWeight: "600", marginBottom: 8 },
   warningText: { fontSize: 14, lineHeight: 20, marginBottom: 4 },
+  skipButton: {
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  skipButtonText: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
 });
 
 export default ImportExportScreen;

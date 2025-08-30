@@ -11,9 +11,12 @@ import {
   renderTermsPage,
 } from "./flows";
 import testRouter from "./router/tests";
+import polymarketRouter from "./services/polymarket/router";
 
 const app: Application = express();
 const PORT = env.PORT;
+
+app.use(polymarketRouter);
 
 // Rate limiting
 const limiter = rateLimit({

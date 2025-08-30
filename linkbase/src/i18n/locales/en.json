@@ -415,5 +415,29 @@
     "el": "Greek",
     "it": "Italian",
     "nl": "Dutch"
+  },
+  "onboarding": {
+    "welcome": "Welcome to Linkbase",
+    "chooseLanguage": "Choose your preferred language",
+    "chooseTheme": "Choose Your Theme",
+    "themeDescription": "Pick a theme that matches your style",
+    "getStarted": "Let's get you started!",
+    "enjoy": "Enjoy ❤️",
+    "optionalImport": "Optional Import",
+    "importFromJson": "Import from JSON",
+    "importDescription": "Import your connections from a JSON file",
+    "startFresh": "Start Fresh",
+    "startFreshDescription": "Begin with an empty connection list",
+    "skipForNow": "Skip for now",
+    "getStarted": "Get Started",
+    "skipImport": "Skip Import",
+    "canChangeLater": "You can change this later in Settings",
+    "importAnytime": "You can import data anytime from the Settings menu",
+    "exoTheme": "Exo Theme",
+    "exoDescription": "Dark theme with cyan accents",
+    "warmPastel": "Warm Pastel",
+    "warmPastelDescription": "Dark theme with warm pink accents",
+    "lightMode": "Light Mode",
+    "lightModeDescription": "Clean light theme with blue accents"
   }
 }
