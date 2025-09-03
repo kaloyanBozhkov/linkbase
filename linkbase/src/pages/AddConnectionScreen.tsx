@@ -207,7 +207,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
           </View>
           <View style={styles.voiceRec}>
             {isFetchingFillout ? (
-              <ActivityIndicator size="small" color={baseColors.loading} />
+              <ActivityIndicator size="small" color={colors.text.accent} />
             ) : (
               <VoiceRecorder
                 onRecordingUploaded={handleVoiceRecordingUploaded}

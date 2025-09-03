@@ -251,7 +251,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         />
         {isLoadingConnections ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={baseColors.loading} />
+            <ActivityIndicator size="large" color={colors.text.accent} />
           </View>
         ) : (
           <FlatList
@@ -264,8 +264,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
-                tintColor={baseColors.loading}
-                colors={[baseColors.loading, baseColors.secondary[500]]}
+                tintColor={colors.text.accent}
+                colors={[colors.text.accent, colors.text.accent]}
               />
             }
             showsVerticalScrollIndicator={false}
@@ -276,7 +276,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             onEndReachedThreshold={0.5}
             ListFooterComponent={() =>
               isFetchingNextPage && hasNextPage ? (
-                <ActivityIndicator size="large" color={baseColors.loading} />
+                <ActivityIndicator size="large" color={colors.text.accent} />
               ) : null
             }
           />

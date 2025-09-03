@@ -6,7 +6,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, shadows, borderRadius } from "@/theme/colors";
+import { colors as baseColors, shadows, borderRadius } from "@/theme/colors";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 interface SearchInputWrapperProps {
   children: React.ReactNode;
@@ -27,9 +28,11 @@ const SearchInputWrapper: React.FC<SearchInputWrapperProps> = ({
   onClear,
   containerStyle,
 }) => {
+  const { colors } = useThemeStore();
+  
   const renderIcon = () => {
     if (isSearching) {
-      return <ActivityIndicator size={20} color={colors.loading} style={{ marginTop: 4, marginBottom: 4 }} />;
+      return <ActivityIndicator size={20} color={colors.text.accent} style={{ marginTop: 4, marginBottom: 4 }} />;
     }
     
     if (hasSearched) {
@@ -68,9 +71,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: colors.border.default,
+    borderColor: baseColors.border.default,
     borderRadius: borderRadius.md,
-    backgroundColor: colors.background.secondary,
+    backgroundColor: baseColors.background.secondary,
     paddingHorizontal: 16,
     paddingVertical: 12,
     ...shadows.sm,

@@ -2,7 +2,7 @@ import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Based on this can render only new features if already comlete with this old key
-const ONBOARDING_KEY = "linkbase_onboarding_27-08-2025.01";
+const ONBOARDING_KEY = "linkbase_onboarding_27-09-2025.01";
 
 export interface OnboardingState {
   isCompleted: boolean;
