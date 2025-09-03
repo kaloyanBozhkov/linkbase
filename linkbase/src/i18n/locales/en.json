@@ -211,6 +211,7 @@
   },
   "voice": {
     "recording": "Recording...",
+    "recordingDuration": "Duration",
     "processing": "Processing...",
     "uploading": "Uploading...",
     "tapToRecord": "Tap to record",
@@ -383,6 +384,10 @@
     "processingDescription": "We're analyzing what you just said and filling out your mentioned connections. This usually takes a few seconds... please wait!",
     "readyToRecord": "🎤 Ready to Record",
     "readyToRecordDescription": "Tap the microphone below and tell me about the people you've met. You can mention multiple people in one recording!",
+    "shareAboutWhoYouMet": "Share about who you met!",
+    "aiWillParseDescription": "Our AI will anonymously parse what you talk about, and you will be able to review everything in the next step.",
+    "goodToGo": "Good to go?",
+    "confirmRecordingDescription": "Before unnecessary computing is wasted on this, could we confirm that the recording went fine? You can always retry!",
     "exampleText": "For example: \"I met John at the coffee shop, he's a software engineer from San Francisco. I also met Sarah at the conference, she works in marketing and loves hiking.\"",
     "reviewConnection": "Review Connection",
     "navigationText": "{{current}} of {{total}}"

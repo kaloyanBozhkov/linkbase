@@ -206,7 +206,8 @@
     "recentSearches": "Recente zoekopdrachten",
     "clearHistory": "Geschiedenis wissen",
     "searchConnections": "Zoek connecties",
-    "search": "Zoeken"
+    "search": "Zoeken",
+    "searchByFactsOrQuestions": "Zoek op feiten of vragen..."
   },
   "voice": {
     "recording": "Opnemen...",
@@ -246,7 +247,8 @@
     "failedToStopRecording": "Stoppen van opname mislukt",
     "failedToUploadRecording": "Uploaden van opname mislukt",
     "couldntParseRecording": "Kon je spraakopname niet verwerken. Probeer het later opnieuw.",
-    "allGood": "Alles goed?"
+    "allGood": "Alles goed?",
+    "recordingDuration": "Duur"
   },
   "qrCode": {
     "title": "QR-code",
@@ -411,7 +413,11 @@
     "connectionsAddedSuccessfullyPlural": "{{count}} connecties succesvol toegevoegd!",
     "createConnection": "Maak 1 Connectie",
     "createConnectionsPlural": "Maak {{count}} Connecties",
-    "navigationText": "{{current}} van {{total}}"
+    "navigationText": "{{current}} van {{total}}",
+    "shareAboutWhoYouMet": "Deel met wie je hebt ontmoet!",
+    "aiWillParseDescription": "Onze AI zal anoniem analyseren waar je het over hebt, en je kunt alles in de volgende stap bekijken.",
+    "goodToGo": "Klaar om te gaan?",
+    "confirmRecordingDescription": "Voordat er onnodige rekenkracht wordt verbruikt, kunnen we bevestigen dat de opname goed is gegaan? Je kunt altijd opnieuw proberen!"
   },
   "loading": {
     "doingMagic": "Magie uitvoeren.."

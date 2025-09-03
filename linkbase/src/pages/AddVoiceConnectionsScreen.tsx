@@ -57,6 +57,8 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
   const [connections, setConnections] = useState<VoiceConnectionData[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isCreating, setIsCreating] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isReviewing, setIsReviewing] = useState(false);
   const { scrollViewRef, scrollToFocusedInput } = useKeyboardScroll();
 
   const {
@@ -79,7 +81,7 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
     if (filloutError) {
       Alert.alert(t("common.error"), t("voice.couldntParseRecording"));
     }
-  }, [filloutError]);
+  }, [filloutError, t]);
 
   useEffect(() => {
     if (filloutData) {
@@ -99,6 +101,12 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
     setAudioUrl(s3AudioUrl);
     setConnections([]);
     setCurrentIndex(0);
+    setIsReviewing(false);
+  };
+
+  const handleRecordingStateChange = (state: "idle" | "recording" | "recorded") => {
+    setIsRecording(state === "recording");
+    setIsReviewing(state === "recorded");
   };
 
   const handleConnectionUpdate = (
@@ -200,6 +208,7 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
     setAudioUrl(null);
     setConnections([]);
     setCurrentIndex(0);
+    setIsReviewing(false);
   };
 
   const { colors } = useThemeStore();
@@ -358,14 +367,24 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
             <Text
               style={[styles.emptyStateTitle, { color: colors.text.primary }]}
             >
-              {t("voiceConnections.readyToRecord")}
+              {isRecording
+                ? t("voiceConnections.shareAboutWhoYouMet")
+                : isReviewing
+                ? t("voiceConnections.goodToGo")
+                : t("voiceConnections.readyToRecord")}
             </Text>
             <Text style={[styles.emptyStateText, { color: colors.text.muted }]}>
-              {t("voiceConnections.readyToRecordDescription")}
+              {isRecording
+                ? t("voiceConnections.aiWillParseDescription")
+                : isReviewing
+                ? t("voiceConnections.confirmRecordingDescription")
+                : t("voiceConnections.readyToRecordDescription")}
             </Text>
             <View style={styles.voiceRecorderContainer}>
               <VoiceRecorder
+                startRecordingOnMount
                 onRecordingUploaded={handleVoiceRecordingUploaded}
+                onRecordingStateChange={handleRecordingStateChange}
                 featureFolder="add-multiple-contacts-recordings"
                 userId={useSessionUserStore.getState().userId!}
                 size="large"

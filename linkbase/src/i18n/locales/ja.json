@@ -206,7 +206,8 @@
     "recentSearches": "最近の検索",
     "clearHistory": "履歴をクリア",
     "searchConnections": "接続を検索",
-    "search": "検索"
+    "search": "検索",
+    "searchByFactsOrQuestions": "事実または質問で検索..."
   },
   "voice": {
     "recording": "録音中...",
@@ -246,7 +247,8 @@
     "failedToStopRecording": "録音の停止に失敗しました",
     "failedToUploadRecording": "録音のアップロードに失敗しました",
     "couldntParseRecording": "音声録音を解析できませんでした。後でもう一度お試しください。",
-    "allGood": "すべて順調ですか？"
+    "allGood": "すべて順調ですか？",
+    "recordingDuration": "期間"
   },
   "qrCode": {
     "title": "QRコード",
@@ -413,7 +415,11 @@
     "connectionsAddedSuccessfullyPlural": "{{count}}件の接続が正常に追加されました！",
     "createConnection": "1件の接続を作成",
     "createConnectionsPlural": "{{count}}件の接続を作成",
-    "navigationText": "{{current}} / {{total}}"
+    "navigationText": "{{current}} / {{total}}",
+    "shareAboutWhoYouMet": "出会った人について共有しよう！",
+    "aiWillParseDescription": "AIが匿名で会話内容を解析します。次のステップで全てを確認できます。",
+    "goodToGo": "準備はいいですか？",
+    "confirmRecordingDescription": "無駄な計算を避けるために、録音がうまくいったか確認してもいいですか？いつでも再試行できます！"
   },
   "loading": {
     "doingMagic": "魔法をかけています…"

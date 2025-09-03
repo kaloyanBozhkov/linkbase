@@ -206,7 +206,8 @@
     "recentSearches": "Ricerche Recenti",
     "clearHistory": "Cancella Cronologia",
     "searchConnections": "Cerca Connessioni",
-    "search": "Cerca"
+    "search": "Cerca",
+    "searchByFactsOrQuestions": "Cerca per fatti o domande..."
   },
   "voice": {
     "recording": "Registrazione...",
@@ -246,7 +247,8 @@
     "failedToStopRecording": "Impossibile fermare la registrazione",
     "failedToUploadRecording": "Impossibile caricare la registrazione",
     "couldntParseRecording": "Impossibile eseguire il parsing della registrazione vocale. Riprova più tardi.",
-    "allGood": "Tutto bene?"
+    "allGood": "Tutto bene?",
+    "recordingDuration": "Durata"
   },
   "qrCode": {
     "title": "Codice QR",
@@ -411,7 +413,11 @@
     "connectionsAddedSuccessfullyPlural": "{{count}} connessioni aggiunte con successo!",
     "createConnection": "Crea 1 connessione",
     "createConnectionsPlural": "Crea {{count}} connessioni",
-    "navigationText": "{{current}} di {{total}}"
+    "navigationText": "{{current}} di {{total}}",
+    "shareAboutWhoYouMet": "Condividi chi hai incontrato!",
+    "aiWillParseDescription": "La nostra IA analizzerà anonimamente ciò di cui parli e potrai rivedere tutto nel passaggio successivo.",
+    "goodToGo": "Pronto a partire?",
+    "confirmRecordingDescription": "Prima che venga sprecata potenza di calcolo inutile, possiamo confermare che la registrazione sia andata bene? Puoi sempre riprovare!"
   },
   "loading": {
     "doingMagic": "Facendo magia.."

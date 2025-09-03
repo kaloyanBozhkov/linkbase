@@ -206,7 +206,8 @@
     "recentSearches": "Скорошни търсения",
     "clearHistory": "Изчисти историята",
     "searchConnections": "Търсене на връзки",
-    "search": "Търсене"
+    "search": "Търсене",
+    "searchByFactsOrQuestions": "Търсете по факти или въпроси..."
   },
   "voice": {
     "recording": "Записване...",
@@ -246,7 +247,8 @@
     "failedToStopRecording": "Неуспешно спиране на записването",
     "failedToUploadRecording": "Неуспешно качване на записването",
     "couldntParseRecording": "Не успяхме да разпознаем вашето гласово записване. Моля, опитайте отново по-късно.",
-    "allGood": "Всичко наред ли е?"
+    "allGood": "Всичко наред ли е?",
+    "recordingDuration": "Продължителност"
   },
   "qrCode": {
     "title": "QR код",
@@ -411,7 +413,11 @@
     "connectionsAddedSuccessfullyPlural": "{{count}} връзки са добавени успешно!",
     "createConnection": "Създай 1 връзка",
     "createConnectionsPlural": "Създай {{count}} връзки",
-    "navigationText": "{{current}} от {{total}}"
+    "navigationText": "{{current}} от {{total}}",
+    "shareAboutWhoYouMet": "Споделете за кого срещнахте!",
+    "aiWillParseDescription": "Нашият AI ще анализира анонимно това, за което говорите, и ще можете да прегледате всичко в следващата стъпка.",
+    "goodToGo": "Готови ли сте да продължите?",
+    "confirmRecordingDescription": "Преди да бъдат изразходвани излишни изчисления за това, може ли да потвърдим, че записът е минал добре? Винаги можете да опитате отново!"
   },
   "loading": {
     "doingMagic": "Правим магия.."

@@ -206,7 +206,8 @@
     "recentSearches": "Căutări Recente",
     "clearHistory": "Șterge Istoricul",
     "searchConnections": "Caută Conexiuni",
-    "search": "Căutare"
+    "search": "Căutare",
+    "searchByFactsOrQuestions": "Căutare după fapte sau întrebări..."
   },
   "voice": {
     "recording": "Înregistrăm...",
@@ -246,7 +247,8 @@
     "failedToStopRecording": "Oprirea înregistrării a eșuat",
     "failedToUploadRecording": "Încărcarea înregistrării a eșuat",
     "couldntParseRecording": "Nu am putut analiza înregistrarea vocală. Te rog să încerci din nou mai târziu.",
-    "allGood": "Totul bine?"
+    "allGood": "Totul bine?",
+    "recordingDuration": "Durată"
   },
   "qrCode": {
     "title": "Cod QR",
@@ -411,7 +413,11 @@
     "connectionsAddedSuccessfullyPlural": "{{count}} conexiuni adăugate cu succes!",
     "createConnection": "Creează 1 Conexiune",
     "createConnectionsPlural": "Creează {{count}} Conexiuni",
-    "navigationText": "{{current}} din {{total}}"
+    "navigationText": "{{current}} din {{total}}",
+    "shareAboutWhoYouMet": "Împărtășește despre cine ai întâlnit!",
+    "aiWillParseDescription": "AI-ul nostru va analiza anonim discuția ta, iar tu vei putea revizui totul în pasul următor.",
+    "goodToGo": "Ești gata?",
+    "confirmRecordingDescription": "Înainte de a consuma resurse computaționale inutile, putem confirma că înregistrarea a decurs bine? Poți oricând să încerci din nou!"
   },
   "loading": {
     "doingMagic": "Facem magie..."

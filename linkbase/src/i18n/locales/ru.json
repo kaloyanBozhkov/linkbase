@@ -206,7 +206,8 @@
     "recentSearches": "Недавние поиски",
     "clearHistory": "Очистить историю",
     "searchConnections": "Поиск связей",
-    "search": "Поиск"
+    "search": "Поиск",
+    "searchByFactsOrQuestions": "Поиск по фактам или вопросам..."
   },
   "voice": {
     "recording": "Запись...",
@@ -246,7 +247,8 @@
     "failedToStopRecording": "Не удалось остановить запись",
     "failedToUploadRecording": "Не удалось загрузить запись",
     "couldntParseRecording": "Не удалось обработать вашу голосовую запись. Попробуйте позже.",
-    "allGood": "Все в порядке?"
+    "allGood": "Все в порядке?",
+    "recordingDuration": "Длительность"
   },
   "qrCode": {
     "title": "QR-код",
@@ -411,7 +413,11 @@
     "connectionsAddedSuccessfullyPlural": "{{count}} соединений успешно добавлено!",
     "createConnection": "Создать 1 соединение",
     "createConnectionsPlural": "Создать {{count}} соединений",
-    "navigationText": "{{current}} из {{total}}"
+    "navigationText": "{{current}} из {{total}}",
+    "shareAboutWhoYouMet": "Поделитесь, с кем вы познакомились!",
+    "aiWillParseDescription": "Наш ИИ анонимно проанализирует, о чем вы говорите, и вы сможете все просмотреть на следующем шаге.",
+    "goodToGo": "Все готово?",
+    "confirmRecordingDescription": "Прежде чем тратить лишние ресурсы, можем ли мы подтвердить, что запись прошла успешно? Вы всегда можете попробовать снова!"
   },
   "loading": {
     "doingMagic": "Творим магию.."

@@ -206,7 +206,8 @@
     "recentSearches": "Pesquisas Recentes",
     "clearHistory": "Limpar Histórico",
     "searchConnections": "Pesquisar Conexões",
-    "search": "Pesquisar"
+    "search": "Pesquisar",
+    "searchByFactsOrQuestions": "Pesquisar por fatos ou perguntas..."
   },
   "voice": {
     "recording": "Gravando...",
@@ -246,7 +247,8 @@
     "failedToStopRecording": "Falha ao parar a gravação",
     "failedToUploadRecording": "Falha ao enviar a gravação",
     "couldntParseRecording": "Não foi possível analisar sua gravação de voz. Por favor, tente novamente mais tarde.",
-    "allGood": "Tudo bem?"
+    "allGood": "Tudo bem?",
+    "recordingDuration": "Duração"
   },
   "qrCode": {
     "title": "Código QR",
@@ -411,7 +413,11 @@
     "connectionsAddedSuccessfullyPlural": "{{count}} conexões adicionadas com sucesso!",
     "createConnection": "Criar 1 Conexão",
     "createConnectionsPlural": "Criar {{count}} Conexões",
-    "navigationText": "{{current}} de {{total}}"
+    "navigationText": "{{current}} de {{total}}",
+    "shareAboutWhoYouMet": "Compartilhe sobre quem você conheceu!",
+    "aiWillParseDescription": "Nossa IA irá analisar anonimamente o que você falar, e você poderá revisar tudo na próxima etapa.",
+    "goodToGo": "Pronto para continuar?",
+    "confirmRecordingDescription": "Antes que recursos sejam gastos desnecessariamente, podemos confirmar que a gravação está boa? Você pode sempre tentar novamente!"
   },
   "loading": {
     "doingMagic": "Fazendo mágica.."

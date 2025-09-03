@@ -206,7 +206,8 @@
     "recentSearches": "Letzte Suchanfragen",
     "clearHistory": "Verlauf löschen",
     "searchConnections": "Verbindungen suchen",
-    "search": "Suche"
+    "search": "Suche",
+    "searchByFactsOrQuestions": "Nach Fakten oder Fragen suchen..."
   },
   "voice": {
     "recording": "Aufnahme...",
@@ -246,7 +247,8 @@
     "failedToStopRecording": "Aufnahme konnte nicht gestoppt werden",
     "failedToUploadRecording": "Aufnahme konnte nicht hochgeladen werden",
     "couldntParseRecording": "Ihre Sprachaufnahme konnte nicht verarbeitet werden. Bitte versuchen Sie es später noch einmal.",
-    "allGood": "Alles gut?"
+    "allGood": "Alles gut?",
+    "recordingDuration": "Dauer"
   },
   "qrCode": {
     "title": "QR-Code",
@@ -411,7 +413,11 @@
     "connectionsAddedSuccessfullyPlural": "{{count}} Verbindungen erfolgreich hinzugefügt!",
     "createConnection": "1 Verbindung erstellen",
     "createConnectionsPlural": "{{count}} Verbindungen erstellen",
-    "navigationText": "{{current}} von {{total}}"
+    "navigationText": "{{current}} von {{total}}",
+    "shareAboutWhoYouMet": "Teile, wen du getroffen hast!",
+    "aiWillParseDescription": "Unsere KI wird anonym analysieren, worüber du sprichst, und du kannst alles im nächsten Schritt überprüfen.",
+    "goodToGo": "Bereit?",
+    "confirmRecordingDescription": "Bevor unnötige Rechenressourcen verschwendet werden, könnten wir bestätigen, dass die Aufnahme in Ordnung war? Du kannst es jederzeit erneut versuchen!"
   },
   "loading": {
     "doingMagic": "Magie am Werk.."

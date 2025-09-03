@@ -181,7 +181,8 @@
     "recentSearches": "最近搜索",
     "clearHistory": "清除历史记录",
     "searchConnections": "搜索联系人",
-    "search": "搜索"
+    "search": "搜索",
+    "searchByFactsOrQuestions": "按事实或问题搜索..."
   },
   "errors": {
     "networkError": "网络错误。请检查您的连接。",
@@ -296,7 +297,8 @@
     "failedToStopRecording": "停止录音失败",
     "failedToUploadRecording": "上传录音失败",
     "couldntParseRecording": "无法解析您的语音录音。请稍后再试。",
-    "allGood": "一切顺利吗？"
+    "allGood": "一切顺利吗？",
+    "recordingDuration": "时长"
   },
   "sync": {
     "emailVerified": "邮箱已验证！",
@@ -414,7 +416,11 @@
     "connectionsAddedSuccessfullyPlural": "成功添加{{count}}个连接！",
     "createConnection": "创建1个连接",
     "createConnectionsPlural": "创建{{count}}个连接",
-    "navigationText": "{{current}} / {{total}}"
+    "navigationText": "{{current}} / {{total}}",
+    "shareAboutWhoYouMet": "分享你遇见了谁！",
+    "aiWillParseDescription": "我们的AI将匿名解析你们的对话，接下来你将能够查看所有内容。",
+    "goodToGo": "准备好了吗？",
+    "confirmRecordingDescription": "在浪费不必要的计算资源之前，我们能确认录音正常吗？您可以随时重试！"
   },
   "loading": {
     "doingMagic": "施展魔法中..."

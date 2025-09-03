@@ -206,7 +206,8 @@
     "recentSearches": "最近的搜尋",
     "clearHistory": "清除歷史",
     "searchConnections": "搜尋連線",
-    "search": "搜尋"
+    "search": "搜尋",
+    "searchByFactsOrQuestions": "搜尋事實或問題..."
   },
   "voice": {
     "recording": "錄製中...",
@@ -246,7 +247,8 @@
     "failedToStopRecording": "無法停止錄製",
     "failedToUploadRecording": "無法上傳錄製",
     "couldntParseRecording": "無法解析您的語音錄音。請稍後再試。",
-    "allGood": "一切都好嗎？"
+    "allGood": "一切都好嗎？",
+    "recordingDuration": "時長"
   },
   "qrCode": {
     "title": "QR碼",
@@ -413,7 +415,11 @@
     "connectionsAddedSuccessfullyPlural": "成功新增{{count}}個連接！",
     "createConnection": "建立1個連接",
     "createConnectionsPlural": "建立{{count}}個連接",
-    "navigationText": "{{current}} / {{total}}"
+    "navigationText": "{{current}} / {{total}}",
+    "shareAboutWhoYouMet": "分享你遇見了誰！",
+    "aiWillParseDescription": "我們的 AI 會匿名解析你談話的內容，你可以在下一步中查看所有內容。",
+    "goodToGo": "準備好了嗎？",
+    "confirmRecordingDescription": "在浪費不必要的運算之前，我們可以確認錄音效果如何嗎？你可以隨時重試！"
   },
   "loading": {
     "doingMagic": "施展魔法中.."

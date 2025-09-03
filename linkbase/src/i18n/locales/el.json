@@ -206,7 +206,8 @@
     "recentSearches": "Πρόσφατες Αναζητήσεις",
     "clearHistory": "Καθαρισμός Ιστορικού",
     "searchConnections": "Αναζήτηση Συνδέσεων",
-    "search": "Αναζήτηση"
+    "search": "Αναζήτηση",
+    "searchByFactsOrQuestions": "Αναζήτηση με γεγονότα ή ερωτήσεις..."
   },
   "voice": {
     "recording": "Εγγραφή...",
@@ -246,7 +247,8 @@
     "failedToStopRecording": "Αποτυχία διακοπής ηχογράφησης",
     "failedToUploadRecording": "Αποτυχία μεταφόρτωσης ηχογράφησης",
     "couldntParseRecording": "Δεν ήταν δυνατή η ανάλυση της ηχογράφησής σας. Παρακαλώ δοκιμάστε ξανά αργότερα.",
-    "allGood": "Όλα καλά;"
+    "allGood": "Όλα καλά;",
+    "recordingDuration": "Διάρκεια"
   },
   "qrCode": {
     "title": "Κωδικός QR",
@@ -411,7 +413,11 @@
     "connectionsAddedSuccessfullyPlural": "{{count}} συνδέσεις προστέθηκαν με επιτυχία!",
     "createConnection": "Δημιουργία 1 Σύνδεσης",
     "createConnectionsPlural": "Δημιουργία {{count}} Συνδέσεων",
-    "navigationText": "{{current}} από {{total}}"
+    "navigationText": "{{current}} από {{total}}",
+    "shareAboutWhoYouMet": "Μοιραστείτε για το ποιον γνωρίσατε!",
+    "aiWillParseDescription": "Η τεχνητή μας νοημοσύνη θα αναλύσει ανώνυμα αυτό που συζητάτε και θα μπορείτε να το εξετάσετε στο επόμενο βήμα.",
+    "goodToGo": "Έτοιμοι να προχωρήσουμε;",
+    "confirmRecordingDescription": "Πριν σπαταληθεί περιττή υπολογιστική ισχύς, μπορούμε να επιβεβαιώσουμε ότι η ηχογράφηση πήγε καλά; Μπορείτε πάντα να δοκιμάσετε ξανά!"
   },
   "loading": {
     "doingMagic": "Κάνουμε μαγικά.."

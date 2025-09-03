@@ -206,7 +206,8 @@
     "recentSearches": "Recherches récentes",
     "clearHistory": "Effacer l'historique",
     "searchConnections": "Rechercher des connexions",
-    "search": "Recherche"
+    "search": "Recherche",
+    "searchByFactsOrQuestions": "Rechercher par faits ou questions..."
   },
   "voice": {
     "recording": "Enregistrement...",
@@ -246,7 +247,8 @@
     "failedToStopRecording": "Échec de l'arrêt de l'enregistrement",
     "failedToUploadRecording": "Échec du téléchargement de l'enregistrement",
     "couldntParseRecording": "Impossible d'analyser votre enregistrement vocal. Veuillez réessayer plus tard.",
-    "allGood": "Tout va bien ?"
+    "allGood": "Tout va bien ?",
+    "recordingDuration": "Durée"
   },
   "qrCode": {
     "title": "Code QR",
@@ -403,6 +405,8 @@
     "processingDescription": "Nous analysons ce que vous venez de dire et complétons les connexions mentionnées. Cela prend généralement quelques secondes... veuillez patienter !",
     "readyToRecord": "🎤 Prêt à Enregistrer",
     "readyToRecordDescription": "Appuyez sur le microphone ci-dessous et parlez-moi des personnes que vous avez rencontrées. Vous pouvez mentionner plusieurs personnes en un seul enregistrement !",
+    "shareAboutWhoYouMet": "Parlez-moi de qui vous avez rencontré !",
+    "aiWillParseDescription": "Notre IA analysera de manière anonyme ce dont vous parlez, et vous pourrez tout examiner à l'étape suivante.",
     "exampleText": "Par exemple : \"J'ai rencontré John au café, il est ingénieur logiciel de San Francisco. J'ai aussi rencontré Sarah à la conférence, elle travaille dans le marketing et aime la randonnée.\"",
     "reviewConnection": "Revoir la connexion",
     "reviewTitle": "Vérifier les connexions",
@@ -411,7 +415,9 @@
     "connectionsAddedSuccessfullyPlural": "{{count}} connexions ajoutées avec succès !",
     "createConnection": "Créer 1 connexion",
     "createConnectionsPlural": "Créer {{count}} connexions",
-    "navigationText": "{{current}} sur {{total}}"
+    "navigationText": "{{current}} sur {{total}}",
+    "goodToGo": "Prêt à partir ?",
+    "confirmRecordingDescription": "Avant de gaspiller inutilement des ressources informatiques, pouvons-nous confirmer que l'enregistrement s'est bien passé ? Vous pouvez toujours réessayer !"
   },
   "loading": {
     "doingMagic": "La magie opère.."

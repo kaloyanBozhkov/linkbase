@@ -230,7 +230,8 @@
     "recentSearches": "Búsquedas Recientes",
     "clearHistory": "Limpiar Historial",
     "search": "Buscar",
-    "searchConnections": "Buscar Conexiones"
+    "searchConnections": "Buscar Conexiones",
+    "searchByFactsOrQuestions": "Buscar por hechos o preguntas..."
   },
   "voice": {
     "recording": "Grabando...",
@@ -270,7 +271,8 @@
     "failedToStopRecording": "Error al detener la grabación",
     "failedToUploadRecording": "Error al subir la grabación",
     "couldntParseRecording": "No se pudo interpretar tu grabación de voz. Por favor, inténtalo de nuevo más tarde.",
-    "allGood": "¿Todo bien?"
+    "allGood": "¿Todo bien?",
+    "recordingDuration": "Duración"
   },
   "errors": {
     "networkError": "Error de red. Por favor verifica tu conexión.",
@@ -405,6 +407,8 @@
     "processingDescription": "Estamos analizando lo que acabas de decir y completando las conexiones mencionadas. Esto generalmente toma unos segundos... ¡por favor espera!",
     "readyToRecord": "🎤 Listo para Grabar",
     "readyToRecordDescription": "Toca el micrófono abajo y cuéntame sobre las personas que has conocido. ¡Puedes mencionar a varias personas en una grabación!",
+    "shareAboutWhoYouMet": "¡Comparte sobre quién conociste!",
+    "aiWillParseDescription": "Nuestra IA analizará de forma anónima lo que hablas, y podrás revisar todo en el siguiente paso.",
     "exampleText": "Por ejemplo: \"Conocí a John en la cafetería, es ingeniero de software de San Francisco. También conocí a Sarah en la conferencia, trabaja en marketing y le encanta el senderismo.\"",
     "reviewConnection": "Revisar conexión",
     "reviewTitle": "Revisar Conexiones",
@@ -413,7 +417,9 @@
     "connectionsAddedSuccessfullyPlural": "¡{{count}} conexiones añadidas con éxito!",
     "createConnection": "Crear 1 Conexión",
     "createConnectionsPlural": "Crear {{count}} Conexiones",
-    "navigationText": "{{current}} de {{total}}"
+    "navigationText": "{{current}} de {{total}}",
+    "goodToGo": "¿Todo listo?",
+    "confirmRecordingDescription": "Antes de que se desperdicie computación innecesaria en esto, ¿podríamos confirmar que la grabación salió bien? ¡Siempre puedes intentarlo de nuevo!"
   },
   "loading": {
     "doingMagic": "Haciendo magia.."

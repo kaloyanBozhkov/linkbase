@@ -206,7 +206,8 @@
     "recentSearches": "हाल की खोज",
     "clearHistory": "इतिहास साफ करें",
     "searchConnections": "कनेक्शन खोजें",
-    "search": "खोजें"
+    "search": "खोजें",
+    "searchByFactsOrQuestions": "तथ्यों या प्रश्नों द्वारा खोजें..."
   },
   "voice": {
     "recording": "रिकॉर्डिंग हो रही है...",
@@ -246,7 +247,8 @@
     "failedToStopRecording": "रिकॉर्डिंग रोकने में विफल",
     "failedToUploadRecording": "रिकॉर्डिंग अपलोड करने में विफल",
     "couldntParseRecording": "आपकी वॉयस रिकॉर्डिंग को पार्स नहीं कर सके। कृपया बाद में पुनः प्रयास करें।",
-    "allGood": "सब अच्छा?"
+    "allGood": "सब अच्छा?",
+    "recordingDuration": "अवधि"
   },
   "qrCode": {
     "title": "QR कोड",
@@ -411,7 +413,11 @@
     "connectionsAddedSuccessfullyPlural": "{{count}} कनेक्शन सफलतापूर्वक जोड़े गए!",
     "createConnection": "1 कनेक्शन बनाएं",
     "createConnectionsPlural": "{{count}} कनेक्शन बनाएं",
-    "navigationText": "{{current}} का {{total}}"
+    "navigationText": "{{current}} का {{total}}",
+    "shareAboutWhoYouMet": "जिससे आप मिले उसके बारे में साझा करें!",
+    "aiWillParseDescription": "हमारा एआई आपके द्वारा की गई बातों को गुमनाम रूप से विश्लेषित करेगा, और आप अगले चरण में सब कुछ देख सकेंगे।",
+    "goodToGo": "सब कुछ ठीक है?",
+    "confirmRecordingDescription": "इस पर अनावश्यक कम्प्यूटिंग बर्बाद होने से पहले, क्या हम इसकी पुष्टि कर सकते हैं कि रिकॉर्डिंग सही तरह से हुई? आप हमेशा फिर से प्रयास कर सकते हैं!"
   },
   "loading": {
     "doingMagic": "जादू कर रहे हैं.."

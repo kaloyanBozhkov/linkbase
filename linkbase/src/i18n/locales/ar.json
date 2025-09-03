@@ -206,7 +206,8 @@
     "recentSearches": "البحث الأخير",
     "clearHistory": "مسح السجل",
     "searchConnections": "بحث عن الاتصالات",
-    "search": "بحث"
+    "search": "بحث",
+    "searchByFactsOrQuestions": "ابحث عن الحقائق أو الأسئلة..."
   },
   "voice": {
     "recording": "جار التسجيل...",
@@ -246,7 +247,8 @@
     "failedToStopRecording": "فشل في إيقاف التسجيل",
     "failedToUploadRecording": "فشل في تحميل التسجيل",
     "couldntParseRecording": "لم نتمكن من تحليل تسجيل الصوت الخاص بك. حاول مرة أخرى لاحقاً.",
-    "allGood": "كل شيء جيد؟"
+    "allGood": "كل شيء جيد؟",
+    "recordingDuration": "المدة"
   },
   "qrCode": {
     "title": "الرمز الشريطي",
@@ -411,7 +413,11 @@
     "connectionsAddedSuccessfullyPlural": "تمت إضافة {{count}} اتصالات بنجاح!",
     "createConnection": "إنشاء اتصال واحد",
     "createConnectionsPlural": "إنشاء {{count}} اتصالات",
-    "navigationText": "{{current}} من {{total}}"
+    "navigationText": "{{current}} من {{total}}",
+    "shareAboutWhoYouMet": "شارك عن من قابلته!",
+    "aiWillParseDescription": "سيقوم الذكاء الاصطناعي لدينا بتحليل ما تتحدث عنه بشكل مجهول، وستتمكن من مراجعة كل شيء في الخطوة التالية.",
+    "goodToGo": "هل أنت جاهز للانطلاق؟",
+    "confirmRecordingDescription": "قبل أن نهدر جهد الحوسبة دون داعٍ، هل يمكننا التأكد من أن التسجيل كان جيدًا؟ يمكنك دائماً المحاولة مرة أخرى!"
   },
   "loading": {
     "doingMagic": "جارٍ عمل السحر.."

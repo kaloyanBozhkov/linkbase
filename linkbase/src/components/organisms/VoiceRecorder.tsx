@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { View, Text, StyleSheet, Pressable, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -21,20 +21,24 @@ interface VoiceRecorderProps {
   onRecordingUploaded: (uploadedUrl: string) => void;
   userId: string;
   featureFolder: (typeof S3_FEATURE_FOLDERS)[number];
-  size?: 'small' | 'medium' | 'large';
+  size?: "small" | "medium" | "large";
+  startRecordingOnMount?: boolean;
+  onRecordingStateChange?: (state: RecordingState) => void;
 }
 
 const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   onRecordingUploaded,
   userId,
   featureFolder,
-  size = 'medium',
+  size = "medium",
+  startRecordingOnMount = false,
+  onRecordingStateChange,
 }) => {
   const { t } = useTranslation();
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
   const { colors } = useThemeStore();
-  
+
   const [recordingState, setRecordingState] = useState<RecordingState>("idle");
   const [recordingUri, setRecordingUri] = useState<string | null>(null);
   const [recordingDuration, setRecordingDuration] = useState(0);
@@ -50,7 +54,10 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
     (async () => {
       const status = await AudioModule.requestRecordingPermissionsAsync();
       if (!status.granted) {
-        Alert.alert(t("voice.permissionRequired"), t("voice.permissionMessage"));
+        Alert.alert(
+          t("voice.permissionRequired"),
+          t("voice.permissionMessage")
+        );
       }
 
       await setAudioModeAsync({
@@ -66,6 +73,11 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       }
     };
   }, []);
+
+  // Call onRecordingStateChange whenever recordingState changes
+  useEffect(() => {
+    onRecordingStateChange?.(recordingState);
+  }, [recordingState, onRecordingStateChange]);
 
   // Timer effect for recording duration
   useEffect(() => {
@@ -87,11 +99,11 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
     }
   }, [recorderState.isRecording, recordingStartTime]);
 
-  const startRecording = async () => {
+  const startRecording = useCallback(async () => {
     try {
       await audioRecorder.prepareToRecordAsync();
       audioRecorder.record();
-      
+
       setRecordingDuration(0);
       const startTime = Date.now();
       setRecordingStartTime(startTime);
@@ -102,7 +114,13 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       console.error("Failed to start recording:", error);
       Alert.alert(t("common.error"), t("voice.failedToStartRecording"));
     }
-  };
+  }, [audioRecorder, t]);
+
+  useEffect(() => {
+    if (startRecordingOnMount) {
+      startRecording();
+    }
+  }, [startRecordingOnMount, startRecording]);
 
   const stopRecording = async () => {
     try {
@@ -153,7 +171,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       onRecordingUploaded(destinationUrl);
     } catch (error) {
       console.error("Failed to upload recording:", error);
-              Alert.alert(t("common.error"), t("voice.failedToUploadRecording"));
+      Alert.alert(t("common.error"), t("voice.failedToUploadRecording"));
     } finally {
       setIsUploading(false);
     }
@@ -213,18 +231,22 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   const renderIdleState = () => (
     <Pressable
       style={[
-        styles.button, 
+        styles.button,
         styles.recordButton,
         {
           width: config.buttonSize,
           height: config.buttonSize,
           borderRadius: config.buttonSize / 2,
           backgroundColor: colors.background.accent,
-        }
+        },
       ]}
       onPress={startRecording}
     >
-      <Ionicons name="mic" size={config.iconSize} color={colors.text.onAccent} />
+      <Ionicons
+        name="mic"
+        size={config.iconSize}
+        color={colors.text.onAccent}
+      />
     </Pressable>
   );
 
@@ -232,22 +254,44 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
     <View style={styles.recordingContainer}>
       <Pressable
         style={[
-          styles.button, 
+          styles.button,
           styles.stopButton,
           {
             width: config.stopButtonSize,
             height: config.stopButtonSize,
             borderRadius: config.stopButtonSize / 2,
             backgroundColor: colors.text.error,
-          }
+          },
         ]}
         onPress={stopRecording}
       >
-        <Ionicons name="stop" size={config.iconSize * 0.7} color={colors.text.onAccent} />
+        <Ionicons
+          name="stop"
+          size={config.iconSize * 0.7}
+          color={colors.text.onAccent}
+        />
       </Pressable>
-      <View style={[styles.recordingInfo, { backgroundColor: colors.background.secondary, borderColor: colors.border.default }]}>
-        <View style={[styles.recordingIndicator, { backgroundColor: colors.text.error }]} />
-        <Text style={[styles.durationText, { fontSize: config.fontSize, color: colors.text.primary }]}>
+      <View
+        style={[
+          styles.recordingInfo,
+          {
+            backgroundColor: colors.background.secondary,
+            borderColor: colors.border.default,
+          },
+        ]}
+      >
+        <View
+          style={[
+            styles.recordingIndicator,
+            { backgroundColor: colors.text.error },
+          ]}
+        />
+        <Text
+          style={[
+            styles.durationText,
+            { fontSize: config.fontSize, color: colors.text.primary },
+          ]}
+        >
           {formatDuration(recordingDuration)}
         </Text>
       </View>
@@ -259,46 +303,73 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       <View style={styles.actionsContainer}>
         <Pressable
           style={[
-            styles.button, 
+            styles.button,
             styles.discardButton,
             {
               width: config.actionButtonSize,
               height: config.actionButtonSize,
               borderRadius: config.actionButtonSize / 2,
               backgroundColor: colors.text.error,
-            }
+            },
           ]}
           onPress={discardRecording}
           disabled={isUploading}
         >
-          <Ionicons name="close" size={config.iconSize * 0.6} color={colors.text.onAccent} />
+          <Ionicons
+            name="close"
+            size={config.iconSize * 0.6}
+            color={colors.text.onAccent}
+          />
         </Pressable>
         <Pressable
           style={[
-            styles.button, 
+            styles.button,
             styles.acceptButton,
             {
               width: config.actionButtonSize,
               height: config.actionButtonSize,
               borderRadius: config.actionButtonSize / 2,
               backgroundColor: colors.background.accent,
-            }
+            },
           ]}
           onPress={acceptRecording}
           disabled={isUploading}
         >
           {isUploading ? (
-            <Text style={[styles.uploadingText, { fontSize: config.fontSize, color: colors.text.onAccent }]}>...</Text>
+            <Text
+              style={[
+                styles.uploadingText,
+                { fontSize: config.fontSize, color: colors.text.onAccent },
+              ]}
+            >
+              ...
+            </Text>
           ) : (
-            <Ionicons name="checkmark" size={config.iconSize * 0.6} color={colors.text.onAccent} />
+            <Ionicons
+              name="checkmark"
+              size={config.iconSize * 0.6}
+              color={colors.text.onAccent}
+            />
           )}
         </Pressable>
       </View>
       <View style={styles.recordedTextContainer}>
-        <Text style={[styles.recordedText, { fontSize: config.fontSize, color: colors.text.muted }]}>
-          {t("voice.recording")}: {formatDuration(recordingDuration)}
+        <Text
+          style={[
+            styles.recordedText,
+            { fontSize: config.fontSize, color: colors.text.muted },
+          ]}
+        >
+          {t("voice.recordingDuration")}: {formatDuration(recordingDuration)}
         </Text>
-        <Text style={[styles.recordedText, { fontSize: config.fontSize, color: colors.text.muted }]}>{t("voice.allGood")}</Text>
+        <Text
+          style={[
+            styles.recordedText,
+            { fontSize: config.fontSize, color: colors.text.muted },
+          ]}
+        >
+          {t("voice.allGood")}
+        </Text>
       </View>
     </View>
   );
@@ -328,8 +399,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
-   recordButton: {
-  },
+  recordButton: {},
   stopButton: {
     width: 30,
     height: 30,
