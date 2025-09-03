@@ -307,17 +307,13 @@ const SettingsScreen: React.FC = () => {
                 <Text
                   style={[styles.modalTitle, { color: colors.text.accent }]}
                 >
-                  {t('settings.language.selectLanguage')}
+                  {t("settings.language.selectLanguage")}
                 </Text>
                 <TouchableOpacity
                   onPress={() => setIsLanguageModalVisible(false)}
                   style={styles.closeButton}
                 >
-                  <Ionicons
-                    name="close"
-                    size={24}
-                    color={colors.text.muted}
-                  />
+                  <Ionicons name="close" size={24} color={colors.text.muted} />
                 </TouchableOpacity>
               </View>
 
@@ -341,7 +337,10 @@ const SettingsScreen: React.FC = () => {
                         style={[
                           styles.languageItem,
                           { backgroundColor: colors.background.surface },
-                          isSelected && [styles.languageItemSelected, { backgroundColor: colors.background.tertiary }],
+                          isSelected && [
+                            styles.languageItemSelected,
+                            { backgroundColor: colors.background.tertiary },
+                          ],
                         ]}
                         onPress={async () => {
                           await changeLanguage(code as any);
@@ -372,7 +371,7 @@ const SettingsScreen: React.FC = () => {
                               { color: colors.text.muted },
                             ]}
                           >
-                            {language.regions.join(', ')}
+                            {language.regions.join(", ")}
                           </Text>
                         </View>
                         {isSelected && (
@@ -523,27 +522,27 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
-    width: '90%',
-    maxHeight: '80%',
+    width: "90%",
+    maxHeight: "80%",
     borderRadius: 16,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   modalGradient: {
     padding: 20,
   },
   modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 20,
   },
   modalTitle: {
-    fontSize: typography.size['2xl'],
+    fontSize: typography.size["2xl"],
     fontWeight: typography.weight.bold,
     flex: 1,
   },
@@ -554,16 +553,16 @@ const styles = StyleSheet.create({
     maxHeight: 400,
   },
   languageItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 16,
     borderRadius: 12,
     marginBottom: 8,
   },
   languageItemSelected: {
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: "transparent",
   },
   languageInfo: {
     flex: 1,
@@ -579,7 +578,7 @@ const styles = StyleSheet.create({
   },
   languageRegions: {
     fontSize: typography.size.sm,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
 });
 

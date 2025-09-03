@@ -34,8 +34,6 @@ const OnboardingLanguageScreen: React.FC<Props> = ({ navigation }) => {
     isInitializing,
   } = useOnboardingStore();
 
-
-
   // Initialize the language when component mounts
   useEffect(
     () => {

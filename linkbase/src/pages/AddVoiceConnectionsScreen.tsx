@@ -104,7 +104,9 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
     setIsReviewing(false);
   };
 
-  const handleRecordingStateChange = (state: "idle" | "recording" | "recorded") => {
+  const handleRecordingStateChange = (
+    state: "idle" | "recording" | "recorded"
+  ) => {
     setIsRecording(state === "recording");
     setIsReviewing(state === "recorded");
   };
@@ -370,15 +372,15 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
               {isRecording
                 ? t("voiceConnections.shareAboutWhoYouMet")
                 : isReviewing
-                ? t("voiceConnections.goodToGo")
-                : t("voiceConnections.readyToRecord")}
+                  ? t("voiceConnections.goodToGo")
+                  : t("voiceConnections.readyToRecord")}
             </Text>
             <Text style={[styles.emptyStateText, { color: colors.text.muted }]}>
               {isRecording
                 ? t("voiceConnections.aiWillParseDescription")
                 : isReviewing
-                ? t("voiceConnections.confirmRecordingDescription")
-                : t("voiceConnections.readyToRecordDescription")}
+                  ? t("voiceConnections.confirmRecordingDescription")
+                  : t("voiceConnections.readyToRecordDescription")}
             </Text>
             <View style={styles.voiceRecorderContainer}>
               <VoiceRecorder

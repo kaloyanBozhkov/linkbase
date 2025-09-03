@@ -22,7 +22,6 @@ import { getInfiniteQueryItems } from "@/hooks/getInfiniteQueryItems";
 import { getErrorMessage } from "@/helpers/utils";
 import { colors as baseColors, typography } from "@/theme/colors";
 import { useThemeStore } from "@/hooks/useThemeStore";
-import { useOnboardingStore } from "@/hooks/useOnboardingStore";
 import { useTranslation } from "@/hooks/useTranslation";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
@@ -35,8 +34,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const trpcUtils = trpc.useUtils();
   const { colors } = useThemeStore();
   const { t } = useTranslation();
-  const { isCompleted: isOnboardingCompleted } = useOnboardingStore();
-  
+
   const getAllQuery = trpc.linkbase.connections.getAll.useInfiniteQuery(
     {},
     {
@@ -183,16 +181,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       />
     );
   };
-  
+
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Text style={[styles.emptyStateTitle, { color: colors.text.primary }]}>
         {hasSearched ? t("home.noResults") : t("home.startBuilding")}
       </Text>
       <Text style={[styles.emptyStateText, { color: colors.text.muted }]}>
-        {hasSearched
-          ? t("home.noResultsFound")
-          : t("home.emptyNetwork")}
+        {hasSearched ? t("home.noResultsFound") : t("home.emptyNetwork")}
       </Text>
       {!hasSearched && (
         <Button
@@ -206,10 +202,15 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   if (errorConnections) {
     return (
-      <LinearGradient colors={colors.gradients.background} style={styles.container}>
+      <LinearGradient
+        colors={colors.gradients.background}
+        style={styles.container}
+      >
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.errorContainer}>
-            <Text style={[styles.errorTitle, { color: colors.text.primary }]}>{t("home.connectionError")}</Text>
+            <Text style={[styles.errorTitle, { color: colors.text.primary }]}>
+              {t("home.connectionError")}
+            </Text>
             <Text style={[styles.errorText, { color: colors.text.error }]}>
               {getErrorMessage(errorConnections)}
             </Text>
@@ -230,7 +231,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   return (
-    <LinearGradient colors={colors.gradients.background} style={styles.container}>
+    <LinearGradient
+      colors={colors.gradients.background}
+      style={styles.container}
+    >
       <SafeAreaView style={styles.safeArea}>
         <ActionsHeader
           isSearching={isSearching}
@@ -240,7 +244,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           onClearSearch={handleClearSearch}
           onSearchQueryChange={setSearchQuery}
           onAddConnection={() => navigation.navigate("AddConnection")}
-          onVoiceAddConnection={() => navigation.navigate("AddVoiceConnections")}
+          onVoiceAddConnection={() =>
+            navigation.navigate("AddVoiceConnections")
+          }
           onOpenSettings={() => navigation.navigate("Settings")}
         />
         {isLoadingConnections ? (

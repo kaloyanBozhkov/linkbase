@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, Switch, Platform, TouchableOpacity, Modal } from "react-native";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  ScrollView,
+  Switch,
+  Platform,
+  TouchableOpacity,
+  Modal,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { useNotificationSettingsStore } from "@/hooks/useNotificationSettings";
@@ -65,7 +75,8 @@ const scheduleNotification = async (time: string, t: any) => {
 const NotificationsScreen: React.FC = () => {
   const { colors } = useThemeStore();
   const { t } = useTranslation();
-  const { enabled, time, isInitializing, setEnabled, setTime, loadSettings } = useNotificationSettingsStore();
+  const { enabled, time, isInitializing, setEnabled, setTime, loadSettings } =
+    useNotificationSettingsStore();
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [tempTime, setTempTime] = useState<Date>(new Date());
 
@@ -79,7 +90,8 @@ const NotificationsScreen: React.FC = () => {
       targetTime.setDate(targetTime.getDate() + 1);
     }
 
-    const hoursDifference = (targetTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const hoursDifference =
+      (targetTime.getTime() - now.getTime()) / (1000 * 60 * 60);
 
     if (hoursDifference <= 2) {
       const minutesDiff = Math.round(hoursDifference * 60);
@@ -118,7 +130,7 @@ const NotificationsScreen: React.FC = () => {
     if (Platform.OS === "android") {
       setShowTimePicker(false);
     }
-    
+
     if (selectedTime) {
       setTempTime(selectedTime);
       if (Platform.OS === "ios") {
@@ -170,10 +182,17 @@ const NotificationsScreen: React.FC = () => {
 
   if (isInitializing) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.primary }}>
-        <LinearGradient colors={colors.gradients.background} style={styles.gradient}>
+      <SafeAreaView
+        style={{ flex: 1, backgroundColor: colors.background.primary }}
+      >
+        <LinearGradient
+          colors={colors.gradients.background}
+          style={styles.gradient}
+        >
           <View style={styles.container}>
-            <Text style={[styles.title, { color: colors.text.primary }]}>{t("common.loading")}</Text>
+            <Text style={[styles.title, { color: colors.text.primary }]}>
+              {t("common.loading")}
+            </Text>
           </View>
         </LinearGradient>
       </SafeAreaView>
@@ -181,17 +200,39 @@ const NotificationsScreen: React.FC = () => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.primary }}>
-      <LinearGradient colors={colors.gradients.background} style={styles.gradient}>
-        <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-          <Text style={[styles.title, { color: colors.text.primary }]}>{t("notifications.title")}</Text>
-          <View style={[styles.card, { backgroundColor: colors.background.surface, borderColor: colors.border.light }]}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background.primary }}
+    >
+      <LinearGradient
+        colors={colors.gradients.background}
+        style={styles.gradient}
+      >
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+        >
+          <Text style={[styles.title, { color: colors.text.primary }]}>
+            {t("notifications.title")}
+          </Text>
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: colors.background.surface,
+                borderColor: colors.border.light,
+              },
+            ]}
+          >
             <View style={styles.row}>
-              <Text style={[styles.label, { color: colors.text.secondary }]}>Enable Notifications</Text>
+              <Text style={[styles.label, { color: colors.text.secondary }]}>
+                Enable Notifications
+              </Text>
               <Switch value={enabled} onValueChange={setEnabled} />
             </View>
             <View style={styles.row}>
-              <Text style={[styles.label, { color: colors.text.secondary }]}>Time</Text>
+              <Text style={[styles.label, { color: colors.text.secondary }]}>
+                Time
+              </Text>
               <TouchableOpacity
                 onPress={openTimePicker}
                 style={[
@@ -209,7 +250,12 @@ const NotificationsScreen: React.FC = () => {
             </View>
             {enabled && (
               <View style={styles.notificationTypeRow}>
-                <Text style={[styles.notificationTypeText, { color: colors.text.secondary }]}>
+                <Text
+                  style={[
+                    styles.notificationTypeText,
+                    { color: colors.text.secondary },
+                  ]}
+                >
                   {getNotificationScheduleInfo(time)}
                 </Text>
               </View>
@@ -226,14 +272,39 @@ const NotificationsScreen: React.FC = () => {
           onRequestClose={handleTimeCancel}
         >
           <View style={styles.modalOverlay}>
-                         <View style={[styles.modalContent, { backgroundColor: colors.background.primary }]}>
-                             <View style={[styles.modalHeader, { borderBottomColor: colors.border.light }]}>
+            <View
+              style={[
+                styles.modalContent,
+                { backgroundColor: colors.background.primary },
+              ]}
+            >
+              <View
+                style={[
+                  styles.modalHeader,
+                  { borderBottomColor: colors.border.light },
+                ]}
+              >
                 <TouchableOpacity onPress={handleTimeCancel}>
-                  <Text style={[styles.modalButton, { color: colors.text.secondary }]}>{t("common.cancel")}</Text>
+                  <Text
+                    style={[
+                      styles.modalButton,
+                      { color: colors.text.secondary },
+                    ]}
+                  >
+                    {t("common.cancel")}
+                  </Text>
                 </TouchableOpacity>
-                <Text style={[styles.modalTitle, { color: colors.text.primary }]}>{t("notifications.setTime")}</Text>
+                <Text
+                  style={[styles.modalTitle, { color: colors.text.primary }]}
+                >
+                  {t("notifications.setTime")}
+                </Text>
                 <TouchableOpacity onPress={handleTimeConfirm}>
-                  <Text style={[styles.modalButton, { color: colors.text.accent }]}>{t("common.done")}</Text>
+                  <Text
+                    style={[styles.modalButton, { color: colors.text.accent }]}
+                  >
+                    {t("common.done")}
+                  </Text>
                 </TouchableOpacity>
               </View>
               <DateTimePicker
@@ -258,8 +329,17 @@ const styles = StyleSheet.create({
   container: { padding: 20, gap: 16 },
   title: { fontSize: 24, fontWeight: "700" },
   card: { borderRadius: 12, padding: 16, borderWidth: 1 },
-  row: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
-  notificationTypeRow: { flexDirection: "row", justifyContent: "flex-end", marginTop: 4 },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  notificationTypeRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 4,
+  },
   label: { fontSize: 16 },
   notificationTypeText: { fontSize: 12, fontStyle: "italic" },
   timeButton: {
@@ -302,4 +382,3 @@ const styles = StyleSheet.create({
 });
 
 export default NotificationsScreen;
-

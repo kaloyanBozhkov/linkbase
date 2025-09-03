@@ -30,8 +30,6 @@ const OnboardingThemeScreen: React.FC<Props> = ({ navigation }) => {
   const { selectedTheme, setSelectedTheme, setCurrentStep } =
     useOnboardingStore();
 
-
-
   const handleThemeSelect = async (themeId: string) => {
     // Apply the theme immediately for instant visual feedback
     await setThemeId(themeId as ThemeId);

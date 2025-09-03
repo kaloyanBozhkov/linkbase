@@ -5,10 +5,9 @@ import { useThemeStore } from "@/hooks/useThemeStore";
 import { useTranslation } from "@/hooks/useTranslation";
 import ThemeSelector from "@/components/molecules/ThemeSelector";
 
-
-
 const AppearanceScreen: React.FC = () => {
-  const { colors, themeId, setThemeId, initializeTheme, isInitializing } = useThemeStore();
+  const { colors, themeId, setThemeId, initializeTheme, isInitializing } =
+    useThemeStore();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -17,11 +16,23 @@ const AppearanceScreen: React.FC = () => {
   }, [initializeTheme, isInitializing]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.primary }}>
-      <LinearGradient colors={colors.gradients.background} style={styles.gradient}>
-        <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-          <Text style={[styles.title, { color: colors.text.primary }]}>{t("appearance.title")}</Text>
-          <Text style={[styles.subtitle, { color: colors.text.muted }]}>{t("appearance.chooseTheme")}</Text>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background.primary }}
+    >
+      <LinearGradient
+        colors={colors.gradients.background}
+        style={styles.gradient}
+      >
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+        >
+          <Text style={[styles.title, { color: colors.text.primary }]}>
+            {t("appearance.title")}
+          </Text>
+          <Text style={[styles.subtitle, { color: colors.text.muted }]}>
+            {t("appearance.chooseTheme")}
+          </Text>
           <ThemeSelector
             selectedThemeId={themeId}
             onThemeSelect={setThemeId}
@@ -42,4 +53,3 @@ const styles = StyleSheet.create({
 });
 
 export default AppearanceScreen;
-

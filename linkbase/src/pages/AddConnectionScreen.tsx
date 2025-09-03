@@ -51,7 +51,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isNameAutoCapitalized, setIsNameAutoCapitalized] = useState(true);
   const trpcUtils = trpc.useUtils();
-  
+
   const [filloutAudioUrl, setFilloutAudioUrl] = useState<string | null>(null);
   const {
     data: filloutData,
@@ -67,10 +67,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
   );
   useEffect(() => {
     if (filloutError) {
-      Alert.alert(
-        t("common.error"),
-        t("connections.voiceRecordingError")
-      );
+      Alert.alert(t("common.error"), t("connections.voiceRecordingError"));
     }
   }, [filloutError]);
   useEffect(() => {
@@ -125,7 +122,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
 
     const userId = useSessionUserStore.getState().userId;
     if (!userId) {
-              Alert.alert(t("common.error"), t("auth.userNotFound"));
+      Alert.alert(t("common.error"), t("auth.userNotFound"));
       return;
     }
 
@@ -146,9 +143,9 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
             { prepend: true }
           );
 
-                  Alert.alert(t("common.success"), t("connections.addedSuccessfully"), [
-          { text: t("common.ok"), onPress: () => navigation.goBack() },
-        ]);
+          Alert.alert(t("common.success"), t("connections.addedSuccessfully"), [
+            { text: t("common.ok"), onPress: () => navigation.goBack() },
+          ]);
 
           enableRateApp();
         },
@@ -192,12 +189,21 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
   const { colors } = useThemeStore();
 
   return (
-    <LinearGradient colors={colors.gradients.background} style={styles.container}>
+    <LinearGradient
+      colors={colors.gradients.background}
+      style={styles.container}
+    >
       <SafeAreaView style={styles.safeArea}>
-        <View style={[styles.header, { borderBottomColor: colors.border.light }]}>
+        <View
+          style={[styles.header, { borderBottomColor: colors.border.light }]}
+        >
           <View>
-            <Text style={[styles.headerTitle, { color: colors.text.primary }]}>{t("connections.newConnection")}</Text>
-            <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}>{t("connections.buildNetwork")}</Text>
+            <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+              {t("connections.newConnection")}
+            </Text>
+            <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}>
+              {t("connections.buildNetwork")}
+            </Text>
           </View>
           <View style={styles.voiceRec}>
             {isFetchingFillout ? (
@@ -265,10 +271,24 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
               />
 
               <View style={styles.factsSection}>
-                <LinearGradient colors={colors.gradients.section} style={[styles.factsSectionContent, { borderColor: colors.border.default }]}>
-                  <Text style={[styles.factsTitle, { color: colors.text.accent }]}>{t("connections.notesOptional")}</Text>
+                <LinearGradient
+                  colors={colors.gradients.section}
+                  style={[
+                    styles.factsSectionContent,
+                    { borderColor: colors.border.default },
+                  ]}
+                >
+                  <Text
+                    style={[styles.factsTitle, { color: colors.text.accent }]}
+                  >
+                    {t("connections.notesOptional")}
+                  </Text>
                   {errors.facts && (
-                    <Text style={[styles.errorText, { color: colors.text.error }]}>{errors.facts}</Text>
+                    <Text
+                      style={[styles.errorText, { color: colors.text.error }]}
+                    >
+                      {errors.facts}
+                    </Text>
                   )}
 
                   {formData.facts.map((fact, index) => (
@@ -302,18 +322,26 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
                   />
                 </LinearGradient>
               </View>
-
             </View>
           </ScrollView>
-          <View style={[styles.bottomActions, { borderTopColor: colors.border.light }]}>
+          <View
+            style={[
+              styles.bottomActions,
+              { borderTopColor: colors.border.light },
+            ]}
+          >
             <Button
-                          title={t("common.cancel")}
-            onPress={() => navigation.goBack()}
-            variant="secondary"
+              title={t("common.cancel")}
+              onPress={() => navigation.goBack()}
+              variant="secondary"
               style={styles.cancelButton}
             />
             <Button
-              title={loading ? t("connections.adding") : t("connections.addConnection")}
+              title={
+                loading
+                  ? t("connections.adding")
+                  : t("connections.addConnection")
+              }
               onPress={handleSubmit}
               disabled={loading}
               style={styles.submitButton}

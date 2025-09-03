@@ -9,13 +9,19 @@ export default function LoadingScreen() {
   const { colors } = useThemeStore();
   const { t } = useTranslation();
   return (
-    <LinearGradient colors={colors.gradients.background} style={styles.container}>
+    <LinearGradient
+      colors={colors.gradients.background}
+      style={styles.container}
+    >
       <SafeAreaView style={styles.safeArea}>
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
           <ActivityIndicator color={colors.text.accent} />
-          <Text variant="bodyMedium" style={[styles.loadingText, { color: colors.text.primary }]}>
+          <Text
+            variant="bodyMedium"
+            style={[styles.loadingText, { color: colors.text.primary }]}
+          >
             {t("loading.doingMagic")}
           </Text>
         </View>

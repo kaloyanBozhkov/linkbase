@@ -29,8 +29,6 @@ const OnboardingImportScreen: React.FC<Props> = ({ navigation }) => {
   const { t } = useTranslation();
   const { setHasImportedData, setCompleted } = useOnboardingStore();
 
-
-
   const handleImportData = async () => {
     await setHasImportedData(true);
     navigation.navigate("ImportExport");
@@ -41,8 +39,6 @@ const OnboardingImportScreen: React.FC<Props> = ({ navigation }) => {
     await setCompleted(true);
     navigation.navigate("Home");
   };
-
-
 
   return (
     <SafeAreaView

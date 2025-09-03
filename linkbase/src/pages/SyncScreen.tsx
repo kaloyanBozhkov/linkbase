@@ -39,9 +39,8 @@ const SyncScreen: React.FC = () => {
 
         // Load email sent state from storage
         const storedEmailSent = await AsyncStorage.getItem(EMAIL_SENT_KEY);
-        const storedPendingEmail = await AsyncStorage.getItem(
-          PENDING_EMAIL_KEY
-        );
+        const storedPendingEmail =
+          await AsyncStorage.getItem(PENDING_EMAIL_KEY);
 
         if (storedEmailSent === "1" && storedPendingEmail) {
           setIsEmailSent(true);
