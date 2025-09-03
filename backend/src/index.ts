@@ -87,6 +87,7 @@ if (!process.env.VERCEL) {
     console.log(`Environment: ${env.NODE_ENV}`);
     console.log(`CORS origin: ${env.CORS_ORIGIN}`);
   });
+  
   console.log("Server started");
 }
 
