@@ -53,6 +53,12 @@ jobs:
       - name: Create environment file
         run: |
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > backend/.env.production
+          echo "OPEN_AI_API_KEY=${{ secrets.OPEN_AI_API_KEY }}" >> backend/.env.production
+          echo "OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}" >> backend/.env.production
+          echo "S3_ACCESS_KEY_ID=${{ secrets.S3_ACCESS_KEY_ID }}" >> backend/.env.production
+          echo "S3_SECRET_ACCESS_KEY=${{ secrets.S3_SECRET_ACCESS_KEY }}" >> backend/.env.production
+          echo "RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}" >> backend/.env.production
+          echo "EMAIL_ENCRYPTION_KEY=${{ secrets.EMAIL_ENCRYPTION_KEY }}" >> backend/.env.production
 
       - name: Upload Docker image and deployment files to VPS
         uses: appleboy/scp-action@v0.1.7
