@@ -20,9 +20,10 @@ import { useSessionUserStore } from "../hooks/useGetSessionUser";
 import { getErrorMessage } from "../helpers/utils";
 import { useTranslation } from "@/hooks/useTranslation";
 import { trpc, updateInfiniteQueryDataOnAdd } from "@/utils/trpc";
-import { colors as baseColors, typography } from "@/theme/colors";
+import { typography } from "@/theme/colors";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { useKeyboardScroll } from "@/hooks/useKeyboardScroll";
+import { social_media_type } from "@linkbase/prisma/client/enums";
 
 type AddVoiceConnectionsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -37,6 +38,15 @@ export interface VoiceConnectionData {
   name: string;
   metWhere: string;
   facts: string[];
+  socialMedias: {
+    type: social_media_type;
+    handle: string;
+    id?: string;
+    url?: string | null;
+    created_at?: Date;
+    updated_at?: Date;
+    connection_id?: string;
+  }[];
   id: string; // temporary ID for UI management
 }
 
@@ -67,10 +77,7 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     if (filloutError) {
-      Alert.alert(
-        t("common.error"),
-        t("voice.couldntParseRecording")
-      );
+      Alert.alert(t("common.error"), t("voice.couldntParseRecording"));
     }
   }, [filloutError]);
 
@@ -79,6 +86,7 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
       const connectionsWithIds = filloutData.connections.map((conn, index) => ({
         ...conn,
         metWhere: conn.metWhere || "",
+        socialMedias: [],
         id: `temp-${index}`,
       }));
       setConnections(connectionsWithIds);
@@ -123,7 +131,10 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleCreateAll = async () => {
     if (connections.length === 0) {
-      Alert.alert(t("voiceConnections.noConnections"), t("voiceConnections.pleaseRecordFirst"));
+      Alert.alert(
+        t("voiceConnections.noConnections"),
+        t("voiceConnections.pleaseRecordFirst")
+      );
       return;
     }
 
@@ -149,7 +160,10 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
           name: conn.name.trim(),
           metAt: conn.metWhere.trim(),
           facts: conn.facts.filter((fact) => fact.trim()),
-          socialMedias: [],
+          socialMedias: conn.socialMedias.map((sm) => ({
+            type: sm.type,
+            handle: sm.handle.trim(),
+          })),
         })
       );
 
@@ -167,7 +181,11 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
 
       Alert.alert(
         t("common.success"),
-        t("voiceConnections.connectionsAddedSuccessfully", { count: createdConnections.length }),
+        createdConnections.length === 1
+          ? t("voiceConnections.connectionAddedSuccessfully")
+          : t("voiceConnections.connectionsAddedSuccessfullyPlural", {
+              count: createdConnections.length,
+            }),
         [{ text: t("common.ok"), onPress: () => navigation.goBack() }]
       );
     } catch (error: any) {
@@ -186,43 +204,70 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
 
   const { colors } = useThemeStore();
   return (
-    <LinearGradient colors={colors.gradients.background} style={styles.container}>
+    <LinearGradient
+      colors={colors.gradients.background}
+      style={styles.container}
+    >
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.header}>
+        <View
+          style={[styles.header, { borderBottomColor: colors.border.light }]}
+        >
           <View>
-            <Text style={[styles.headerTitle, { color: colors.text.primary }]}>{t("voiceConnections.title")}</Text>
-            <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}> 
-              {t("voiceConnections.subtitle")}
+            <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+              {connections.length > 0
+                ? t("voiceConnections.reviewTitle")
+                : t("voiceConnections.title")}
+            </Text>
+            <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}>
+              {connections.length > 0
+                ? t("voiceConnections.reviewSubtitle")
+                : t("voiceConnections.subtitle")}
             </Text>
           </View>
         </View>
 
         {connections.length > 0 && (
           <>
-            <View style={[styles.navigationHeader, { borderBottomColor: colors.border.light }]}>
-              <Text style={[styles.navigationText, { color: colors.text.primary }]}>
-                {currentIndex + 1} of {connections.length}
+            <View
+              style={[
+                styles.navigationHeader,
+                { borderBottomColor: colors.border.light },
+              ]}
+            >
+              <Text
+                style={[styles.navigationText, { color: colors.text.primary }]}
+              >
+                {t("voiceConnections.navigationText", {
+                  current: currentIndex + 1,
+                  total: connections.length,
+                })}
               </Text>
-              <View style={styles.navigationButtons}>
-                <Button
-                  title={t("common.previous")}
-                  onPress={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
-                  disabled={currentIndex === 0}
-                  variant="secondary"
-                  size="small"
-                />
-                <Button
-                  title={t("common.next")}
-                  onPress={() =>
-                    setCurrentIndex(
-                      Math.min(connections.length - 1, currentIndex + 1)
-                    )
-                  }
-                  disabled={currentIndex === connections.length - 1}
-                  variant="secondary"
-                  size="small"
-                />
-              </View>
+              {connections.length > 1 && (
+                <>
+                  <View style={styles.navigationButtons}>
+                    <Button
+                      title={t("common.previous")}
+                      onPress={() =>
+                        setCurrentIndex(Math.max(0, currentIndex - 1))
+                      }
+                      disabled={currentIndex === 0}
+                      variant="secondary"
+                      size="small"
+                    />
+                    <Button
+                      title={t("common.next")}
+                      onPress={() =>
+                        setCurrentIndex(
+                          Math.min(connections.length - 1, currentIndex + 1)
+                        )
+                      }
+                      disabled={currentIndex === connections.length - 1}
+                      variant="secondary"
+                      size="small"
+                    />
+                  </View>
+                </>
+              )}
             </View>
 
             <KeyboardAvoidingView
@@ -236,6 +281,7 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
               >
                 {connections[currentIndex] && (
                   <VoiceConnectionCard
+                    idx={currentIndex + 1}
                     connection={connections[currentIndex]}
                     onUpdate={(updatedData) =>
                       handleConnectionUpdate(
@@ -252,7 +298,12 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
               </ScrollView>
             </KeyboardAvoidingView>
 
-            <View style={styles.bottomActions}>
+            <View
+              style={[
+                styles.bottomActions,
+                { borderTopColor: colors.border.light },
+              ]}
+            >
               <Button
                 title={t("common.tryAgain")}
                 onPress={handleRetry}
@@ -264,7 +315,11 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
                 title={
                   isCreating
                     ? t("voiceConnections.creating")
-                    : t("voiceConnections.createConnections", { count: connections.length })
+                    : connections.length === 1
+                      ? t("voiceConnections.createConnection")
+                      : t("voiceConnections.createConnectionsPlural", {
+                          count: connections.length,
+                        })
                 }
                 onPress={handleCreateAll}
                 disabled={isCreating}
@@ -277,9 +332,22 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
 
         {isFetchingFillout && (
           <View style={styles.processingState}>
-            <ActivityIndicator size="large" color={baseColors.loading} />
-            <Text style={[styles.processingTitle, { color: colors.text.primary }]}>{t("voiceConnections.processingRecording")}</Text>
-            <Text style={[styles.processingText, { backgroundColor: colors.background.surface, borderColor: colors.border.light, color: colors.text.muted }]}>
+            <ActivityIndicator size="large" color={colors.text.accent} />
+            <Text
+              style={[styles.processingTitle, { color: colors.text.primary }]}
+            >
+              {t("voiceConnections.processingRecording")}
+            </Text>
+            <Text
+              style={[
+                styles.processingText,
+                {
+                  backgroundColor: colors.background.surface,
+                  borderColor: colors.border.light,
+                  color: colors.text.muted,
+                },
+              ]}
+            >
               {t("voiceConnections.processingDescription")}
             </Text>
           </View>
@@ -287,7 +355,11 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
 
         {connections.length === 0 && !isFetchingFillout && (
           <View style={styles.emptyState}>
-            <Text style={[styles.emptyStateTitle, { color: colors.text.primary }]}>{t("voiceConnections.readyToRecord")}</Text>
+            <Text
+              style={[styles.emptyStateTitle, { color: colors.text.primary }]}
+            >
+              {t("voiceConnections.readyToRecord")}
+            </Text>
             <Text style={[styles.emptyStateText, { color: colors.text.muted }]}>
               {t("voiceConnections.readyToRecordDescription")}
             </Text>
@@ -299,7 +371,16 @@ const AddVoiceConnectionsScreen: React.FC<Props> = ({ navigation }) => {
                 size="large"
               />
             </View>
-            <Text style={[styles.emptyStateExample, { backgroundColor: colors.background.surface, borderColor: colors.border.light, color: colors.text.secondary }]}>
+            <Text
+              style={[
+                styles.emptyStateExample,
+                {
+                  backgroundColor: colors.background.surface,
+                  borderColor: colors.border.light,
+                  color: colors.text.secondary,
+                },
+              ]}
+            >
               {t("voiceConnections.exampleText")}
             </Text>
           </View>
@@ -320,18 +401,15 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: baseColors.border.light,
   },
   headerTitle: {
     fontSize: typography.size["5xl"],
     fontWeight: typography.weight.extrabold,
-    color: baseColors.text.primary,
     marginBottom: 4,
     letterSpacing: typography.letterSpacing.wide,
   },
   headerSubtitle: {
     fontSize: typography.size.xl,
-    color: baseColors.text.muted,
     fontWeight: typography.weight.medium,
   },
   navigationHeader: {
@@ -341,12 +419,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: baseColors.border.light,
   },
   navigationText: {
     fontSize: typography.size.lg,
     fontWeight: typography.weight.semibold,
-    color: baseColors.text.primary,
   },
   navigationButtons: {
     flexDirection: "row",
@@ -361,7 +437,6 @@ const styles = StyleSheet.create({
     gap: 16,
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: baseColors.border.light,
   },
   actionButton: {
     flex: 1,
@@ -379,22 +454,18 @@ const styles = StyleSheet.create({
   processingTitle: {
     fontSize: typography.size["4xl"],
     fontWeight: typography.weight.bold,
-    color: baseColors.text.primary,
     marginTop: 20,
     marginBottom: 12,
     textAlign: "center",
   },
   processingText: {
     fontSize: typography.size.xl,
-    color: baseColors.text.muted,
     textAlign: "center",
     lineHeight: 24,
     paddingHorizontal: 16,
-    backgroundColor: baseColors.background.surface,
     paddingVertical: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: baseColors.border.light,
   },
   emptyState: {
     flex: 1,
@@ -405,13 +476,11 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     fontSize: typography.size["4xl"],
     fontWeight: typography.weight.bold,
-    color: baseColors.text.primary,
     marginBottom: 12,
     textAlign: "center",
   },
   emptyStateText: {
     fontSize: typography.size.xl,
-    color: baseColors.text.muted,
     textAlign: "center",
     marginBottom: 24,
     lineHeight: 24,
@@ -422,16 +491,13 @@ const styles = StyleSheet.create({
   },
   emptyStateExample: {
     fontSize: typography.size.base,
-    color: baseColors.text.secondary,
     textAlign: "center",
     fontStyle: "italic",
     lineHeight: 22,
     paddingHorizontal: 16,
-    backgroundColor: baseColors.background.surface,
     paddingVertical: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: baseColors.border.light,
   },
 });
 

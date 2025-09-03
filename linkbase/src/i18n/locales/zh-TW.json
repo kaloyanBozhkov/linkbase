@@ -322,7 +322,20 @@
     "importConnections": "匯入連接",
     "importDescription": "從 JSON 文件匯入連接",
     "importing": "匯入中...",
-    "import": "匯入"
+    "import": "匯入",
+    "title": "匯入與匯出",
+    "manageData": "管理您的數據",
+    "manageDataDescription": "匯出您的連接以備份數據或與其他設備分享。從JSON文件匯入連接以新增到您目前的集合中。",
+    "invalidFormat": "格式不正確",
+    "invalidConnectionData": "檔案不包含有效的連接數據。",
+    "importComplete": "匯入完成",
+    "importCompleteMessage": "匯入完成！\n\n匯入數：{{imported}}\n跳過（重複）：{{skipped}}",
+    "importErrors": "匯入錯誤",
+    "importFailed": "匯入失敗",
+    "importError": "匯入連接時發生錯誤。",
+    "duplicateNote": "• 匯入時，重複的連接（相同名稱和會面地點）將會被跳過",
+    "factsNote": "• 每個連接的事實是去重處理的",
+    "jsonFormatNote": "• 匯入文件必須是有效的JSON格式"
   },
   "appearance": {
     "title": "外觀",
@@ -393,7 +406,14 @@
     "readyToRecord": "🎤 準備錄音",
     "readyToRecordDescription": "點擊下方麥克風，告訴我您遇見的人。您可以在一次錄音中提及多個人！",
     "exampleText": "例如：“我在咖啡店遇到了約翰，他是來自舊金山的軟體工程師。我也在會議上遇到了莎拉，她從事市場營銷，喜歡徒步旅行。”",
-    "reviewConnection": "檢閱連接"
+    "reviewConnection": "檢閱連接",
+    "reviewTitle": "查看連接",
+    "reviewSubtitle": "現在讓我們檢視每個聯絡人。",
+    "connectionAddedSuccessfully": "成功新增1個連接！",
+    "connectionsAddedSuccessfullyPlural": "成功新增{{count}}個連接！",
+    "createConnection": "建立1個連接",
+    "createConnectionsPlural": "建立{{count}}個連接",
+    "navigationText": "{{current}} / {{total}}"
   },
   "loading": {
     "doingMagic": "施展魔法中.."
@@ -436,6 +456,7 @@
     "warmPastel": "暖色粉彩",
     "warmPastelDescription": "深色主題，帶有暖粉色點綴",
     "lightMode": "亮色模式",
-    "lightModeDescription": "乾淨的亮色主題，帶有藍色點綴"
+    "lightModeDescription": "乾淨的亮色主題，帶有藍色點綴",
+    "continue": "繼續"
   }
 }

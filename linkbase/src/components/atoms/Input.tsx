@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TextInputProps,
 } from "react-native";
-import { colors as baseColors, shadows, typography, borderRadius } from "@/theme/colors";
+import { shadows, typography, borderRadius } from "@/theme/colors";
 import { useThemeStore } from "@/hooks/useThemeStore";
 
 interface InputProps extends TextInputProps {
@@ -76,22 +76,17 @@ const styles = StyleSheet.create({
     fontSize: typography.size.xl,
     fontWeight: typography.weight.semibold,
     marginBottom: 8,
-    color: baseColors.input.label,
     letterSpacing: typography.letterSpacing.wide,
   },
   input: {
     borderWidth: 2,
-    borderColor: baseColors.input.border,
     borderRadius: borderRadius.md,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: typography.size.xl,
-    backgroundColor: baseColors.input.background,
-    color: baseColors.input.text,
     ...shadows.sm,
   },
   errorText: {
-    color: baseColors.text.error,
     fontSize: typography.size.base,
     marginTop: 6,
     fontWeight: typography.weight.medium,

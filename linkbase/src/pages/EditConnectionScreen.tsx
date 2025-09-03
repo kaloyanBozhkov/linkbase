@@ -127,9 +127,11 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
             updatedConnection
           );
 
-          Alert.alert(t("common.success"), t("connections.updatedSuccessfully"), [
-            { text: "OK", onPress: () => navigation.goBack() },
-          ]);
+          Alert.alert(
+            t("common.success"),
+            t("connections.updatedSuccessfully"),
+            [{ text: "OK", onPress: () => navigation.goBack() }]
+          );
         },
         onError: (error) => {
           const errorMessage = getErrorMessage(error);
@@ -181,10 +183,15 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
   const { colors } = useThemeStore();
   if (isLoadingConnection) {
     return (
-      <LinearGradient colors={colors.gradients.background} style={styles.container}>
+      <LinearGradient
+        colors={colors.gradients.background}
+        style={styles.container}
+      >
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.centerContainer}>
-            <Text style={[styles.loadingText, { color: colors.text.accent }]}>⚡ Loading connection...</Text>
+            <Text style={[styles.loadingText, { color: colors.text.accent }]}>
+              ⚡ Loading connection...
+            </Text>
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -192,12 +199,16 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
   }
 
   return (
-    <LinearGradient colors={colors.gradients.background} style={styles.container}>
+    <LinearGradient
+      colors={colors.gradients.background}
+      style={styles.container}
+    >
       <SafeAreaView style={styles.safeArea}>
-        <View style={[styles.header, { borderBottomColor: colors.border.light }]}>
-                      <Text style={[styles.headerTitle, { color: colors.text.primary }]}>{t("connections.editConnection")}</Text>
-          <Text style={[styles.headerSubtitle, { color: colors.text.muted }]}>
-            Update {connection?.name}&apos;s info
+        <View
+          style={[styles.header, { borderBottomColor: colors.border.light }]}
+        >
+          <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+            {t("connections.editConnection")}
           </Text>
         </View>
 
@@ -212,7 +223,7 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
           >
             <View style={styles.form}>
               <Input
-                label="Name *"
+                label={t("connections.name") + " *"}
                 value={formData.name}
                 onChangeText={(text) => {
                   // Auto-capitalize if user is just typing (not manually editing)
@@ -224,7 +235,8 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
                   // If user deletes or manually edits, stop auto-capitalizing
                   if (
                     text.length < formData.name.length ||
-                    (text !== camelCaseWords(text) && text === text.toLowerCase())
+                    (text !== camelCaseWords(text) &&
+                      text === text.toLowerCase())
                   ) {
                     setIsNameAutoCapitalized(false);
                   } else if (text.length > formData.name.length) {
@@ -256,10 +268,24 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
               />
 
               <View style={styles.factsSection}>
-                <LinearGradient colors={colors.gradients.section} style={[styles.factsSectionContent, { borderColor: colors.border.default }]}>
-                  <Text style={[styles.factsTitle, { color: colors.text.accent }]}>{t("connections.notesOptional")}</Text>
+                <LinearGradient
+                  colors={colors.gradients.section}
+                  style={[
+                    styles.factsSectionContent,
+                    { borderColor: colors.border.default },
+                  ]}
+                >
+                  <Text
+                    style={[styles.factsTitle, { color: colors.text.accent }]}
+                  >
+                    {t("connections.notesOptional")}
+                  </Text>
                   {errors.facts && (
-                    <Text style={[styles.errorText, { color: colors.text.error }]}>{errors.facts}</Text>
+                    <Text
+                      style={[styles.errorText, { color: colors.text.error }]}
+                    >
+                      {errors.facts}
+                    </Text>
                   )}
 
                   {formData.facts.map((fact, index) => (
@@ -273,7 +299,9 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
                       />
                       {/* Always show remove button since facts are optional */}
                       <Button
-                        icon={<Ionicons name="trash" size={18} color="#ffffff" />}
+                        icon={
+                          <Ionicons name="trash" size={18} color="#ffffff" />
+                        }
                         onPress={() => removeFactField(index)}
                         variant="danger"
                         size="small"
@@ -291,10 +319,14 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
                   />
                 </LinearGradient>
               </View>
-
             </View>
           </ScrollView>
-          <View style={[styles.bottomActions, { borderTopColor: colors.border.light }]}>
+          <View
+            style={[
+              styles.bottomActions,
+              { borderTopColor: colors.border.light },
+            ]}
+          >
             <Button
               title={t("common.cancel")}
               onPress={() => navigation.goBack()}
@@ -303,7 +335,9 @@ const EditConnectionScreen: React.FC<Props> = ({ navigation, route }) => {
             />
             <Button
               title={
-                isUpdatingConnection ? t("connections.updating") : t("connections.updateConnection")
+                isUpdatingConnection
+                  ? t("connections.updating")
+                  : t("connections.updateConnection")
               }
               onPress={handleSubmit}
               disabled={isUpdatingConnection}
@@ -329,7 +363,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   headerTitle: {
-    fontSize: typography.size['5xl'],
+    fontSize: typography.size["5xl"],
     fontWeight: typography.weight.extrabold,
     color: baseColors.text.primary,
     marginBottom: 4,
@@ -352,7 +386,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingText: {
-    fontSize: typography.size['2xl'],
+    fontSize: typography.size["2xl"],
     color: baseColors.text.accent,
     fontWeight: typography.weight.semibold,
   },
@@ -365,7 +399,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   factsTitle: {
-    fontSize: typography.size['2xl'],
+    fontSize: typography.size["2xl"],
     fontWeight: typography.weight.bold,
     marginBottom: 16,
     color: baseColors.text.accent,

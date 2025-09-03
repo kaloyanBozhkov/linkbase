@@ -322,7 +322,20 @@
     "importConnections": "Importer des connexions",
     "importDescription": "Importer des connexions à partir d'un fichier JSON",
     "importing": "Importation...",
-    "import": "Importer"
+    "import": "Importer",
+    "title": "Importer & Exporter",
+    "manageData": "Gérer vos données",
+    "manageDataDescription": "Exportez vos connexions pour sauvegarder vos données ou les partager avec un autre appareil. Importez des connexions à partir d'un fichier JSON pour les ajouter à votre collection actuelle.",
+    "invalidFormat": "Format invalide",
+    "invalidConnectionData": "Le fichier ne contient pas de données de connexion valides.",
+    "importComplete": "Importation terminée",
+    "importCompleteMessage": "Importation terminée !\n\nImporté : {{imported}}\nIgnoré (doublons) : {{skipped}}",
+    "importErrors": "Erreurs d'importation",
+    "importFailed": "Échec de l'importation",
+    "importError": "Une erreur est survenue lors de l'importation de vos connexions.",
+    "duplicateNote": "• Les connexions en doublon (même nom et lieu de rencontre) seront ignorées lors de l'importation",
+    "factsNote": "• Les faits sont dédupliqués pour chaque connexion",
+    "jsonFormatNote": "• Les fichiers d'importation doivent être au format JSON valide"
   },
   "appearance": {
     "title": "Apparence",
@@ -385,15 +398,20 @@
     "pleaseRecordFirst": "Veuillez d'abord enregistrer quelques connexions.",
     "incompleteConnections": "Connexions Incomplètes",
     "fillNameAndMeetingPlace": "Veuillez remplir le nom et le lieu de rencontre pour toutes les connexions.",
-    "connectionsAddedSuccessfully": "{{count}} connexion{{count > 1 ? 's' : ''}} ajoutée{{count > 1 ? 's' : ''}} avec succès !",
     "creating": "Création...",
-    "createConnections": "Créer {{count}} Connexion{{count > 1 ? 's' : ''}}",
     "processingRecording": "🤖 Traitement de Votre Enregistrement",
     "processingDescription": "Nous analysons ce que vous venez de dire et complétons les connexions mentionnées. Cela prend généralement quelques secondes... veuillez patienter !",
     "readyToRecord": "🎤 Prêt à Enregistrer",
     "readyToRecordDescription": "Appuyez sur le microphone ci-dessous et parlez-moi des personnes que vous avez rencontrées. Vous pouvez mentionner plusieurs personnes en un seul enregistrement !",
     "exampleText": "Par exemple : \"J'ai rencontré John au café, il est ingénieur logiciel de San Francisco. J'ai aussi rencontré Sarah à la conférence, elle travaille dans le marketing et aime la randonnée.\"",
-    "reviewConnection": "Revoir la connexion"
+    "reviewConnection": "Revoir la connexion",
+    "reviewTitle": "Vérifier les connexions",
+    "reviewSubtitle": "Révisons maintenant chaque contact.",
+    "connectionAddedSuccessfully": "1 connexion ajoutée avec succès !",
+    "connectionsAddedSuccessfullyPlural": "{{count}} connexions ajoutées avec succès !",
+    "createConnection": "Créer 1 connexion",
+    "createConnectionsPlural": "Créer {{count}} connexions",
+    "navigationText": "{{current}} sur {{total}}"
   },
   "loading": {
     "doingMagic": "La magie opère.."
@@ -436,6 +454,7 @@
     "warmPastel": "Pastel chaud",
     "warmPastelDescription": "Thème sombre avec des accents rose chaud",
     "lightMode": "Mode clair",
-    "lightModeDescription": "Thème clair et épuré avec des accents bleus"
+    "lightModeDescription": "Thème clair et épuré avec des accents bleus",
+    "continue": "Continuer"
   }
 }

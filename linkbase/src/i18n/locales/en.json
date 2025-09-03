@@ -206,7 +206,8 @@
     "recentSearches": "Recent Searches",
     "clearHistory": "Clear History",
     "searchConnections": "Search Connections",
-    "search": "Search"
+    "search": "Search",
+    "searchByFactsOrQuestions": "Search by facts or questions..."
   },
   "voice": {
     "recording": "Recording...",
@@ -246,7 +247,6 @@
     "failedToStopRecording": "Failed to stop recording",
     "failedToUploadRecording": "Failed to upload recording",
     "couldntParseRecording": "Couldn't parse your voice recording. Please try again later.",
-    "recording": "Recording",
     "allGood": "All good?"
   },
   "qrCode": {
@@ -368,19 +368,24 @@
     "meetingPlaceRequired": "Meeting place is required",
     "title": "Voice Connections",
     "subtitle": "Tell me about who you've met",
+    "reviewTitle": "Review Connections",
+    "reviewSubtitle": "Now let's review each contact.",
     "noConnections": "No Connections",
     "pleaseRecordFirst": "Please record some connections first.",
     "incompleteConnections": "Incomplete Connections",
     "fillNameAndMeetingPlace": "Please fill in the name and meeting place for all connections.",
-    "connectionsAddedSuccessfully": "{{count}} connection{{count > 1 ? 's' : ''}} added successfully!",
+    "connectionAddedSuccessfully": "1 connection added successfully!",
+    "connectionsAddedSuccessfullyPlural": "{{count}} connections added successfully!",
     "creating": "Creating...",
-    "createConnections": "Create {{count}} Connection{{count > 1 ? 's' : ''}}",
+    "createConnection": "Create 1 Connection",
+    "createConnectionsPlural": "Create {{count}} Connections",
     "processingRecording": "🤖 Processing Your Recording",
     "processingDescription": "We're analyzing what you just said and filling out your mentioned connections. This usually takes a few seconds... please wait!",
     "readyToRecord": "🎤 Ready to Record",
     "readyToRecordDescription": "Tap the microphone below and tell me about the people you've met. You can mention multiple people in one recording!",
     "exampleText": "For example: \"I met John at the coffee shop, he's a software engineer from San Francisco. I also met Sarah at the conference, she works in marketing and loves hiking.\"",
-    "reviewConnection": "Review Connection"
+    "reviewConnection": "Review Connection",
+    "navigationText": "{{current}} of {{total}}"
   },
   "errors": {
     "networkError": "Network error. Please check your connection.",

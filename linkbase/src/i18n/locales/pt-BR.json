@@ -322,7 +322,20 @@
     "importConnections": "Importar Conexões",
     "importDescription": "Importar conexões de um arquivo JSON",
     "importing": "Importando...",
-    "import": "Importar"
+    "import": "Importar",
+    "title": "Importar & Exportar",
+    "manageData": "Gerenciar Seus Dados",
+    "manageDataDescription": "Exporte suas conexões para fazer backup dos seus dados ou compartilhe com outro dispositivo. Importe conexões de um arquivo JSON para adicioná-las à sua coleção atual.",
+    "invalidFormat": "Formato Inválido",
+    "invalidConnectionData": "O arquivo não contém dados de conexão válidos.",
+    "importComplete": "Importação Concluída",
+    "importCompleteMessage": "Importação concluída!\n\nImportado: {{imported}}\nIgnorado (duplicados): {{skipped}}",
+    "importErrors": "Erros de Importação",
+    "importFailed": "Falha na Importação",
+    "importError": "Ocorreu um erro ao importar suas conexões.",
+    "duplicateNote": "• Conexões duplicadas (mesmo nome e local de encontro) serão ignoradas durante a importação",
+    "factsNote": "• Fatos são desduplicados por conexão",
+    "jsonFormatNote": "• Arquivos de importação devem estar no formato JSON válido"
   },
   "appearance": {
     "title": "Aparência",
@@ -385,15 +398,20 @@
     "pleaseRecordFirst": "Por favor, grave algumas conexões primeiro.",
     "incompleteConnections": "Conexões Incompletas",
     "fillNameAndMeetingPlace": "Por favor, preencha o nome e o local do encontro para todas as conexões.",
-    "connectionsAddedSuccessfully": "{{count}} conexão{{count > 1 ? 's' : ''}} adicionada com sucesso!",
     "creating": "Criando...",
-    "createConnections": "Criar {{count}} Conexão{{count > 1 ? 's' : ''}}",
     "processingRecording": "🤖 Processando Sua Gravação",
     "processingDescription": "Estamos analisando o que você acabou de dizer e preenchendo as conexões mencionadas. Isso geralmente leva alguns segundos... por favor, aguarde!",
     "readyToRecord": "🎤 Pronto para Gravar",
     "readyToRecordDescription": "Toque no microfone abaixo e me conte sobre as pessoas que você conheceu. Você pode mencionar várias pessoas em uma gravação!",
     "exampleText": "Por exemplo: \"Conheci o John na cafeteria, ele é engenheiro de software de São Francisco. Também conheci a Sarah na conferência, ela trabalha em marketing e adora fazer trilhas.\"",
-    "reviewConnection": "Revisar Conexão"
+    "reviewConnection": "Revisar Conexão",
+    "reviewTitle": "Revisar Conexões",
+    "reviewSubtitle": "Agora vamos revisar cada contato.",
+    "connectionAddedSuccessfully": "1 conexão adicionada com sucesso!",
+    "connectionsAddedSuccessfullyPlural": "{{count}} conexões adicionadas com sucesso!",
+    "createConnection": "Criar 1 Conexão",
+    "createConnectionsPlural": "Criar {{count}} Conexões",
+    "navigationText": "{{current}} de {{total}}"
   },
   "loading": {
     "doingMagic": "Fazendo mágica.."
@@ -436,6 +454,7 @@
     "warmPastel": "Pastel Quente",
     "warmPastelDescription": "Tema escuro com detalhes em rosa quente",
     "lightMode": "Modo Claro",
-    "lightModeDescription": "Tema claro e limpo com detalhes em azul"
+    "lightModeDescription": "Tema claro e limpo com detalhes em azul",
+    "continue": "Continuar"
   }
 }

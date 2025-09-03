@@ -323,7 +323,20 @@
     "importConnections": "导入连接",
     "importDescription": "从JSON文件导入连接",
     "importing": "导入中...",
-    "import": "导入"
+    "import": "导入",
+    "title": "导入与导出",
+    "manageData": "管理您的数据",
+    "manageDataDescription": "导出您的连接以备份数据或与其他设备共享。从JSON文件中导入连接以添加到您当前的收藏。",
+    "invalidFormat": "格式无效",
+    "invalidConnectionData": "该文件不包含有效的连接数据。",
+    "importComplete": "导入完成",
+    "importCompleteMessage": "导入完成！\n\n已导入：{{imported}}\n跳过（重复项）：{{skipped}}",
+    "importErrors": "导入错误",
+    "importFailed": "导入失败",
+    "importError": "导入连接时发生错误。",
+    "duplicateNote": "• 重复连接（相同名称和会面地点）将在导入时被跳过",
+    "factsNote": "• 每个连接的信息都已去重",
+    "jsonFormatNote": "• 导入文件必须是有效的JSON格式"
   },
   "appearance": {
     "title": "外观",
@@ -394,7 +407,14 @@
     "readyToRecord": "🎤 准备好录音",
     "readyToRecordDescription": "点击下面的麦克风，告诉我你遇到的人。你可以在一个录音中提到多个朋友！",
     "exampleText": "例如：“我在咖啡馆遇到了约翰，他是来自旧金山的软件工程师。我还在会议上遇到了莎拉，她从事市场营销，喜欢徒步旅行。”",
-    "reviewConnection": "审核连接"
+    "reviewConnection": "审核连接",
+    "reviewTitle": "审查连接",
+    "reviewSubtitle": "现在让我们审查每个联系人。",
+    "connectionAddedSuccessfully": "成功添加1个连接！",
+    "connectionsAddedSuccessfullyPlural": "成功添加{{count}}个连接！",
+    "createConnection": "创建1个连接",
+    "createConnectionsPlural": "创建{{count}}个连接",
+    "navigationText": "{{current}} / {{total}}"
   },
   "loading": {
     "doingMagic": "施展魔法中..."
@@ -437,6 +457,7 @@
     "warmPastel": "暖色调",
     "warmPastelDescription": "带有暖粉色点缀的黑暗主题",
     "lightMode": "浅色模式",
-    "lightModeDescription": "带有蓝色点缀的简洁浅色主题"
+    "lightModeDescription": "带有蓝色点缀的简洁浅色主题",
+    "continue": "继续"
   }
 }

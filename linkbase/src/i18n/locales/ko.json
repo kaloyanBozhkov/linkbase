@@ -322,7 +322,20 @@
     "importConnections": "연결 가져오기",
     "importDescription": "JSON 파일에서 연결 가져오기",
     "importing": "가져오는 중...",
-    "import": "가져오기"
+    "import": "가져오기",
+    "title": "가져오기 및 내보내기",
+    "manageData": "데이터 관리",
+    "manageDataDescription": "연결을 내보내 데이터 백업을 하거나 다른 기기와 공유하세요. 현재 컬렉션에 추가하려면 JSON 파일에서 연결을 가져오세요.",
+    "invalidFormat": "잘못된 형식",
+    "invalidConnectionData": "파일에 유효한 연결 데이터가 없습니다.",
+    "importComplete": "가져오기 완료",
+    "importCompleteMessage": "가져오기가 완료되었습니다!\n\n가져옴: {{imported}}\n건너뜀 (중복): {{skipped}}",
+    "importErrors": "가져오기 오류",
+    "importFailed": "가져오기 실패",
+    "importError": "연결을 가져오는 중 오류가 발생했습니다.",
+    "duplicateNote": "• 이름과 만남 장소가 동일한 중복 연결은 가져오는 중에 건너뜁니다",
+    "factsNote": "• 사실은 연결당 중복을 방지합니다",
+    "jsonFormatNote": "• 가져오기 파일은 유효한 JSON 형식이어야 합니다"
   },
   "appearance": {
     "title": "외관",
@@ -385,7 +398,6 @@
     "pleaseRecordFirst": "먼저 연결을 녹음해 주세요.",
     "incompleteConnections": "불완전한 연결",
     "fillNameAndMeetingPlace": "모든 연결의 이름과 만난 장소를 입력해 주세요.",
-    "connectionsAddedSuccessfully": "{{count}}개{{count > 1 ? '의' : ''}} 연결이 성공적으로 추가되었습니다!",
     "creating": "생성 중...",
     "createConnections": "{{count}}개의 연결 만들기",
     "processingRecording": "🤖 녹음 처리 중",
@@ -393,7 +405,14 @@
     "readyToRecord": "🎤 녹음 준비 완료",
     "readyToRecordDescription": "아래 마이크를 누르고 만난 사람들에 대해 이야기해 주세요. 하나의 녹음에서 여러 사람을 언급할 수 있습니다!",
     "exampleText": "예를 들어: \"커피숍에서 존을 만났어요, 그는 샌프란시스코 출신의 소프트웨어 엔지니어에요. 또한 컨퍼런스에서 사라를 만났는데, 그녀는 마케팅에서 일하고 하이킹을 좋아해요.\"",
-    "reviewConnection": "연결 검토"
+    "reviewConnection": "연결 검토",
+    "reviewTitle": "연결 검토",
+    "reviewSubtitle": "이제 각 연락처를 검토해봅시다.",
+    "connectionAddedSuccessfully": "1개의 연결이 성공적으로 추가되었습니다!",
+    "connectionsAddedSuccessfullyPlural": "{{count}}개의 연결이 성공적으로 추가되었습니다!",
+    "createConnection": "1개의 연결 만들기",
+    "createConnectionsPlural": "{{count}}개의 연결 만들기",
+    "navigationText": "{{current}} / {{total}}"
   },
   "loading": {
     "doingMagic": "마법 기능 실행 중.."
@@ -436,6 +455,7 @@
     "warmPastel": "따뜻한 파스텔",
     "warmPastelDescription": "따뜻한 분홍색 강조의 어두운 테마",
     "lightMode": "라이트 모드",
-    "lightModeDescription": "파란색 강조의 깔끔한 라이트 테마"
+    "lightModeDescription": "파란색 강조의 깔끔한 라이트 테마",
+    "continue": "계속"
   }
 }

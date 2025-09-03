@@ -3,7 +3,7 @@
 import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
-
+console.log("ran")
 // eslint-disable-next-line no-undef
 const __dirname = path.resolve();
 

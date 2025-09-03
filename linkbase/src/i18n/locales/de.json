@@ -322,7 +322,20 @@
     "importConnections": "Verbindungen importieren",
     "importDescription": "Verbindungen aus einer JSON-Datei importieren",
     "importing": "Importieren...",
-    "import": "Importieren"
+    "import": "Importieren",
+    "title": "Import & Export",
+    "manageData": "Verwalten Sie Ihre Daten",
+    "manageDataDescription": "Exportieren Sie Ihre Verbindungen, um Ihre Daten zu sichern oder sie auf ein anderes Gerät zu übertragen. Importieren Sie Verbindungen aus einer JSON-Datei, um sie Ihrer aktuellen Sammlung hinzuzufügen.",
+    "invalidFormat": "Ungültiges Format",
+    "invalidConnectionData": "Die Datei enthält keine gültigen Verbindungsdaten.",
+    "importComplete": "Import abgeschlossen",
+    "importCompleteMessage": "Import abgeschlossen!\n\nImportiert: {{imported}}\nÜbersprungen (Duplikate): {{skipped}}",
+    "importErrors": "Importfehler",
+    "importFailed": "Import fehlgeschlagen",
+    "importError": "Beim Importieren Ihrer Verbindungen ist ein Fehler aufgetreten.",
+    "duplicateNote": "• Doppelte Verbindungen (gleicher Name und Treffpunkt) werden beim Import übersprungen",
+    "factsNote": "• Fakten werden pro Verbindung dedupliziert",
+    "jsonFormatNote": "• Importdateien müssen im gültigen JSON-Format vorliegen"
   },
   "appearance": {
     "title": "Aussehen",
@@ -385,15 +398,20 @@
     "pleaseRecordFirst": "Bitte zeichne zuerst einige Verbindungen auf.",
     "incompleteConnections": "Unvollständige Verbindungen",
     "fillNameAndMeetingPlace": "Bitte fülle den Namen und den Treffpunkt für alle Verbindungen aus.",
-    "connectionsAddedSuccessfully": "{{count}} Verbindung{{count > 1 ? 'en' : ''}} erfolgreich hinzugefügt!",
     "creating": "Erstellen...",
-    "createConnections": "Erstelle {{count}} Verbindung{{count > 1 ? 'en' : ''}}",
     "processingRecording": "🤖 Verarbeite Deine Aufnahme",
     "processingDescription": "Wir analysieren, was du gerade gesagt hast und füllen die genannten Verbindungen aus. Das dauert normalerweise nur ein paar Sekunden... bitte warte!",
     "readyToRecord": "🎤 Bereit zur Aufnahme",
     "readyToRecordDescription": "Tippe auf das Mikrofon unten und erzähle mir von den Menschen, die du getroffen hast. Du kannst mehrere Personen in einer Aufnahme erwähnen!",
     "exampleText": "Zum Beispiel: \"Ich habe John im Café getroffen, er ist Softwareentwickler aus San Francisco. Ich habe auch Sarah auf der Konferenz getroffen, sie arbeitet im Marketing und liebt Wandern.\"",
-    "reviewConnection": "Verbindung überprüfen"
+    "reviewConnection": "Verbindung überprüfen",
+    "reviewTitle": "Verbindungen überprüfen",
+    "reviewSubtitle": "Lassen Sie uns jetzt jeden Kontakt überprüfen.",
+    "connectionAddedSuccessfully": "1 Verbindung erfolgreich hinzugefügt!",
+    "connectionsAddedSuccessfullyPlural": "{{count}} Verbindungen erfolgreich hinzugefügt!",
+    "createConnection": "1 Verbindung erstellen",
+    "createConnectionsPlural": "{{count}} Verbindungen erstellen",
+    "navigationText": "{{current}} von {{total}}"
   },
   "loading": {
     "doingMagic": "Magie am Werk.."
@@ -436,6 +454,7 @@
     "warmPastel": "Warmes Pastell",
     "warmPastelDescription": "Dunkles Thema mit warmen rosa Akzenten",
     "lightMode": "Heller Modus",
-    "lightModeDescription": "Sauberes helles Thema mit blauen Akzenten"
+    "lightModeDescription": "Sauberes helles Thema mit blauen Akzenten",
+    "continue": "Weiter"
   }
 }

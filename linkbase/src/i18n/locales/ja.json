@@ -322,7 +322,20 @@
     "importConnections": "接続をインポート",
     "importDescription": "JSONファイルから接続をインポート",
     "importing": "インポート中...",
-    "import": "インポート"
+    "import": "インポート",
+    "title": "インポートとエクスポート",
+    "manageData": "データを管理する",
+    "manageDataDescription": "接続をエクスポートしてデータをバックアップしたり、別のデバイスと共有したりします。現在のコレクションに追加するには、JSONファイルから接続をインポートしてください。",
+    "invalidFormat": "無効な形式",
+    "invalidConnectionData": "ファイルに有効な接続データが含まれていません。",
+    "importComplete": "インポート完了",
+    "importCompleteMessage": "インポートが完了しました！\n\nインポートされた件数: {{imported}}\nスキップされた件数（重複）: {{skipped}}",
+    "importErrors": "インポートエラー",
+    "importFailed": "インポートに失敗しました",
+    "importError": "接続のインポート中にエラーが発生しました。",
+    "duplicateNote": "• インポート中に重複する接続（同じ名前と会う場所）はスキップされます",
+    "factsNote": "• 接続ごとに事実情報は重複削除されます",
+    "jsonFormatNote": "• インポートファイルは有効なJSON形式でなければなりません"
   },
   "appearance": {
     "title": "外観",
@@ -393,7 +406,14 @@
     "readyToRecord": "🎤 録音の準備完了",
     "readyToRecordDescription": "下のマイクをタップして、会った人たちについて教えてください。一度の録音で複数の人を言及できます！",
     "exampleText": "例えば：「私はコーヒーショップでジョンに会いました。彼はサンフランシスコからのソフトウェアエンジニアです。また、会議でサラに会いました。彼女はマーケティングの仕事をしていてハイキングが大好きです。」",
-    "reviewConnection": "接続を確認"
+    "reviewConnection": "接続を確認",
+    "reviewTitle": "接続を確認",
+    "reviewSubtitle": "次に、各連絡先を確認しましょう。",
+    "connectionAddedSuccessfully": "1件の接続が正常に追加されました！",
+    "connectionsAddedSuccessfullyPlural": "{{count}}件の接続が正常に追加されました！",
+    "createConnection": "1件の接続を作成",
+    "createConnectionsPlural": "{{count}}件の接続を作成",
+    "navigationText": "{{current}} / {{total}}"
   },
   "loading": {
     "doingMagic": "魔法をかけています…"
@@ -436,6 +456,7 @@
     "warmPastel": "ウォームパステル",
     "warmPastelDescription": "暖かいピンクのアクセントがあるダークテーマ",
     "lightMode": "ライトモード",
-    "lightModeDescription": "青いアクセントがある清潔なライトテーマ"
+    "lightModeDescription": "青いアクセントがある清潔なライトテーマ",
+    "continue": "続ける"
   }
 }

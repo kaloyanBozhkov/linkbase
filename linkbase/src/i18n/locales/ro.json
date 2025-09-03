@@ -322,7 +322,20 @@
     "importConnections": "Importă conexiuni",
     "importDescription": "Importă conexiuni dintr-un fișier JSON",
     "importing": "Importare...",
-    "import": "Importă"
+    "import": "Importă",
+    "title": "Import & Export",
+    "manageData": "Gestionează-ți Datele",
+    "manageDataDescription": "Exportă-ți conexiunile pentru a-ți salva datele sau pentru a le partaja cu un alt dispozitiv. Importează conexiuni dintr-un fișier JSON pentru a le adăuga la colecția ta curentă.",
+    "invalidFormat": "Format Invalid",
+    "invalidConnectionData": "Fișierul nu conține date valide de conexiune.",
+    "importComplete": "Import Finalizat",
+    "importCompleteMessage": "Import finalizat!\n\nImportate: {{imported}}\nOmitere (duplicate): {{skipped}}",
+    "importErrors": "Erori de Import",
+    "importFailed": "Import Eșuat",
+    "importError": "A apărut o eroare în timpul importului conexiunilor tale.",
+    "duplicateNote": "• Conexiunile duplicate (același nume și loc de întâlnire) vor fi omise în timpul importului",
+    "factsNote": "• Faptele sunt deduplicate per conexiune",
+    "jsonFormatNote": "• Fișierele de import trebuie să fie în format JSON valid"
   },
   "appearance": {
     "title": "Aspect",
@@ -385,15 +398,20 @@
     "pleaseRecordFirst": "Te rog să înregistrezi mai întâi niște conexiuni.",
     "incompleteConnections": "Conexiuni Incomplete",
     "fillNameAndMeetingPlace": "Te rog să completezi numele și locul întâlnirii pentru toate conexiunile.",
-    "connectionsAddedSuccessfully": "{{count}} conexiune{{count > 1 ? 'i' : ''}} adăugată cu succes!",
     "creating": "Se creează...",
-    "createConnections": "Creează {{count}} Conexiune{{count > 1 ? 'i' : ''}}",
     "processingRecording": "🤖 Procesăm Înregistrarea Ta",
     "processingDescription": "Analizăm ceea ce tocmai ai spus și completăm conexiunile menționate de tine. Acest proces durează de obicei câteva secunde... te rog să aștepți!",
     "readyToRecord": "🎤 Gata de Înregistrare",
     "readyToRecordDescription": "Atinge microfonul de mai jos și povestește-mi despre persoanele pe care le-ai întâlnit. Poți menționa mai multe persoane într-o singură înregistrare!",
     "exampleText": "De exemplu: \"L-am întâlnit pe John la cafenea, este inginer software din San Francisco. De asemenea, am întâlnit-o pe Sarah la conferință, lucrează în marketing și îi place să facă drumeții.\"",
-    "reviewConnection": "Revizuiește conexiunea"
+    "reviewConnection": "Revizuiește conexiunea",
+    "reviewTitle": "Revizuiește Conexiunile",
+    "reviewSubtitle": "Acum să revizuim fiecare contact.",
+    "connectionAddedSuccessfully": "1 conexiune adăugată cu succes!",
+    "connectionsAddedSuccessfullyPlural": "{{count}} conexiuni adăugate cu succes!",
+    "createConnection": "Creează 1 Conexiune",
+    "createConnectionsPlural": "Creează {{count}} Conexiuni",
+    "navigationText": "{{current}} din {{total}}"
   },
   "loading": {
     "doingMagic": "Facem magie..."
@@ -436,6 +454,7 @@
     "warmPastel": "Pastel cald",
     "warmPastelDescription": "Temă închisă cu accente roz calde",
     "lightMode": "Modul lumină",
-    "lightModeDescription": "Temă luminoasă curată cu accente albastre"
+    "lightModeDescription": "Temă luminoasă curată cu accente albastre",
+    "continue": "Continuă"
   }
 }

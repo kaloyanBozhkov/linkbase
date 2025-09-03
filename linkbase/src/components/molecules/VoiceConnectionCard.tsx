@@ -9,16 +9,19 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
+import SocialMediaSection from "./SocialMediaSection";
 import { camelCaseWords } from "@/helpers/utils";
 import { useTranslation } from "@/hooks/useTranslation";
-import { colors, typography, borderRadius, shadows } from "@/theme/colors";
+import { typography, borderRadius, shadows } from "@/theme/colors";
 import type { VoiceConnectionData } from "@/pages/AddVoiceConnectionsScreen";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 interface VoiceConnectionCardProps {
   connection: VoiceConnectionData;
   onUpdate: (updatedData: Partial<VoiceConnectionData>) => void;
   onRemove: () => void;
   onInputFocus?: () => void;
+  idx: number;
 }
 
 const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
@@ -26,10 +29,23 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
   onUpdate,
   onRemove,
   onInputFocus,
+  idx,
 }) => {
   const { t } = useTranslation();
+  const { colors } = useThemeStore();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isNameAutoCapitalized, setIsNameAutoCapitalized] = useState(true);
+
+  // Convert VoiceConnectionData social media format to SocialMediaSection format
+  const adaptedSocialMedias = connection.socialMedias.map((sm, index) => ({
+    id: sm.id || `temp-${index}`,
+    type: sm.type,
+    handle: sm.handle,
+    url: sm.url || null,
+    created_at: sm.created_at || new Date(),
+    updated_at: sm.updated_at || new Date(),
+    connection_id: sm.connection_id || connection.id,
+  }));
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -116,10 +132,10 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
         colors={colors.gradients.section}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.card}
+        style={[styles.card, { borderColor: colors.border.default }]}
       >
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>{t("voiceConnections.reviewConnection")}</Text>
+          <Text style={[styles.cardTitle, { color: colors.text.primary }]}>{t("voiceConnections.reviewConnection")} #{idx}</Text>
           <Button
             icon={<Ionicons name="trash" size={18} color="#ffffff" />}
             onPress={handleRemove}
@@ -140,20 +156,20 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
           />
 
           <Input
-                            label={t("connections.whereDidYouMeet")}
+            label={t("connections.whereDidYouMeet")}
             value={connection.metWhere}
             onChangeText={handleMetWhereChange}
             error={errors.metWhere}
-                            placeholder={t("connections.meetingPlaceholder")}
+            placeholder={t("connections.meetingPlaceholder")}
             onFocus={() => onInputFocus && onInputFocus()}
           />
 
           <View style={styles.factsSection}>
             <LinearGradient
               colors={colors.gradients.section}
-              style={styles.factsSectionContent}
+              style={[styles.factsSectionContent, { borderColor: colors.border.light }]}
             >
-              <Text style={styles.factsTitle}>{t("connections.notesOptional")}</Text>
+              <Text style={[styles.factsTitle, { color: colors.text.accent }]}>{t("connections.notesOptional")}</Text>
 
               {connection.facts.map((fact, index) => (
                 <View key={index} style={styles.factRow}>
@@ -183,6 +199,22 @@ const VoiceConnectionCard: React.FC<VoiceConnectionCardProps> = ({
               />
             </LinearGradient>
           </View>
+
+          <SocialMediaSection
+            socialMedias={adaptedSocialMedias}
+            onUpdateSocialMedias={(socialMedias) => onUpdate({ 
+              socialMedias: socialMedias.map(sm => ({
+                type: sm.type,
+                handle: sm.handle,
+                id: sm.id,
+                url: sm.url,
+                created_at: sm.created_at,
+                updated_at: sm.updated_at,
+                connection_id: sm.connection_id,
+              }))
+            })}
+            onInputFocus={onInputFocus}
+          />
         </View>
       </LinearGradient>
     </View>
@@ -197,7 +229,6 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: 20,
     borderWidth: 1,
-    borderColor: colors.border.default,
     ...shadows.lg,
   },
   cardHeader: {
@@ -209,7 +240,6 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: typography.size["3xl"],
     fontWeight: typography.weight.bold,
-    color: colors.text.primary,
     letterSpacing: typography.letterSpacing.wide,
   },
   form: {
@@ -222,13 +252,11 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: colors.border.light,
   },
   factsTitle: {
     fontSize: typography.size.xl,
     fontWeight: typography.weight.semibold,
     marginBottom: 12,
-    color: colors.text.accent,
     letterSpacing: typography.letterSpacing.wide,
   },
   factRow: {

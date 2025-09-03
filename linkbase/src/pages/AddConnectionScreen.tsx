@@ -223,7 +223,7 @@ const AddConnectionScreen: React.FC<Props> = ({ navigation }) => {
           >
             <View style={styles.form}>
               <Input
-                label="Name *"
+                label={t("connections.name") + " *"}
                 value={formData.name}
                 onChangeText={(text) => {
                   // Auto-capitalize if user is just typing (not manually editing)

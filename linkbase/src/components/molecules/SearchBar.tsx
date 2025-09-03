@@ -33,7 +33,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onSearchQueryChange,
   onSearch,
   isSearching = false,
-  placeholder = "Search by facts or questions...",
+  placeholder,
   containerStyle,
   inputStyle,
   buttonStyle,
@@ -104,7 +104,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     >
       <TextInput
         style={[styles.searchInput, { color: colors.text.primary }, inputStyle]}
-        placeholder={placeholder}
+        placeholder={placeholder || t("search.searchByFactsOrQuestions")}
         value={searchQuery}
         onChangeText={onSearchQueryChange}
         placeholderTextColor={colors.text.muted}

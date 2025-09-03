@@ -322,7 +322,20 @@
     "importConnections": "Verbindingen importeren",
     "importDescription": "Importeer verbindingen vanuit een JSON-bestand",
     "importing": "Bezig met importeren...",
-    "import": "Importeren"
+    "import": "Importeren",
+    "title": "Importeren & Exporteren",
+    "manageData": "Beheer Je Gegevens",
+    "manageDataDescription": "Exporteer je connecties om een back-up van je gegevens te maken of deel ze met een ander apparaat. Importeer connecties vanuit een JSON-bestand om ze toe te voegen aan je huidige verzameling.",
+    "invalidFormat": "Ongeldig Formaat",
+    "invalidConnectionData": "Het bestand bevat geen geldige connectiegegevens.",
+    "importComplete": "Import Voltooid",
+    "importCompleteMessage": "Import voltooid!\n\nGeïmporteerd: {{imported}}\nOvergeslagen (duplicaten): {{skipped}}",
+    "importErrors": "Importfouten",
+    "importFailed": "Import Mislukt",
+    "importError": "Er is een fout opgetreden bij het importeren van je connecties.",
+    "duplicateNote": "• Dubbele connecties (zelfde naam en ontmoetingsplaats) worden overgeslagen tijdens import",
+    "factsNote": "• Feiten worden per connectie gededupliceerd",
+    "jsonFormatNote": "• Importbestanden moeten in geldig JSON-formaat zijn"
   },
   "appearance": {
     "title": "Uiterlijk",
@@ -385,15 +398,20 @@
     "pleaseRecordFirst": "Neem eerst enkele verbindingen op.",
     "incompleteConnections": "Onvolledige verbindingen",
     "fillNameAndMeetingPlace": "Vul alstublieft de naam en ontmoetingsplaats in voor alle verbindingen.",
-    "connectionsAddedSuccessfully": "{{count}} verbinding{{count > 1 ? 'en' : ''}} succesvol toegevoegd!",
     "creating": "Creëren...",
-    "createConnections": "Creëer {{count}} verbinding{{count > 1 ? 'en' : ''}}",
     "processingRecording": "🤖 We verwerken je opname",
     "processingDescription": "We analyseren wat je net hebt gezegd en vullen je genoemde verbindingen in. Dit duurt meestal een paar seconden... even geduld!",
     "readyToRecord": "🎤 Klaar om op te nemen",
     "readyToRecordDescription": "Tik op de microfoon hieronder en vertel me over de mensen die je hebt ontmoet. Je kunt meerdere mensen in één opname noemen!",
     "exampleText": "Bijvoorbeeld: \"Ik heb John ontmoet in het koffiehuis, hij is een software-ingenieur uit San Francisco. Ik heb ook Sarah ontmoet op de conferentie, ze werkt in marketing en houdt van wandelen.\"",
-    "reviewConnection": "Verbinding beoordelen"
+    "reviewConnection": "Verbinding beoordelen",
+    "reviewTitle": "Beoordeel Connecties",
+    "reviewSubtitle": "Laten we nu elke contactpersoon beoordelen.",
+    "connectionAddedSuccessfully": "1 connectie succesvol toegevoegd!",
+    "connectionsAddedSuccessfullyPlural": "{{count}} connecties succesvol toegevoegd!",
+    "createConnection": "Maak 1 Connectie",
+    "createConnectionsPlural": "Maak {{count}} Connecties",
+    "navigationText": "{{current}} van {{total}}"
   },
   "loading": {
     "doingMagic": "Magie uitvoeren.."
@@ -436,6 +454,7 @@
     "warmPastel": "Warme pastel",
     "warmPastelDescription": "Donker thema met warme roze accenten",
     "lightMode": "Lichte modus",
-    "lightModeDescription": "Schone lichte modus met blauwe accenten"
+    "lightModeDescription": "Schone lichte modus met blauwe accenten",
+    "continue": "Doorgaan"
   }
 }
