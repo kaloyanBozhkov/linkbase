@@ -89,5 +89,6 @@ if (!process.env.VERCEL) {
   });
   console.log("Server started");
 }
+
 // Export for Vercel
 export default app;
